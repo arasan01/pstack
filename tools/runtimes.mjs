@@ -53,6 +53,13 @@ export const RUNTIMES = [
     hooks: (manifest) => [manifest.hooks],
     pluginRootVar: "COPILOT_PLUGIN_ROOT",
   },
+  {
+    name: "oh-my-pi",
+    mapping: "omp-tools.md",
+    modelNames: ompModelNamesSection,
+    manifest: `${PLUGIN}/package.json`,
+    validate: ({ text, pathExists }) => validateOmpPackage(text, { pathExists }),
+  },
 ].map((runtime) => ({
   ...runtime,
   tools: `${SKILLS}/poteto-mode/references/${runtime.mapping}`,
@@ -141,6 +148,22 @@ export function piModelNamesSection(models) {
   );
 }
 
+export function ompModelNamesSection() {
+  return (
+    "Skills print Claude defaults, but omp must not inherit those provider choices. Without an omp model sheet, " +
+    "omit each child's `model` so it uses the current session model. `inherit-parent` and `auto` also omit `model`. " +
+    "A saved role row overrides this with an exact `provider/model` selector or an omp-supported role alias. " +
+    "List the catalog with `omp models --json` and validate the chosen selector against the session's task schema. " +
+    "Never silently fall back to a different model when dispatch fails.\n\n" +
+    "Translate a sheet's `@<level>` suffix to omp's `provider/model:level` selector where supported; " +
+    "`default effort: session` leaves thinking unchanged. Explicit effort with an inherited model uses " +
+    "the current-model selector `@default:<level>` if the runtime supports it. Do not dispatch Claude effort agents.\n\n" +
+    "For diverse-model panels, dispatch one child per configured entry on distinct reachable models. " +
+    "Until setup chooses a diverse panel, keep the workflow's reviewer count on the session model and " +
+    "state that model diversity is reduced. See [omp setup](../../setup-pstack/omp.md)."
+  );
+}
+
 export function validateCodexMarketplace(text, { expectedName, pathExists }) {
   const manifest = JSON.parse(text);
   const plugins = manifest.plugins ?? [];
@@ -188,6 +211,23 @@ export function validatePiPackage(text, { pathExists }) {
     }
     if (!listed.includes(`./${required}`)) fail(`pi.${key} must list ./${required}`);
   }
+}
+
+export function validateOmpPackage(text, { pathExists }) {
+  const manifest = JSON.parse(text);
+  const fail = (message) => { throw new Error(`${PLUGIN}/package.json: ${message}`); };
+  const extensions = manifest.omp?.extensions;
+  if (!Array.isArray(extensions) || !extensions.includes("./omp/index.ts")) {
+    fail("omp.extensions must list ./omp/index.ts");
+  }
+  for (const path of extensions) {
+    if (typeof path !== "string" || !pathExists(`${PLUGIN}/${path.replace(/^\.\//, "")}`)) {
+      fail(`omp.extensions names ${path}, which does not exist`);
+    }
+  }
+  if (extensions.some((path) => path.includes("/pi/"))) fail("omp.extensions must not load the Pi adapter");
+  if (manifest.pi) fail("the omp package must not declare a legacy pi entry");
+  if (!pathExists(SKILLS)) fail("the conventional skills directory is missing");
 }
 
 // The skills that dispatch on role models, which on Copilot need a model sheet.

@@ -320,6 +320,27 @@ test("a Pi session in a second transcripts root marks the worktree it ran in as 
   expect(rowFor(rows, quiet).slice(6, 8)).toEqual(["-", "safe"]);
 });
 
+test.each(["", "work"])("an OMP session under the selected %s profile marks only its worktree as recently chatted", (profile) => {
+  const fixture = createFixture();
+  const chatted = addWorktree(fixture, "omp-chatted");
+  const quiet = addWorktree(fixture, "quiet");
+  const agentDir = profile ? join(fixture.root, ".omp", "profiles", profile, "agent") : join(fixture.root, ".omp", "agent");
+  const sessions = join(agentDir, "sessions");
+  const session = join(sessions, "-omp-chatted", "2026-10-01T00-00-00-000Z_s.jsonl");
+  mkdirSync(dirname(session), { recursive: true });
+  writeFileSync(session, [
+    { type: "title", v: 1, title: "OMP work", source: "auto", pad: " " },
+    { type: "session", version: 3, id: "s", cwd: chatted },
+    { type: "message", id: "u1", parentId: null, message: { role: "user", content: [{ type: "text", text: "go" }] } },
+  ].map((entry) => JSON.stringify(entry)).join("\n") + "\n");
+  const transcripts = defaultTranscriptRoots({ env: { OMP_PROFILE: profile }, home: fixture.root });
+  expect(transcripts).toEqual([sessions]);
+  const { rows, warnings } = runAudit(fixture, { transcripts });
+  expect(warnings).toEqual([]);
+  expect(rowFor(rows, chatted).slice(6, 8)).toEqual([ymd(Math.floor(Date.now() / 1000)), "verify-recent-chat"]);
+  expect(rowFor(rows, quiet).slice(6, 8)).toEqual(["-", "safe"]);
+});
+
 for (const dir of ["sessions", "archived_sessions"]) {
   test(`a Codex session in ~/.codex/${dir} marks the worktree it ran in as a recent chat`, () => {
     const fixture = createFixture();
@@ -562,6 +583,50 @@ describe("default transcripts roots", () => {
       "/pi/pstack",
     ]);
     expect(roots({ env: {}, exists })).toEqual([claude, "/home/u/.codex/sessions", "/home/u/.pi/agent/sessions"]);
+  });
+
+  test("OMP's default root is included without leaking it through an explicit agent override", () => {
+    const present = new Set(["/home/u/.omp/agent/sessions", "/pi/sessions", "/pi/pstack"]);
+    const exists = (path) => present.has(path);
+    expect(roots({ env: {}, exists })).toEqual(["/home/u/.omp/agent/sessions"]);
+    expect(roots({ env: { PI_CODING_AGENT_DIR: "/pi" }, exists })).toEqual(["/pi/sessions", "/pi/pstack"]);
+  });
+
+  test.each([
+    [{ OMP_PROFILE: "work" }, "/home/u/.omp/profiles/work/agent/sessions"],
+    [{ PI_PROFILE: "work" }, "/home/u/.omp/profiles/work/agent/sessions"],
+    [{ OMP_PROFILE: " work ", PI_PROFILE: "other" }, "/home/u/.omp/profiles/work/agent/sessions"],
+    [{ OMP_PROFILE: "", PI_PROFILE: "work" }, "/home/u/.omp/agent/sessions"],
+    [{ OMP_PROFILE: "default", PI_PROFILE: "work" }, "/home/u/.omp/agent/sessions"],
+    [{ OMP_PROFILE: "  ", PI_PROFILE: "work" }, "/home/u/.omp/agent/sessions"],
+    [{ OMP_PROFILE: "work", PI_CONFIG_DIR: ".custom" }, "/home/u/.custom/profiles/work/agent/sessions"],
+  ])("OMP selects only the active profile under %j", (env, selected) => {
+    const present = new Set(["/home/u/.omp/agent/sessions", "/home/u/.omp/profiles/work/agent/sessions", selected]);
+    expect(roots({ env, exists: (path) => present.has(path) })).toEqual([selected]);
+  });
+
+  test("a named OMP profile ignores the agent override while Pi retains it", () => {
+    const selected = "/home/u/.omp/profiles/work/agent/sessions";
+    const present = new Set(["/pi/sessions", "/home/u/.omp/agent/sessions", selected]);
+    expect(roots({ env: { OMP_PROFILE: "work", PI_CODING_AGENT_DIR: "/pi" }, exists: (path) => present.has(path) }))
+      .toEqual(["/pi/sessions", selected]);
+  });
+
+  test("OMP routes sessions to initialized XDG data roots, not state or other profiles", () => {
+    const present = new Set([
+      "/data/omp", "/data/omp/sessions", "/data/omp/profiles/work/sessions",
+      "/state/omp", "/state/omp/sessions", "/home/u/.omp/agent/sessions", "/home/u/.omp/profiles/work/agent/sessions",
+    ]);
+    const env = { XDG_DATA_HOME: "/data", XDG_STATE_HOME: "/state" };
+    const exists = (path) => present.has(path);
+    expect(roots({ env, exists, platform: "linux" })).toEqual(["/data/omp/sessions"]);
+    expect(roots({ env: { ...env, OMP_PROFILE: "work" }, exists, platform: "darwin" }))
+      .toEqual(["/home/u/.omp/profiles/work/agent/sessions"]);
+    present.add("/data/omp/profiles/work");
+    expect(roots({ env: { ...env, OMP_PROFILE: "work" }, exists, platform: "darwin" }))
+      .toEqual(["/data/omp/profiles/work/sessions"]);
+    expect(roots({ env, exists, platform: "win32" })).toEqual(["/home/u/.omp/agent/sessions"]);
+    expect(roots({ env: { ...env, PI_CODING_AGENT_DIR: "/pi" }, exists, platform: "linux" })).toEqual([claude]);
   });
 
   test("Codex's sessions and archived_sessions, under CODEX_HOME when set", () => {

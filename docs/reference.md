@@ -47,13 +47,14 @@ Find each skill's instructions in the [skills tree](../plugins/pstack/skills/).
 
 ## Runtime support
 
-All runtimes share [one skills tree](../plugins/pstack/skills/). A skills-only installation includes the skills, scripts, agent references, and license notices. The Claude Code, Codex, and GitHub Copilot plugins also install automatic routing hooks, and the Pi package adds an extension that injects the same routing and supplies the subagent tools. Codex command shortcuts are separate.
+All runtimes share [one skills tree](../plugins/pstack/skills/). A skills-only installation includes the skills, scripts, agent references, and license notices. The Claude Code, Codex, and GitHub Copilot plugins also install automatic routing hooks. The Pi package adds routing and tools through its extension; the separate omp package adds routing while using omp's native tools. Codex command shortcuts are separate.
 
 | Runtime | Setup and recorded verification |
 | --- | --- |
 | Claude Code | Install the marketplace plugin. Skills use Claude tool names and model defaults; the plugin installs automatic routing. |
 | Codex | Install the native plugin through the repository's marketplace and trust its hook through `/hooks`. The [Codex mapping](../plugins/pstack/skills/poteto-mode/references/codex-tools.md) translates Claude tools and model names. Shared skill symlinks were also detected in a live session. |
 | Pi | Install the repository as a Pi package with `pi install`. The [Pi extension](../plugins/pstack/pi/index.ts) registers the subagent, question, and wake-up tools and `/loop`, and the [Pi mapping](../plugins/pstack/skills/poteto-mode/references/pi-tools.md) translates Claude tools and model names. The [equivalence table](pi-equivalence.md) records each Claude Code mechanism and how it was verified on Pi 1.0. |
+| oh-my-pi (`omp`) | Install this checkout with `omp install ./plugins/pstack`. The [omp adapter](../plugins/pstack/omp/index.ts) adds routing and model-sheet context; [omp mapping](../plugins/pstack/skills/poteto-mode/references/omp-tools.md) uses native task, ask, and todo tools, with no Pi child-process extension. |
 | GitHub Copilot | Install the plugin through the repository's marketplace; the CLI and the GitHub Copilot app share it. The [Copilot mapping](../plugins/pstack/skills/poteto-mode/references/copilot-tools.md) translates Claude tools, paths, and model roles, and maps app-only tools to CLI fallbacks. Install, routing, agent dispatch, and first-run setup are smoke-tested on the CLI; see [GitHub Copilot](#github-copilot). |
 | Prime Agent | Its documentation describes shared-directory discovery; it has not been tested in a live session. Choose tools and models through Prime's configuration. |
 | opencode | Discovery and reading a linked skill were verified on version 1.18.25. Configure agents, commands, and permissions in `opencode.json`. Its picker also lists principle skills. |
@@ -73,7 +74,7 @@ Smaller tasks proceed directly. The full skill loads when invoked, and explicit 
 
 To disable routing, run `setup-pstack` and turn off the session hook. In Claude Code, use `/pstack:setup-pstack`. You can also write `session hook: off` in the runtime's sheet, at the path in [setup-pstack's runtime table](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes). The hook reads that setting before injecting its instruction. Without the setting, routing stays on.
 
-Skills-only installs and other runtimes do not include the hook or the Pi extension. Request `poteto-mode` explicitly, or add a standing instruction to the runtime's instruction file.
+Skills-only installs and other runtimes do not include a routing adapter. Request `poteto-mode` explicitly, or add a standing instruction to the runtime's instruction file.
 
 ### Shared skills installation
 
@@ -135,6 +136,16 @@ done
 ```
 
 Each shortcut invokes its skill. The commands skip existing files and links. Remove a shortcut by deleting its link at `~/.codex/prompts/<name>.md`. Both native-plugin and skills-only installations work without these shortcuts.
+
+### oh-my-pi (omp)
+
+Run `omp install ./plugins/pstack` from this checkout's root. The [nested omp package](../plugins/pstack/package.json) sits beside the conventional shared `skills/` directory, so omp discovers the skills without a duplicated tree. The repository-root package remains Pi-only. Request skills by name, for example `Use poteto-mode to fix the search filter.` For a one-session extension load, `omp -e ./plugins/pstack/omp/index.ts` loads the adapter but does not install the skill tree for later sessions or children; prefer the package installation.
+
+The adapter appends the [omp mapping](../plugins/pstack/skills/poteto-mode/references/omp-tools.md) and the model sheet on every agent start. It routes nontrivial root-session tasks to poteto-mode unless the sheet says `session hook: off`. It does not replace omp's native tools. The sheet lives in the active omp agent directory, with `PI_CODING_AGENT_DIR` and named profiles respected. Run `setup-pstack` to choose models from `omp models --json`; without a sheet, workers inherit the current session model rather than choosing a Claude provider. Configure distinct models for panels or report reduced diversity.
+
+The omp build does not implement the Pi extension's `/loop`, `schedule_wakeup`, or process-based subagent controls. Follow the mapping's native dispatch and background-work rules. A workflow that needs recurring agent turns must use a scheduler exposed by the session or report that it cannot run unattended.
+
+For Codex on this same checkout, the native Codex manifests, hook, and optional prompt stubs remain unchanged. The [shared skills installation](#shared-skills-installation) also works with this checkout; skip cloning another repository and run the linking commands here. Enable Codex's `multi_agent` feature when delegation is disabled, and review hook trust with `/hooks` for a native plugin installation.
 
 ### Pi
 
@@ -202,6 +213,8 @@ plugins/pstack/
   .codex-plugin/                  Codex manifest and generated prompt stubs
   .github/plugin/plugin.json      GitHub Copilot plugin manifest
   pi/                            Pi extension (subagent, question, and wake-up tools)
+  package.json                   oh-my-pi package manifest (install this directory)
+  omp/                           oh-my-pi routing and model-sheet adapter
   skills/                        Shared skills, references, and scripts
   agents/                        Claude Code subagent definitions
   hooks/                         Startup routing for Claude Code, Codex, and Copilot; Copilot tool checks
@@ -213,7 +226,7 @@ Skills-only installs use `plugins/pstack/skills/`. Agent references and license 
 
 ### Generated files and checks
 
-The [generator](../tools/generate.mjs) updates versions, model defaults, Codex prompts, Copilot preambles and role lists, and portable reference files, and validates the Pi package manifest. The [slash-command table](#slash-commands) supplies the Codex prompt descriptions and order. Edit that table when changing a menu description, then regenerate. Keep a row for every public skill, with `poteto-mode` first.
+The [generator](../tools/generate.mjs) updates versions, model defaults, Codex prompts, Copilot preambles and role lists, and portable reference files, and validates both Pi and omp package manifests. The [slash-command table](#slash-commands) supplies the Codex prompt descriptions and order. Edit that table when changing a menu description, then regenerate. Keep a row for every public skill, with `poteto-mode` first.
 
 [Documentation fact tests](../tests/readme-facts.test.mjs) check the skill counts and upstream pin. The table parser requires the header `| command | use it when |`.
 

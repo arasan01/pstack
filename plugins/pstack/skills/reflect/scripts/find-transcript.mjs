@@ -6,15 +6,15 @@
 // Prints the newest matching path, or exits 1 with "no transcript". Covers
 // Claude Code's three layouts under one per-project directory (flat
 // <id>.jsonl, nested <id>/<id>.jsonl, subagent <id>/subagents/<child>.jsonl)
-// Pi's <iso>_<id>.jsonl under its per-cwd sessions directory, and GitHub
-// Copilot's <id>/events.jsonl under its session-state directory, told apart by
-// Pi's session header line and Copilot's session.start event. Each candidate is
-// streamed line by line; a Claude Code or Copilot transcript is abandoned at its
-// first typed user record. Copilot searches compare the session header's cwd
-// with the workspace (the current directory by default) before reading user
-// messages. A Pi session is read to its last entry to find
-// the active branch. A Codex rollout is refused by name rather than read as an
-// empty Claude transcript.
+// Pi's and OMP's <iso>_<id>.jsonl under their per-cwd sessions directories,
+// and GitHub Copilot's <id>/events.jsonl under its session-state directory,
+// told apart by the session header. OMP may prepend a current-title slot.
+// Each candidate is streamed line by line; a Claude Code or Copilot transcript
+// is abandoned at its first typed user record. Pi, OMP, and Copilot searches
+// compare the session header's cwd with the workspace (the current directory
+// by default) before reading user messages. Pi and OMP sessions are read to
+// their last entry to find the active branch. A Codex rollout is refused by name
+// rather than read as an empty Claude transcript.
 import { createReadStream, readdirSync, realpathSync, statSync } from "node:fs";
 import { isAbsolute, join } from "node:path";
 import process from "node:process";
@@ -78,7 +78,7 @@ function text(content) {
 // <command-message> and is kept: its <command-args> carry what the user typed.
 const LOCAL_COMMAND = /^\s*<(?:command-name|local-command-stdout|bash-input)>/u;
 
-// A Pi session opens with this header line; Claude Code transcripts never do.
+// Pi and OMP share this logical header; OMP can precede it with a title slot.
 const isPiHeader = (record) =>
   record?.type === "session" && Number.isInteger(record.version) && typeof record.cwd === "string";
 // A Codex rollout opens with its session metadata.
@@ -88,17 +88,19 @@ const isCodexHeader = (record) => record?.type === "session_meta";
 // user typed as a `user.message` event.
 const isCopilotHeader = (record) => record?.type === "session.start" && typeof record.data === "object";
 
-async function copilotOpening(head, records, workspace) {
-  if (workspace !== undefined) {
-    const cwd = head.data?.context?.cwd;
-    if (typeof cwd !== "string" || !isAbsolute(cwd)) return null;
-    try {
-      if (realpathSync(cwd) !== realpathSync(workspace)) return null;
-    } catch {
-      // A removed or inaccessible workspace cannot identify this session.
-      return null;
-    }
+function matchesWorkspace(cwd, workspace) {
+  if (workspace === undefined) return true;
+  if (typeof cwd !== "string" || !isAbsolute(cwd)) return false;
+  try {
+    return realpathSync(cwd) === realpathSync(workspace);
+  } catch {
+    // A removed or inaccessible workspace cannot identify this session.
+    return false;
   }
+}
+
+async function copilotOpening(head, records, workspace) {
+  if (!matchesWorkspace(head.data?.context?.cwd, workspace)) return null;
   for await (const record of records) {
     if (record?.type !== "user.message") continue;
     const prompt = text(record.data?.content);
@@ -130,8 +132,8 @@ async function claudeOpening(records) {
   return null;
 }
 
-// Pi branches in place: every entry is appended to one file and linked to its
-// parent by id, and the last entry is the current leaf. The opening prompt is
+// Pi and OMP branch in place: every entry is appended to one file and linked
+// to its parent by id, and the last entry is the current leaf. The opening prompt is
 // the first user message on the path from that leaf to its root, which may not
 // be the first one in file order.
 async function piOpening(records) {
@@ -155,7 +157,7 @@ async function piOpening(records) {
 // Readers by opening record. Claude Code writes no header, so its row is last
 // and takes every file the others do not claim.
 const READERS = [
-  [isPiHeader, (head, rest) => piOpening(rest)],
+  [isPiHeader, (head, rest, path, workspace) => matchesWorkspace(head.cwd, workspace) ? piOpening(rest) : null],
   [isCopilotHeader, (head, rest, path, workspace) => copilotOpening(head, rest, workspace)],
   [isCodexHeader, (head, rest, path) => {
     throw new Error(`${path} is a Codex rollout, which find-transcript does not read; pass the session digest instead`);
@@ -167,7 +169,8 @@ export async function openingPrompt(path, workspace) {
   const stream = createReadStream(path, { encoding: "utf8" });
   try {
     const records = parsed(jsonlLines(stream));
-    const { value: head, done } = await records.next();
+    let { value: head, done } = await records.next();
+    if (head?.type === "title" && head.v === 1) ({ value: head, done } = await records.next());
     if (done) return null;
     const [, read] = READERS.find(([matches]) => matches(head));
     return await read(head, records, path, workspace);

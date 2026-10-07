@@ -148,7 +148,7 @@ describe("find-transcript", () => {
 
   // Pi's layout: <sessions>/--<cwd>--/<iso>_<uuid>.jsonl, a header line, then
   // entries linked by id/parentId; branching appends to the same file.
-  const piHeader = JSON.stringify({ type: "session", version: 3, id: "s-1", timestamp: "2026-10-01T00:00:00.000Z", cwd: "/work/repo" });
+  const piHeader = JSON.stringify({ type: "session", version: 3, id: "s-1", timestamp: "2026-10-01T00:00:00.000Z", cwd: process.cwd() });
   const piEntry = (id, parentId, type, fields = {}) =>
     JSON.stringify({ type, id, parentId, timestamp: "2026-10-01T00:00:01.000Z", ...fields });
   const piMessage = (id, parentId, role, text) =>
@@ -222,6 +222,66 @@ describe("find-transcript", () => {
     const pi = transcript(dir, "--work-repo--/s.jsonl", [piHeader, piMessage("u1", null, "user", "review issue 59 on Pi")], 200);
     expect(await findTranscript(dir, "on Pi")).toBe(pi);
     expect(await findTranscript(dir, "issue 59")).toBe(pi);
+  });
+
+  test.each([true, false])("OMP selects the active branch with a title slot present: %s", async (withTitle) => {
+    const dir = tempDir();
+    const workspace = join(dir, "work");
+    const unrelated = join(dir, "private");
+    mkdirSync(workspace);
+    mkdirSync(unrelated);
+    const header = (cwd) => JSON.stringify({ type: "session", version: 3, id: "omp-session", cwd });
+    const title = withTitle ? [JSON.stringify({ type: "title", v: 1, title: "Cached title", source: "auto", pad: " " })] : [];
+    const sessions = join(dir, ".omp", "agent", "sessions");
+    const current = transcript(sessions, "-work/current.jsonl", [
+      ...title,
+      header(workspace),
+      piMessage("u1", null, "user", "abandoned opening"),
+      piMessage("a1", "u1", "assistant", "ok"),
+      piEntry("summary", null, "branch_summary", { fromId: "a1", summary: "tried A" }),
+      piMessage("u2", "summary", "user", "ship the OMP release"),
+      piMessage("a2", "u2", "assistant", "on it"),
+      piEntry("title", "a2", "title_change", { title: "New title" }),
+    ], 100);
+    transcript(sessions, "-private/newer.jsonl", [
+      ...title, header(unrelated), piMessage("private", null, "user", "ship the OMP release"),
+    ], 200);
+    expect(await findTranscript(sessions, "OMP release", workspace)).toBe(current);
+    expect(await findTranscript(sessions, "abandoned opening", workspace)).toBeNull();
+    expect(await openingPrompt(current, join(dir, "deleted"))).toBeNull();
+  });
+
+  test("Pi session selection also respects the workspace header", async () => {
+    const dir = tempDir();
+    const workspace = join(dir, "work");
+    mkdirSync(workspace);
+    const current = transcript(dir, "--work--/current.jsonl", [
+      JSON.stringify({ type: "session", version: 3, cwd: workspace }),
+      piMessage("u1", null, "user", "review on Pi"),
+    ], 100);
+    transcript(dir, "--other--/newer.jsonl", [piHeader, piMessage("u2", null, "user", "review on Pi")], 200);
+    expect(await findTranscript(dir, "review on Pi", workspace)).toBe(current);
+  });
+
+  test.skipIf(noNode)("the CLI scopes OMP sessions to its current or explicit workspace", () => {
+    const dir = tempDir();
+    const workspace = join(dir, "work");
+    const unrelated = join(dir, "private");
+    mkdirSync(workspace);
+    mkdirSync(unrelated);
+    const sessions = join(dir, ".omp", "agent", "sessions");
+    const records = (cwd) => [
+      JSON.stringify({ type: "title", v: 1, title: "OMP release", pad: " " }),
+      JSON.stringify({ type: "session", version: 3, cwd }),
+      piMessage("u1", null, "user", "ship the OMP release"),
+    ];
+    const current = transcript(sessions, "-work/current.jsonl", records(workspace), 100);
+    transcript(sessions, "-private/newer.jsonl", records(unrelated), 200);
+    for (const [cwd, args] of [[workspace, []], [unrelated, [workspace]]]) {
+      const run = spawnSync("node", [script, sessions, "OMP release", ...args], { cwd, encoding: "utf8" });
+      expect(run.status).toBe(0);
+      expect(run.stdout.trim()).toBe(current);
+    }
   });
 
   // Copilot's layout: <session-state>/<id>/events.jsonl, a session.start event,

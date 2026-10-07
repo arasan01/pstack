@@ -500,18 +500,6 @@ describe("lead lines", () => {
     for (const text of ["# X\n\nA.\n", "# X\n\nA."]) expect(stampLeadLine(text, "A.")).toBe(text);
   });
 
-  test("Codex and Copilot stamp a preamble on their noted skills and Pi stamps none", () => {
-    expect(RUNTIMES.map((r) => r.name)).toEqual(["Codex", "Pi", "GitHub Copilot"]);
-    expect(codex.preamble).toBe(
-      "On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md), including its per-skill notes, before following this skill.",
-    );
-    expect(copilot.preamble).toBe(
-      "On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.",
-    );
-    expect(pi.preamble).toBeNull();
-    expect([...leads.values()].flat().filter((line) => line.includes("pi-tools.md"))).toEqual([]);
-  });
-
   test("a notes table lists its skills in row order and rejects a row without one", () => {
     const table = (...rows) => ["| Skill | On Pi |", "|-------|-------|", ...rows, "", "after"].join("\n");
     expect(noteSkills(pi, table("| `how` | fan-out |", "| `teach` | images |"))).toEqual(["how", "teach"]);

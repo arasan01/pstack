@@ -8,15 +8,19 @@
 //
 // Without a transcripts path it scans every runtime's transcripts directory
 // that exists: Claude Code's projects under $CLAUDE_CONFIG_DIR, Codex's sessions
-// and archived_sessions under $CODEX_HOME, and Pi's sessions and pstack subagent
-// sessions under $PI_CODING_AGENT_DIR (defaults: ~/.claude, ~/.codex, ~/.pi/agent).
+// and archived_sessions under $CODEX_HOME, Pi's sessions and pstack subagent
+// sessions under $PI_CODING_AGENT_DIR, OMP's active-profile sessions, and
+// Copilot's session-state (defaults: ~/.claude, ~/.codex, ~/.pi/agent,
+// ~/.omp/agent, ~/.copilot). OMP honors OMP_PROFILE (legacy PI_PROFILE),
+// PI_CONFIG_DIR, and initialized XDG_DATA_HOME roots. PI_CODING_AGENT_DIR
+// overrides OMP's default profile only.
 //
 // Every probe yields a Fact, { known: true, value } or { known: false }. A hold
 // bucket needs only its own fact; `safe` needs every fact known.
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { homedir } from "node:os";
-import { basename, dirname, join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
@@ -74,13 +78,33 @@ export function parseWorktrees(output) {
   return worktrees;
 }
 
-export function defaultTranscriptRoots({ env = process.env, home = homedir(), exists = existsSync } = {}) {
+function ompSessionsRoot(env, home, exists, platform) {
+  const profileName = (env.OMP_PROFILE !== undefined ? env.OMP_PROFILE : env.PI_PROFILE)?.trim();
+  const profile = !profileName || profileName === "default" ? undefined : profileName;
+  if (profile && (!/^[a-z0-9][a-z0-9._-]{0,63}$/.test(profile) || profile.endsWith(".") ||
+    /^(?:con|prn|aux|nul|com[0-9]|lpt[0-9])(?:\..*)?$/i.test(profile))) {
+    throw new Error(`Invalid OMP profile ${JSON.stringify(profileName)}`);
+  }
+  const configRoot = join(home, env.PI_CONFIG_DIR || ".omp");
+  const profileRoot = profile ? join(configRoot, "profiles", profile) : configRoot;
+  const defaultAgent = join(profileRoot, "agent");
+  const agent = !profile && env.PI_CODING_AGENT_DIR ? resolve(env.PI_CODING_AGENT_DIR) : defaultAgent;
+  if (agent === defaultAgent && ["darwin", "linux"].includes(platform) && env.XDG_DATA_HOME) {
+    const xdgRoot = join(env.XDG_DATA_HOME, "omp");
+    const xdgProfile = profile ? join(xdgRoot, "profiles", profile) : xdgRoot;
+    if (exists(xdgProfile)) return join(xdgProfile, "sessions");
+  }
+  return join(agent, "sessions");
+}
+
+export function defaultTranscriptRoots({ env = process.env, home = homedir(), exists = existsSync, platform = process.platform } = {}) {
   const claude = join(env.CLAUDE_CONFIG_DIR || join(home, ".claude"), "projects");
   const codex = env.CODEX_HOME || join(home, ".codex");
   const piAgent = env.PI_CODING_AGENT_DIR || join(home, ".pi", "agent");
+  const omp = ompSessionsRoot(env, home, exists, platform);
   const copilot = join(env.COPILOT_HOME || join(home, ".copilot"), "session-state");
-  const found = [claude, join(codex, "sessions"), join(codex, "archived_sessions"),
-    join(piAgent, "sessions"), join(piAgent, "pstack"), copilot].filter((root) => exists(root));
+  const found = [...new Set([claude, join(codex, "sessions"), join(codex, "archived_sessions"),
+    join(piAgent, "sessions"), join(piAgent, "pstack"), omp, copilot])].filter((root) => exists(root));
   return found.length ? found : [claude];
 }
 

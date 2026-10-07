@@ -2,6 +2,14 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first. The Cursor-to-Claude rewrite rules live in [`tools/substitutions.json`](tools/substitutions.json), and the [sync boundary](CONTRIBUTING.md#the-sync-boundary) in `CONTRIBUTING.md` defines how a change to upstream's skill content is declared.
 
+## 0.9.75 - add native oh-my-pi support
+
+Install this checkout on oh-my-pi with `omp install ./plugins/pstack`. A separate package beside the existing skills tree loads only the omp routing adapter; the root Pi package stays unchanged. omp uses its native `task`, `ask`, and `todo`, not Pi subprocesses or replacement tools. The adapter appends the omp tool mapping and active-profile model sheet on every agent start, and only root sessions receive the routing mandate. `session hook: off` disables that mandate. Without overrides, workers inherit the session model; setup selects exact available omp provider/model IDs rather than Claude family defaults. The mapping documents native fan-out, effort, isolated writers, and the absence of a pstack-supplied recurring wake-up tool.
+
+Transcript lookup recognizes omp's title-slot prelude and follows its active JSONL branch, with workspace filtering before reading messages. Worktree auditing also discovers omp's default, named-profile, explicit-agent, and initialized XDG session roots. Codex keeps its existing manifests, hook, prompt stubs, and shared skills installation.
+
+The generator versions and validates the omp package and stamps its model guidance. Routing tests cover root/child separation and live sheet changes, including UTF-16 and CRLF. Native installation and skill discovery were exercised in an isolated home on omp 18.7.0. A real model turn and a two-child native task batch succeeded, with children reading the shared skills and receiving the mapping but not the root routing mandate. `bun test tests/` passed 1,189 tests, skipped 40, and failed none; the generator reported 83 current files. Codex live execution was not tested because its CLI was not installed.
+
 ## 0.9.74 - fix the code review's findings and bound Autopilot's verify rounds
 
 `watch-pr` no longer reports a PR ready, or stopped at a merge gate, from a reading GitHub has not settled. A no-checks reading becomes `ci-none` only when the same head has shown no checks for 60 seconds, whatever `--interval` is, so a fresh PR whose checks have not registered waits as `checks-unreported` and a repository with no CI reaches READY a minute later. Unknown mergeability waits as `mergeability-unknown` and is never READY. The watcher reads the PR facts again after the checks and retries when one changed. A branch behind its base stops at the new `behind-base` gate, ahead of a required review. A check rollup cursor that does not advance is a query failure, a missing `gh` exits 7 with a JSON verdict, and a PR whose head is the default branch is in no stack.
