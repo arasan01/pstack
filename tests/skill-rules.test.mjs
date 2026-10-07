@@ -12,16 +12,6 @@ const skillsDir = fileURLToPath(new URL("../plugins/pstack/skills", import.meta.
 
 const rules = [
   {
-    source: "#71 callable driver policy",
-    file: "poteto-mode/SKILL.md",
-    phrase: "fall back to `run` when the repo has none",
-  },
-  {
-    source: "#71 generated skill name",
-    file: "create-verification-skill/SKILL.md",
-    phrase: "YAML frontmatter (`name: verify`",
-  },
-  {
     source: "#71 preserve the original generator trigger",
     file: "create-verification-skill/SKILL.md",
     phrase: "make a control skill for this repo",

@@ -159,7 +159,7 @@ for (const pr of prSections) {
 		if (numbers.join(",") !== "1,2,3,4,5,6,7,8,9,10") fail(live.n, `${pr.title}: lanes are [${numbers.join(",")}], expected 1 to 10`);
 		for (const lane of lanes) {
 			if (!lane.m) fail(lane.n, `${pr.title}: live box is not a lane`);
-			else if (!/Save `[^`]+`/.test(lane.text)) fail(lane.n, `${pr.title}: lane ${lane.m[1]} names no screenshot`);
+			else if (!/Save `[^`]+`/.test(lane.text)) fail(lane.n, `${pr.title}: lane ${lane.m[1]} names no evidence artifact`);
 			else if (!lane.text.includes("Pass when")) fail(lane.n, `${pr.title}: lane ${lane.m[1]} has no pass predicate`);
 		}
 	}
@@ -178,9 +178,14 @@ for (const pr of prSections) {
 		} else {
 			const text = gate.lines.map((l) => l.text).join("\n");
 			if (gateBoxes.length === 0) fail(gate.n, `${pr.title}: Review gate has no box`);
-			for (const word of ["screenshot", "video", "operator"]) {
-				if (!text.includes(word)) fail(gate.n, `${pr.title}: Review gate lacks "${word}"`);
+			if (gate.rest.startsWith("Nonvisual.")) {
+				if (!/Save `[^`]+`/.test(text)) fail(gate.n, `${pr.title}: Review gate names no evidence artifact`);
+			} else {
+				for (const word of ["screenshot", "video"]) {
+					if (!text.includes(word)) fail(gate.n, `${pr.title}: Review gate lacks "${word}"`);
+				}
 			}
+			if (!text.includes("operator")) fail(gate.n, `${pr.title}: Review gate lacks "operator"`);
 		}
 	}
 

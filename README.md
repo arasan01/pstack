@@ -2,7 +2,7 @@
 
 Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) is an opinionated Cursor skill stack that improves agent outcomes. [arasan01/pstack](https://github.com/arasan01/pstack) is a private hard fork of Michael Denyer's Claude Code port, with support for Codex, oh-my-pi, Pi, GitHub Copilot and other agent harnesses. It tracks Cursor's upstream skills and also carries named policy forks, each declared in [`tools/forks.json`](tools/forks.json).
 
-Tell `poteto-mode` your goal and it will invoke the correct workflow for the task. It keeps your code concise, simple and verified.
+Tell `poteto-mode` your goal and it will invoke the correct workflow for the task. This fork is for developing your own projects, not Cursor itself. Skills select commands, verification drivers, and diagnostic tools from the target repository and platform, whether you are working on a web app, native/mobile app, CLI, service, library, or development tool. Cursor attribution describes provenance, not a required product or toolchain.
 
 For concurrency bugs and invariants that tests cannot reach, see the separate [agent-formal-verify](https://github.com/michael-denyer/agent-formal-verify) plugin, which adds TLA+ model checking and Lean proofs.
 
@@ -96,4 +96,4 @@ Thanks for helping make this port better. Bug reports, documentation fixes, and 
 
 ## License
 
-This port, including its modifications and additions, is also [MIT-licensed](LICENSE), © 2026 Michael Denyer. Original pstack © 2026 Lauren Tan; imported cursor-team-kit skills © 2026 Cursor. See [LICENSE-cursor-team-kit](LICENSE-cursor-team-kit) and [NOTICE.md](NOTICE.md).
+This port, including its modifications and additions, is also [MIT-licensed](LICENSE), © 2026 Michael Denyer. Original pstack © 2026 Lauren Tan; imported cursor-team-kit skills © 2026 Cursor. Japanese prose rules from stop-ai-slop-jp are © 2026 Daichi Nagashima under [MIT](LICENSE-stop-ai-slop-jp). See [LICENSE-cursor-team-kit](LICENSE-cursor-team-kit) and [NOTICE.md](NOTICE.md).

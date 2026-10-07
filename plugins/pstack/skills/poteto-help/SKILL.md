@@ -58,10 +58,12 @@ The default answer is `/poteto-mode`, which runs most of the others when its ste
 | Get several attempts at one brief, merged into the best one | [`/arena`](../arena/SKILL.md) |
 | Run parallel checks over slices, or race workers | [`/swarm`](../swarm/SKILL.md) |
 | Have several models review a diff and try to break it | [`/interrogate`](../interrogate/SKILL.md) |
+| Run a strict structural maintainability audit | [`/nuclear-code-quality-review`](../nuclear-code-quality-review/SKILL.md) |
 | Fix a bug test-first when a cheap local test exists | [`/tdd`](../tdd/SKILL.md) |
 | Apply TypeScript rules to `.ts` or `.tsx` work | [`/typescript-best-practices`](../typescript-best-practices/SKILL.md) |
 | Strip comments before review, using a reviewer that didn't write them | [`/no-comments`](../no-comments/SKILL.md) |
 | Clean AI tells out of prose | [`/unslop`](../unslop/SKILL.md) |
+| Remove Japanese AI prose patterns or clean a code diff | [`/deslop`](../deslop/SKILL.md) |
 | Write docs, an RFC, a README, a PR description, or a commit message to a standard | [`/technical-writing`](../technical-writing/SKILL.md) |
 | Hear the last reply again in plain words | [`/bro`](../bro/SKILL.md) |
 | Give agents a scripted way to drive the app and prove behavior | [`/create-verification-skill`](../create-verification-skill/SKILL.md) |
@@ -88,7 +90,7 @@ Close calls:
 
 Not in pstack:
 
-- The Cursor driver skills have no port. The driver policy in poteto-mode's Non-negotiables names the Claude Code equivalents, the `run` skill and a project `verify` skill.
+- There is no bundled product-specific driver. Use the project verification skill and the current runtime's supported tools for the actual app, service, CLI, or library. The driver policy in poteto-mode's Non-negotiables names the Claude Code `run` and project `verify` equivalents.
 - `/loop` is a Claude Code bundled skill, and the **plugin-dev:skill-development** skill is Claude Code's skill-authoring guidance.
 - pstack has no orchestrate skill. Orchestrate is a `/poteto-mode` playbook. If the slash menu shows an orchestrate command, another plugin provides it.
 

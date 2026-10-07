@@ -1,6 +1,6 @@
 ---
 name: babysit
-description: Watch an open PR — fix failing CI, handle the straightforward review comments, and drive it to a mergeable state. Claude Code analog of Cursor's built-in /babysit. Use after opening a PR when the user wants the agent to shepherd it without re-prompting.
+description: Watch an open PR, fix failing CI, handle straightforward review comments, and drive it to a mergeable state. Use after opening a PR when the user wants ongoing maintenance without re-prompting.
 ---
 
 # Babysit a PR
@@ -9,7 +9,7 @@ On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md),
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-Claude Code analog of Cursor's built-in `/babysit`. The implementation is a loop over `gh` CLI plus the Claude Code `loop` skill for pacing.
+Maintain a single PR using `gh` and the current runtime's supported watcher or scheduling tools.
 
 Inside poteto-mode, the **Babysit** playbook ([`../poteto-mode/playbooks/babysit.md`](../poteto-mode/playbooks/babysit.md)) supersedes this skill: it owns mode declaration, the merge frontier, stack safety, and the `watch-pr` watcher. This skill stays the standalone `/babysit` entry point for a single PR outside a poteto-mode run.
 

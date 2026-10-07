@@ -12,6 +12,8 @@ Edit text to remove AI patterns.
 1. Scan for the patterns below.
 2. Rewrite. Preserve meaning, match intended tone.
 
+For Japanese text, also apply [deslop's Japanese prose rules](../deslop/references/japanese-prose.md). Read the reference directly; do not start a code-cleanup pass for a writing request.
+
 ## Patterns to detect and fix
 
 Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.

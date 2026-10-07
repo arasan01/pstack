@@ -36,9 +36,9 @@ Find each skill's instructions in the [skills tree](../plugins/pstack/skills/).
 | `/no-comments` | strip comments before review, fix the accepted findings, encode claimed constraints |
 | `/create-verification-skill` | generate a project-local verification skill and feature map |
 | `/maintain-verification-skill` | re-sync a drifted verification skill and its feature map |
-| `/deslop` | deslop a diff before commit |
+| `/deslop` | clean a code diff or edit Japanese prose, PR text, and reports without changing facts |
 | `/babysit` | monitor an open PR, fix CI/comments, keep it merge-ready |
-| `/thermo-nuclear-code-quality-review` | extremely strict maintainability audit |
+| `/nuclear-code-quality-review` | extremely strict maintainability audit |
 | `/make-pr-easy-to-review` | clean noisy history and improve PR description before review |
 | `/fix-ci` | find failing PR checks, inspect logs, apply focused fixes |
 | `/fix-merge-conflicts` | non-interactively resolve merge conflicts, validate, finalize |
@@ -248,7 +248,7 @@ The skill tree is synced against upstream `2cbf585` (v0.15.13).
 
 This repository ports Lauren Tan's pstack from Cursor to Claude Code and shares the skills with other runtimes. It includes seven cursor-team-kit skills and an independently authored `babysit` skill. The port supplies Claude Code plugin registration and routing, Codex manifests and shortcuts, the Codex tool mapping, the Pi package, extension, and tool mapping, and the GitHub Copilot hooks and tool mapping.
 
-Cursor-specific automations, sticky-mode metadata, the Grok Bot UI workflow, and the Cursor UI tutorial are excluded. [tools/upstream.json](../tools/upstream.json) records the revisions and exclusions, [tools/substitutions.json](../tools/substitutions.json) holds the Cursor-to-Claude rewrite rules, and [CHANGES.md](../CHANGES.md) records each release. The bundled `thermo-nuclear-code-quality-review` provides a maintainability review when a workflow calls for one.
+Cursor-specific automations, sticky-mode metadata, the Grok Bot UI workflow, and the Cursor UI tutorial are excluded. [tools/upstream.json](../tools/upstream.json) records the revisions and exclusions, [tools/substitutions.json](../tools/substitutions.json) holds the Cursor-to-Claude rewrite rules, and [CHANGES.md](../CHANGES.md) records each release. The bundled `nuclear-code-quality-review` incorporates the local review rubric and retains the summary-plus-detail report format. It replaces the duplicate `thermo-nuclear-code-quality-review` entry point.
 
 For skill changes, follow the [sync boundary](../CONTRIBUTING.md#the-sync-boundary). Runtime adaptations and workflow changes both land here, and a workflow change is declared as a fork.
 

@@ -42,6 +42,21 @@ describe("plan checklists", () => {
     });
   });
 
+  test("a nonvisual review gate accepts execution evidence without invented media", () => {
+    const plan = skeleton.replace(
+      /\*\*Review gate\.\*\*[\s\S]*?(?=\*\*Merge\.\*\*)/,
+      "**Review gate.** Nonvisual. Approval is required before merge.\n\n" +
+        "- [ ] Save `/evidence/consumer-output.txt`.\n" +
+        "- [ ] The operator reviews the consumer result and approves.\n\n"
+    );
+    expect(run(plan)).toEqual({
+      code: 0,
+      out: expect.stringContaining("1 PR sections, 0 problems"),
+    });
+    expect(run(plan.replace("Save `/evidence/consumer-output.txt`.", "Collect results.")).code).toBe(1);
+    expect(run(plan.replace("The operator reviews the consumer result and approves.", "Automatic approval.")).code).toBe(1);
+  });
+
   test("completed boxes remain valid", () => {
     expect(run(skeleton.replaceAll("- [ ]", "- [x]")).code).toBe(0);
   });

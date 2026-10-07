@@ -6,22 +6,25 @@ Invoked at the end of every other playbook.
 
 **Commits.** Commit liberally. Rebase into small, ordered commits before opening PRs. Each commit is a future PR: landable, ordered to tell the story. Amend when the fix belongs in a just-made commit. New commit when separable.
 
-**PRs.** Run `/deslop` over the diff before commit. Run `/no-comments` before review. Write every PR title, PR description, and commit body with `/technical-writing`, then apply `/unslop`. Apply every technical-writing layer except Diátaxis. Use one word for each action, keep articles, and avoid `-ing` when a plain verb works.
+**PRs.** Run `/deslop` over the diff before commit and `/no-comments` before review. Write every PR title, description, and commit body with `/technical-writing`, then `/unslop`. For Japanese text, apply `/deslop` in prose-only mode using its shared Japanese reference. Keep the project's required template and language. Apply every technical-writing layer except Diátaxis.
 
 **Titles.** Use Conventional Commits in the form `type(scope): subject`. Use `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, or `perf` as the type. Use the changed area, such as `pstack` or `poteto-mode`, as the scope. Keep the subject short and imperative. Name a real symbol when one carries the change. For example, `fix(pstack): retarget opening-a-pr babysit trigger`. Do not add a trailing period.
 
-**Descriptions.** The PR body is a briefing, not the lab notebook. A reviewer who has the diff should learn why the change exists, what it leaves out, what it could break, and how you proved it works, in under a minute. Write short, simple sentences with few identifiers. Do not write walls of text. The squash commit body is the PR body. If the body would make the squash commit longer than about 40 lines, cut the body.
+**Descriptions.** Write for the reviewer deciding whether this change is correct, safe to merge, and safe to use. The PR body is a briefing, not an execution diary. Each sentence must explain intent, changed behavior, a review-relevant decision or limitation, a risk, a rollout action, or verification evidence. Delete a sentence when removing it would not change any of those judgments.
 
-Put each section under a `##` heading, not a bold lead-in, so the sections stand apart. Use these sections in order. Drop a section when it has nothing to say.
+Start from the diff and observed results, not a filled-out generic template. State why the change exists and what the user or consumer will notice. Give the actual verification command or scenario and its result. A small PR may need only a short summary and verification. Do not repeat the title, the diff, or the same change under several headings.
 
-- `## Why` gives the problem and the approach in one to three short sentences. Do not list SHAs or rebase genealogy. Do not add a "based on main" preamble.
-- `## What changed` has one to three short bullets. Name a real symbol or path only when it carries the change. Name both sides of a rename or retarget.
-- `## Scope` always names what the PR covers and what it deliberately leaves out, for example a related follow-up or a known gap. Use one to three short items. Do not list symbols or paths, and do not write a file-by-file essay.
-- `## Tradeoffs` names only rejected alternatives that a reviewer would otherwise ask about. Skip this section when there was no real choice.
-- `## Blast Radius` gives one or two sentences on who or what the change touches and why that is safe or risky. If main is red, state the cost of leaving it red.
-- `## Verification` has one to three bullets. Each bullet names a real run path and its outcome. For a performance change, report one primary number with its unit in `before → after` form. Link the arena or swarm directory for the remaining evidence. Do not include sample-size methodology, swarm recitals, or metric tables.
+Use the repository's required PR template. Otherwise use short sections only where they add information:
 
-After these sections, attach videos or screenshots when they prove a claim. Do not paste full SHAs, swarm or arena lane recitals, lever-correction essays, file-by-file checklists, or "CLEAN" verdicts. Put these details in a linked artifact. A commit body does not restate its subject.
+- `## Summary` explains the problem and changed behavior in one to three short sentences or bullets. Name a path or symbol only when it helps the reviewer understand a contract, rename, or entry point.
+- `## Verification` states what actually ran and what it proved. Name failed or unrun relevant checks and the remaining gap. Compilation or unit tests do not imply end-to-end verification. For a performance change, give one primary before/after number with units and link the method and remaining evidence.
+- `## Risks` or `## Compatibility` names a real behavior change, affected consumer, public-contract change, or known limitation. Do not add stock reassurance or a list of everything unchanged.
+- `## Rollout` names required migration order, configuration, deployment steps, or rollback actions. Keep instructions the operator needs in the body.
+- `## Review notes` names a non-obvious tradeoff or requests a specific reviewer decision. Include an out-of-scope issue only when it affects what this PR promises or what the reviewer must decide.
+
+Do not add empty sections, invented alternatives, generic risk statements, a file-by-file inventory, full SHAs, rebase history, agent names, skill names, swarm lane recitals, repeated test counts, or self-awarded verdicts. Do not publish the editing checklist. Link detailed logs and artifacts only when they support a claim, using a location the reviewer can access, not a machine-local path. Attach images or videos only when they prove a visual change.
+
+Read the body once as the reviewer before creating or updating the PR. Remove process narration and duplicate facts, then check that brevity did not hide breaking changes, migration requirements, failed checks, or verification gaps. Aim for a body readable in under a minute and roughly 40 lines or fewer, but never meet a length target by deleting information needed to approve or operate the change. The squash commit body may reuse this briefing; it does not restate its subject.
 
 **Forge.** Resolve the forge before the first PR operation and keep that choice for create, edit, view, watch, and merge. GitHub CLI (`gh`) is the default. If `command -v origin` succeeds and Origin can resolve the repository, prefer `origin pr ...`. If Origin is absent or cannot resolve the repository, stay on `gh` and record the fallback. Do not require Graphite (`gt`).
 

@@ -86,6 +86,10 @@ export const PORTABLE_ASSETS = [
     source: "LICENSE-cursor-team-kit",
     target: "poteto-mode/references/licenses/LICENSE-cursor-team-kit",
   },
+  {
+    source: "LICENSE-stop-ai-slop-jp",
+    target: "poteto-mode/references/licenses/LICENSE-stop-ai-slop-jp",
+  },
   { source: "NOTICE-skills.md", target: "poteto-mode/references/licenses/NOTICE.md" },
 ];
 

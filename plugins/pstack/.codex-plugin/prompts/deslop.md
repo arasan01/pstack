@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: deslop a diff before commit
+description: clean a code diff or edit Japanese prose, PR text, and reports without changing facts
 disable-model-invocation: true
 ---
 

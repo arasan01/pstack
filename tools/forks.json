@@ -26,7 +26,7 @@
     },
     "plugins/pstack/skills/create-verification-skill/SKILL.md": {
       "kind": "port-feature",
-      "why": "Names the generated project skill verify so it replaces Claude Code's bundled user-only /verify and the playbooks can invoke it.",
+      "why": "Names a callable project verify skill at the current runtime discovery path and selects real app, native/mobile, CLI, service, or library-consumer verification from repository evidence instead of assuming a browser or JavaScript product.",
       "since": "0.9.29",
       "upstream": "not-proposed"
     },
@@ -38,7 +38,7 @@
     },
     "plugins/pstack/skills/poteto-mode/SKILL.md": {
       "kind": "policy",
-      "why": "Adds the Claude Code, Codex, Pi, oh-my-pi, and GitHub Copilot Platform Adaptation section with its task-tool and todo.md fallback, the run-or-verify driver line, the deploy-platform and defect-severity triggers, the port's principle summaries, the project playbooks paragraph, and the closed-review-gate rule that the Codex and Pi mappings point to, and it points the Agent-call defaults at the Models section with full tool access and the namespaced pstack:poteto-agent name, requires stopping an abandoned agent before replacing it, renders every reply item as prose, layers technical-writing on top of unslop, and describes Autopilot-full as stopping at merge-ready for the operator's click.",
+      "why": "Adds multi-runtime adaptation, project-derived drivers, native task tracking, workflow triggers including nuclear review and reader-focused PR drafting, project playbooks, full-access worker policy, closed independent-review gates, concise evidence-based replies, and operator-controlled landing.",
       "since": "0.9.2",
       "upstream": "not-proposed"
     },
@@ -72,15 +72,21 @@
       "since": "0.9.39",
       "upstream": "not-proposed"
     },
+    "plugins/pstack/skills/poteto-mode/playbooks/perf-issue.md": {
+      "kind": "policy",
+      "why": "Compares performance artifacts with format-appropriate tools and uses SQLite conversion only when a structured export fits.",
+      "since": "0.9.76",
+      "upstream": "not-proposed"
+    },
     "plugins/pstack/skills/poteto-mode/playbooks/multi-phase-plan.md": {
       "kind": "port-feature",
-      "why": "Plans read skills from the installed plugin, keep the store under ~/.claude/orchestrate, write the program objective into standing orders, run the tick as a dynamic-mode /loop that re-reads that objective, run live lanes in worktrees through the driver skill the Non-negotiables resolve instead of on cloud VMs with control-ui or control-cli, name the configured swarm workers model instead of a placeholder, and leave rebase and merge authority to the execution playbook.",
+      "why": "Plans use installed-plugin sources, the local agent store, dynamic objective audits, isolated project-driver lanes, configured worker models, and execution-playbook topology and merge authority; evidence formats follow the target product instead of requiring screenshots from services or libraries, with explicit nonvisual operator review gates.",
       "since": "0.9.19",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/playbooks/opening-a-pr.md": {
       "kind": "policy",
-      "why": "Requires stopping every live agent that holds a worktree before committing, merging, or deploying from it.",
+      "why": "Stops every live worktree holder before commit/merge/deploy and writes PR bodies from reviewer-relevant intent, behavior, proof, risks, and operational decisions instead of mandatory boilerplate sections or agent work logs, applying prose-only Japanese deslop.",
       "since": "0.9.10",
       "upstream": "not-proposed"
     },
@@ -100,6 +106,18 @@
       "kind": "policy",
       "why": "Reads the project checkpoint first and applies the human-rulings epistemics when reconstructing state.",
       "since": "0.9.34",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/runtime-forensics.md": {
+      "kind": "policy",
+      "why": "Selects instrumentation by target runtime and platform, includes native allocation evidence, and makes CDP evaluation and live code replacement optional and authorization-bound.",
+      "since": "0.9.76",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/trace-forensics.md": {
+      "kind": "policy",
+      "why": "Analyzes captured artifacts with format-native tools or structured exports, preserving identifiers and units without assuming Chromium JSON, SQLite conversion, or garbage collection.",
+      "since": "0.9.76",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/playbooks/shipping.md": {
@@ -122,7 +140,7 @@
     },
     "plugins/pstack/skills/poteto-mode/scripts/check-plan.mjs": {
       "kind": "port-feature",
-      "why": "Checks for the port's plan skeleton markers (standing orders, installed-plugin reads, an hourly cadence, the configured swarm workers model), requires a box under each program task and under Close the program, tracks code fences by delimiter character and length, and strips a leading byte-order mark before parsing.",
+      "why": "Checks the port plan skeleton, program/completion checklists, and code-fence semantics; supports nonvisual review gates with named execution evidence and operator review while preserving visual media requirements.",
       "since": "0.9.19",
       "upstream": "not-proposed"
     },
@@ -258,6 +276,12 @@
       "since": "0.9.21",
       "upstream": "not-proposed"
     },
+    "plugins/pstack/skills/unslop/SKILL.md": {
+      "kind": "policy",
+      "why": "Loads the shared Japanese prose reference directly without invoking a code-cleanup workflow for prose requests.",
+      "since": "0.9.76",
+      "upstream": "not-proposed"
+    },
     "plugins/pstack/skills/why/references/epistemics.md": {
       "kind": "policy",
       "why": "Adds the Claims about human decisions section that five other files cite for keeping a ruling's original wording and scope.",
@@ -278,10 +302,16 @@
     }
   },
   "cursor-team-kit": {
-    "plugins/pstack/skills/thermo-nuclear-code-quality-review/SKILL.md": {
+    "plugins/pstack/skills/deslop/SKILL.md": {
       "kind": "policy",
-      "why": "Adds a Report Format section requiring one summary report plus one detail file per subsystem or reviewer.",
-      "since": "0.9.11",
+      "why": "Combines code cleanup with stop-ai-slop-jp-derived Japanese writing rules, isolates prose-only and review-only scopes, and preserves facts, meaning, external-boundary validation, and quoted technical text.",
+      "since": "0.9.76",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/make-pr-easy-to-review/SKILL.md": {
+      "kind": "policy",
+      "why": "Uses the shared reader-focused PR description policy instead of a separate checklist that encourages boilerplate or execution diaries.",
+      "since": "0.9.76",
       "upstream": "not-proposed"
     }
   }

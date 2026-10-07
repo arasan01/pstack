@@ -47,10 +47,9 @@ Do not push if the tree changed unintentionally.
 
 When code behavior should stay untouched, prefer PR description and review notes:
 
-- Add a TL;DR that matches the actual diff.
-- Separate core files from generated or mechanical files.
-- Call out risky behavior changes, migration order, rollout plan, and test coverage.
-- Link issue trackers, dashboards, or design docs when they explain intent.
+- Use the shared [Opening a PR description policy](../poteto-mode/playbooks/opening-a-pr.md) for intent, changed behavior, actual verification, and material risks or rollout instructions. Do not fill empty sections or copy the agent's execution diary into the PR.
+- Separate core changes from generated or mechanical changes only when that gives the reviewer a useful entry point.
+- Link issue trackers, dashboards, or design docs only when they explain a decision or provide relevant evidence the reviewer can access.
 
 ## Guardrails
 
