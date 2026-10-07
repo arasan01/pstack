@@ -2,6 +2,12 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first. The Cursor-to-Claude rewrite rules live in [`tools/substitutions.json`](tools/substitutions.json), and the [sync boundary](CONTRIBUTING.md#the-sync-boundary) in `CONTRIBUTING.md` defines how a change to upstream's skill content is declared.
 
+## 0.9.76 - use the private arasan01 hard fork
+
+Distribution metadata, installation commands, support links, help output, and future sync substitutions now point to `arasan01/pstack`. Claude Code, Codex, and Copilot use the `pstack` marketplace and install `pstack@pstack`. The omp package also identifies this fork as its repository. Private-repository installation requires access and authentication; skills-only instructions use an authenticated clone rather than assuming anonymous access. Original copyright notices and historical issue citations remain intact.
+
+The inherited fundraising banner, donation instructions, and GitHub sponsor configuration have been removed. Security reporting now refers to this private fork rather than claiming the original port's advisory form belongs to it. Local marketplace installation succeeded on omp and Copilot, and omp read the installed help skill with this fork's repository links.
+
 ## 0.9.75 - add native oh-my-pi support
 
 Install this checkout on oh-my-pi with `omp install ./plugins/pstack`. A separate package beside the existing skills tree loads only the omp routing adapter; the root Pi package stays unchanged. omp uses its native `task`, `ask`, and `todo`, not Pi subprocesses or replacement tools. The adapter appends the omp tool mapping and active-profile model sheet on every agent start, and only root sessions receive the routing mandate. `session hook: off` disables that mandate. Without overrides, workers inherit the session model; setup selects exact available omp provider/model IDs rather than Claude family defaults. The mapping documents native fan-out, effort, isolated writers, and the absence of a pstack-supplied recurring wake-up tool.

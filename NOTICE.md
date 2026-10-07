@@ -2,6 +2,8 @@
 
 This plugin is a port of upstream MIT-licensed work. The port's modifications and additions are (c) 2026 Michael Denyer and are also released under the [MIT license](LICENSE). All upstream copyright notices and license terms are preserved.
 
+This distribution is maintained as the private [arasan01/pstack](https://github.com/arasan01/pstack) hard fork. The original port's and upstream projects' copyright notices and licenses remain unchanged.
+
 ## Upstream sources
 
 | Component | Upstream | Copyright | License | License file |

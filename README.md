@@ -1,8 +1,6 @@
 # pstack
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/codenyer)
-
-Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) is an opinionated Cursor skill stack that improves agent outcomes. This is a port for Claude Code, Codex, oh-my-pi, Pi, GitHub Copilot and other agent harnesses. It tracks upstream and also carries named policy forks, each declared in [`tools/forks.json`](tools/forks.json).
+Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) is an opinionated Cursor skill stack that improves agent outcomes. [arasan01/pstack](https://github.com/arasan01/pstack) is a private hard fork of Michael Denyer's Claude Code port, with support for Codex, oh-my-pi, Pi, GitHub Copilot and other agent harnesses. It tracks Cursor's upstream skills and also carries named policy forks, each declared in [`tools/forks.json`](tools/forks.json).
 
 Tell `poteto-mode` your goal and it will invoke the correct workflow for the task. It keeps your code concise, simple and verified.
 
@@ -10,13 +8,15 @@ For concurrency bugs and invariants that tests cannot reach, see the separate [a
 
 ## Install
 
+This repository is private. Installations need GitHub access to `arasan01/pstack` and authentication in the relevant runtime or Git client. For a local installation, run `gh repo clone arasan01/pstack` after `gh auth login`, then use the checkout's package or shared-skills instructions below.
+
 ### Claude Code
 
 Run in Claude Code:
 
 ```text
-/plugin marketplace add michael-denyer/pstack-claude
-/plugin install pstack@pstack-claude
+/plugin marketplace add arasan01/pstack
+/plugin install pstack@pstack
 ```
 
 ### Codex
@@ -24,8 +24,8 @@ Run in Claude Code:
 Run in your terminal:
 
 ```shell
-codex plugin marketplace add michael-denyer/pstack-claude
-codex plugin add pstack@pstack-claude
+codex plugin marketplace add arasan01/pstack
+codex plugin add pstack@pstack
 ```
 
 ### oh-my-pi (omp)
@@ -38,14 +38,14 @@ omp install ./plugins/pstack
 
 Start a new omp session, then request `poteto-mode` or `setup-pstack` by name. The separate [omp package](plugins/pstack/package.json) loads the shared skills and an omp routing adapter, not the Pi extension. Delegation, questions, and task tracking use omp's native `task`, `ask`, and `todo`. Without model overrides, workers use the session's model; `setup-pstack` can choose available provider/model IDs for each role and panel.
 
-This links the checkout. Keep it at this path, and update it to update the installed skills. See [omp runtime details](docs/reference.md#oh-my-pi-omp) for profiles, routing, and differences from Pi. The upstream marketplace commands above install the upstream port, not these local omp changes.
+This links the checkout. Keep it at this path, and update it to update the installed skills. See [omp runtime details](docs/reference.md#oh-my-pi-omp) for profiles, routing, and differences from Pi.
 
 ### Pi
 
 Run in your terminal:
 
 ```shell
-pi install git:github.com/michael-denyer/pstack-claude
+pi install git:github.com/arasan01/pstack
 ```
 
 The package loads the skills and the pstack Pi extension, which adds the subagent, question, and wake-up tools the skills use, plus `/loop` and the routing instruction. Invoke a skill with `/skill:<name>`.
@@ -55,8 +55,8 @@ The package loads the skills and the pstack Pi extension, which adds the subagen
 Run in your terminal:
 
 ```shell
-copilot plugin marketplace add michael-denyer/pstack-claude
-copilot plugin install pstack@pstack-claude
+copilot plugin marketplace add arasan01/pstack
+copilot plugin install pstack@pstack
 ```
 
 This installs pstack for the Copilot CLI and the GitHub Copilot app, which share `~/.copilot`. Start a new session afterwards. Copilot ships no default pstack models, so the first skill that needs one runs `setup-pstack` to pick from the models your account lists, and later sessions reuse that choice.
@@ -93,8 +93,6 @@ pstack has no server or telemetry. Anything its skills ask your agent to read, i
 ## Contributing
 
 Thanks for helping make this port better. Bug reports, documentation fixes, and runtime improvements are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the checks and where your change belongs. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
-
-To support maintenance of this port, [buy the maintainer a coffee](https://buymeacoffee.com/codenyer).
 
 ## License
 

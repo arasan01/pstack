@@ -78,11 +78,11 @@ Skills-only installs and other runtimes do not include a routing adapter. Reques
 
 ### Shared skills installation
 
-Use this path for Prime Agent, opencode, Gemini CLI, or a skills-only Codex installation. Clone the repository and link its skills into `~/.agents/skills/`:
+Use this path for Prime Agent, opencode, Gemini CLI, or a skills-only Codex installation. Authenticate with `gh auth login` using an account with access to this private repository, then clone it and link its skills into `~/.agents/skills/`. Skip the clone and `cd` commands if you are already in this checkout.
 
 ```shell
-git clone https://github.com/michael-denyer/pstack-claude
-cd pstack-claude
+gh repo clone arasan01/pstack
+cd pstack
 mkdir -p ~/.agents/skills
 for s in plugins/pstack/skills/*/; do
   target=~/.agents/skills/"$(basename "$s")"
@@ -100,17 +100,17 @@ To update, pull changes in the clone that the links point to. To uninstall a lin
 
 ### Install with the skills CLI
 
-To install without keeping a local clone:
+To copy skills from an authenticated local checkout instead of maintaining links:
 
 ```shell
-npx skills add https://github.com/michael-denyer/pstack-claude/tree/main/plugins/pstack/skills --skill "*" --agent "*" --yes
+npx skills add ./plugins/pstack/skills --skill "*" --agent "*" --yes
 ```
 
 The [CI installation check](../.github/workflows/ci.yml) uses the skills CLI to copy the checkout's skill tree and compare the installed files with their sources.
 
 ### Codex
 
-The [native plugin manifest](../plugins/pstack/.codex-plugin/plugin.json) points to the shared skills directory and the Codex [SessionStart hook](../plugins/pstack/hooks/codex-hooks.json). The [marketplace catalog](../.agents/plugins/marketplace.json) lists `pstack` in the `pstack-claude` marketplace. Review and trust the hook through `/hooks`; Codex asks again when its definition changes.
+The [native plugin manifest](../plugins/pstack/.codex-plugin/plugin.json) points to the shared skills directory and the Codex [SessionStart hook](../plugins/pstack/hooks/codex-hooks.json). The [marketplace catalog](../.agents/plugins/marketplace.json) lists `pstack` in the `pstack` marketplace. Review and trust the hook through `/hooks`; Codex asks again when its definition changes.
 
 The [README installation](../README.md#codex) registers that catalog with `codex plugin marketplace add`, then installs the plugin with `codex plugin add`. These commands match the help output from `codex-cli 0.154.0-alpha.6.2`. A fresh native installation was not tested for this documentation change.
 
@@ -149,7 +149,7 @@ For Codex on this same checkout, the native Codex manifests, hook, and optional 
 
 ### Pi
 
-The repository root is a [Pi package](https://pi.dev/packages): its [`package.json`](../package.json) lists the shared skills directory and the [pstack Pi extension](../plugins/pstack/pi/index.ts). Install it with `pi install git:github.com/michael-denyer/pstack-claude`, or `pi install <clone path>` for a local checkout.
+The repository root is a [Pi package](https://pi.dev/packages): its [`package.json`](../package.json) lists the shared skills directory and the [pstack Pi extension](../plugins/pstack/pi/index.ts). Install it with `pi install git:github.com/arasan01/pstack` using Git credentials that can read this private repository, or `pi install <clone path>` for an authenticated local checkout.
 
 The extension supplies what Pi lacks natively, under the Claude Code names the skills use:
 

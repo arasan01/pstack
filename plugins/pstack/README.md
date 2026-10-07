@@ -19,10 +19,10 @@ pstack has no server or telemetry. Anything its skills ask your agent to read, i
 
 ## Links
 
-- [Skills, slash commands, runtime setup, and model configuration](https://github.com/michael-denyer/pstack-claude/blob/main/docs/reference.md)
-- [Issues and support](https://github.com/michael-denyer/pstack-claude/issues)
-- [Security policy](https://github.com/michael-denyer/pstack-claude/blob/main/SECURITY.md)
+- [Skills, slash commands, runtime setup, and model configuration](https://github.com/arasan01/pstack/blob/main/docs/reference.md)
+- [Issues and support](https://github.com/arasan01/pstack/issues)
+- [Security policy](https://github.com/arasan01/pstack/blob/main/SECURITY.md)
 
 ## License
 
-MIT for this port and its additions, © 2026 Michael Denyer. Original pstack © 2026 Lauren Tan; imported cursor-team-kit skills © 2026 Cursor. See [NOTICE.md](https://github.com/michael-denyer/pstack-claude/blob/main/NOTICE.md).
+This is the arasan01 hard fork of Michael Denyer's MIT-licensed port, © 2026 Michael Denyer. Original pstack © 2026 Lauren Tan; imported cursor-team-kit skills © 2026 Cursor. See [NOTICE.md](https://github.com/arasan01/pstack/blob/main/NOTICE.md).

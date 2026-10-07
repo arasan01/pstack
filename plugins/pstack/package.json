@@ -1,8 +1,14 @@
 {
   "name": "pstack-omp",
   "private": true,
-  "version": "0.9.75",
+  "version": "0.9.76",
   "description": "pstack workflows for oh-my-pi, using native task, ask, and todo tools.",
+  "homepage": "https://github.com/arasan01/pstack",
+  "repository": "https://github.com/arasan01/pstack",
+  "author": {
+    "name": "arasan01",
+    "url": "https://github.com/arasan01"
+  },
   "license": "MIT",
   "omp": {
     "extensions": ["./omp/index.ts"]
