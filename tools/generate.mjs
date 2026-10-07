@@ -578,7 +578,9 @@ export function parseModels(raw, skillExists) {
     const slugs = [value].flat();
     unique(slugs, `tier "${tier}"`);
     for (const slug of slugs) {
-      if (!available.has(slug)) fail(`tier "${tier}" names "${slug}", which is not in available`);
+      const [model, effort] = slug.split(" @");
+      if (!available.has(model)) fail(`tier "${tier}" names "${slug}", which is not in available`);
+      if (effort !== undefined && !raw.efforts.includes(effort)) fail(`tier "${tier}" names invalid effort "${effort}"`);
     }
     tierLists.set(slugs.join(), tier);
   }
@@ -597,7 +599,9 @@ export function parseModels(raw, skillExists) {
       fail(`role "${role.role}" needs a tier name or a non-empty list of models`);
     }
     for (const slug of role.models) {
-      if (!available.has(slug)) fail(`role "${role.role}" names "${slug}", which is not in available`);
+      const [model, effort] = slug.split(" @");
+      if (!available.has(model)) fail(`role "${role.role}" names "${slug}", which is not in available`);
+      if (effort !== undefined && !raw.efforts.includes(effort)) fail(`role "${role.role}" names invalid effort "${effort}"`);
     }
     const tier = tierLists.get(role.models.join());
     if (tier) fail(`role "${role.role}" lists tier "${tier}" literally; name the tier`);
@@ -681,7 +685,7 @@ export function modelsSection(roles) {
 // dispatched through, with the model still passed on the call.
 export function effortSection(levels, defaultEffort) {
   return (
-    "A role value in the override sheet may name a reasoning effort after its model, as in `opus @xhigh`. " +
+    "A role value in the override sheet may name a reasoning effort after its model, as in `gpt-6.1-sol @xhigh`. " +
     "Levels on Claude Code: " + codeList(levels) + ". Which ones apply depends on the model. " +
     "A value without `@` takes the sheet's `default effort` line, a level or `session`, " +
     `and ${code(defaultEffort)} when the sheet has no such line. \`session\` sets no effort, so the dispatch ` +
@@ -760,7 +764,7 @@ export function stampAgentPaths(manifestText, paths) {
 export function setupModelsSection(models) {
   return (
     "Stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`).\n\n" +
-    `- Available Claude models: ${codeList(models.available)}\n` +
+    `- Available GPT models: ${codeList(models.available)}\n` +
     `- Default panel: ${codeList(models.tiers.panel)}\n` +
     `- Reasoning effort levels: ${codeList(models.efforts)}\n` +
     `- Default reasoning effort: ${code(models.defaultEffort)}\n` +
@@ -775,14 +779,15 @@ export function overrideSheetBlock(models) {
   return (
     "# pstack model configuration\n\n" +
     "Per-role model overrides for pstack skills. Each pstack SKILL.md names its defaults in a Models section; " +
-    "the values here override those defaults. Delete a line to fall back to the skill default. " +
-    "A value of `inherit-parent` or `auto` runs that role on the parent session's model (the `Agent` call omits `model`); " +
-    "an alias entry in a panel list still counts toward that panel's fan-out. " +
-    "A model may carry a reasoning effort, as in `opus @xhigh` (levels: " + models.efforts.join(", ") + "); " +
-    "the role then runs through the pstack effort agent of that level, each entry of a panel list on its own. " +
-    "`default effort` sets the level for a value without one; `session` keeps the parent session's effort. " +
-    "`session hook: off` stops the Claude Code or Codex SessionStart hook, or the pstack Pi extension, from injecting the poteto-mode mandate; " +
-    "any other value, or no line, leaves it on.\n\n" +
+    "the values here override those defaults. Delete a line to use the skill default. " +
+    "`inherit-parent` and `auto` omit the child model override; native runtime policy determines selection. " +
+    "Every panel entry counts toward fan-out. Values separate a model from reasoning effort, as in `gpt-6.1-sol @xhigh`. " +
+    "On Codex, pass the bare slug as `model` and the level as `reasoning_effort`; " +
+    "on Pi, select the effort agent that passes `--thinking` to the child; on omp, translate to `provider/model:level`. " +
+    "Pass omp native role selectors unchanged when no effort override is requested. " +
+    "Claude Code requires explicitly selected supported models and uses pstack effort agents for their levels. " +
+    "`default effort` supplies the level when a value has no suffix; `session` adds no pstack effort override. " +
+    "`session hook: off` disables automatic pstack routing for the runtime's hook or adapter.\n\n" +
     rows +
     `\n\ndefault effort: ${models.defaultEffort}\nsession hook: on`
   );
@@ -792,11 +797,12 @@ export function overrideSheetBlock(models) {
 // no model: a full claude-* ID is rejected by the Agent tool, and a backticked
 // family name hard-codes a default that belongs in models.json.
 export function strayModelSlugs(file, text, models) {
-  const families = models.available.join("|");
+  const families = "opus|fable|sonnet|haiku";
+  const defaults = models.available.map((model) => model.replaceAll(".", "\\.")).join("|");
   // Version numbers may sit between claude- and the family (claude-3-opus,
   // claude-3.7-sonnet). An unlisted family is not guessed at: claude-mythos-1
   // has the shape of claude-wt-1.
-  const SLUG_RE = new RegExp(`claude-(?:[0-9.]+-)*(?:${families})[0-9a-z.-]*|\`(?:${families})\``);
+  const SLUG_RE = new RegExp(`claude-(?:[0-9.]+-)*(?:${families})[0-9a-z.-]*|\`(?:${families}|${defaults})(?: @[^\`]+)?\``);
   const lines = text.split("\n");
   const owned = regions(models)
     .filter((r) => r.file === file)

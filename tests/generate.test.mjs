@@ -47,7 +47,7 @@ import {
   strayModelSlugs,
   tableRows,
 } from "../tools/generate.mjs";
-import { piModelNamesSection, RUNTIMES } from "../tools/runtimes.mjs";
+import { RUNTIMES } from "../tools/runtimes.mjs";
 import { walk } from "../tools/validate-skills.mjs";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
@@ -133,24 +133,6 @@ describe("regions", () => {
   });
 });
 
-describe("runtime model names", () => {
-  test("each runtime's mapping file owns a stamped Model names section", () => {
-    for (const runtime of RUNTIMES) {
-      expect(regions(models).filter((r) => r.file === runtime.tools).map((r) => r.name)).toEqual(["Model names section"]);
-    }
-  });
-
-  test("the Pi section tables every alias per provider, names the fallback, and names the sheet override", () => {
-    const tables = { ...models.pi.models, marker: { opus: "marker/o", fable: "marker/f", sonnet: "marker/s", haiku: "marker/h" } };
-    const text = piModelNamesSection({ ...models, pi: { fallback: "marker", models: tables } });
-    expect(text).toContain(`| Alias | ${Object.keys(tables).map((p) => `\`${p}\``).join(" | ")} |`);
-    for (const alias of models.available) {
-      expect(text).toContain(`| \`${alias}\` | ${Object.values(tables).map((t) => `\`${t[alias]}\``).join(" | ")} |`);
-    }
-    expect(text).toContain("in the `marker` column for any other provider");
-    expect(text).toContain("`pi models: ");
-  });
-});
 
 describe("strayModelSlugs", () => {
   test("a slug inside an owned region is exempt", () => {

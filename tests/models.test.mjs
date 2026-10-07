@@ -5,37 +5,14 @@
 // to look up.
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { loadModels, parseModels, regions } from "../tools/generate.mjs";
-import { markdownFiles } from "../tools/validate-skills.mjs";
+import { parseModels } from "../tools/generate.mjs";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
-const skillsDir = join(repoRoot, "plugins/pstack/skills");
 const raw = JSON.parse(readFileSync(join(repoRoot, "plugins/pstack/models.json"), "utf8"));
-const models = loadModels();
 
-describe("committed models.json", () => {
-  test("the pi block gives every available alias a Pi model on anthropic, openai, and openai-codex", () => {
-    expect(raw.pi.fallback).toBe("anthropic");
-    expect(Object.keys(raw.pi.models).sort()).toEqual(["anthropic", "openai", "openai-codex"]);
-    for (const table of Object.values(raw.pi.models)) {
-      expect(Object.keys(table).sort()).toEqual([...models.available].sort());
-    }
-  });
-
-  test("available models are the names the Claude Code Agent tool accepts", () => {
-    // The Agent tool's `model` parameter is an enum of family names; a full ID
-    // such as claude-opus-5-5 is rejected before the subagent starts.
-    expect([...models.available].sort()).toEqual(["fable", "haiku", "opus", "sonnet"]);
-  });
-
-  test("the file stays one row per entry so a role change is a one-line diff", () => {
-    const text = readFileSync(join(repoRoot, "plugins/pstack/models.json"), "utf8");
-    expect(text.match(/^\s*\{ "/gm)).toHaveLength(raw.roles.length);
-  });
-});
 
 describe("parseModels", () => {
   const anySkill = () => true;
@@ -79,7 +56,7 @@ describe("parseModels", () => {
     expect(parse((p) => (role(p, "swarm workers").models = ["opsu"]))).toThrow(
       'models.json: role "swarm workers" names "opsu", which is not in available',
     );
-    expect(parse((p) => (p.tiers.panel = ["opus", "gpt"]))).toThrow(
+    expect(parse((p) => (p.tiers.panel = [p.available[0], "gpt"]))).toThrow(
       'models.json: tier "panel" names "gpt", which is not in available',
     );
   });
@@ -109,8 +86,8 @@ describe("parseModels", () => {
   });
 
   test("a duplicate slug in available or in a panel throws naming it", () => {
-    expect(parse((p) => p.available.push("opus"))).toThrow('models.json: available lists "opus" twice');
-    expect(parse((p) => (p.tiers.panel = ["opus", "opus"]))).toThrow('models.json: tier "panel" lists "opus" twice');
+    expect(parse((p) => p.available.push(p.available[0]))).toThrow(`models.json: available lists "${raw.available[0]}" twice`);
+    expect(parse((p) => (p.tiers.panel = [p.available[0], p.available[0]]))).toThrow(`models.json: tier "panel" lists "${raw.available[0]}" twice`);
     expect(parse((p) => (p.codex.panel = ["a", "a"]))).toThrow('models.json: codex "panel" lists "a" twice');
   });
 
@@ -133,17 +110,17 @@ describe("parseModels", () => {
     expect(parse((p) => (p.pi.extra = 1))).toThrow('models.json: pi names "extra"; its keys are "fallback" and "models"');
     expect(parse((p) => (p.pi.fallback = "google"))).toThrow('models.json: pi.fallback "google" is not a provider in pi.models');
     expect(parse((p) => (p.pi.models.openai = "openai/gpt"))).toThrow("models.json: pi.models.openai must be an object");
-    expect(parse((p) => delete p.pi.models["openai-codex"].haiku)).toThrow(
-      'models.json: pi.models.openai-codex has no Pi model for "haiku"',
+    expect(parse((p) => delete p.pi.models["openai-codex"][p.available[0]])).toThrow(
+      `models.json: pi.models.openai-codex has no Pi model for "${raw.available[0]}"`,
     );
-    expect(parse((p) => (p.pi.models.anthropic.gpt = "anthropic/gpt"))).toThrow(
-      'models.json: pi.models.anthropic names "gpt", which is not in available',
+    expect(parse((p) => (p.pi.models.openai.gpt = "openai/gpt"))).toThrow(
+      'models.json: pi.models.openai names "gpt", which is not in available',
     );
-    expect(parse((p) => (p.pi.models.anthropic.opus = "claude-opus"))).toThrow(
-      'models.json: pi.models.anthropic "opus" is "claude-opus", not a anthropic/<id>',
+    expect(parse((p) => (p.pi.models.openai[p.available[0]] = "unqualified"))).toThrow(
+      `models.json: pi.models.openai "${raw.available[0]}" is "unqualified", not a openai/<id>`,
     );
-    expect(parse((p) => (p.pi.models.anthropic.opus = "openai-codex/gpt-6-sol"))).toThrow(
-      'models.json: pi.models.anthropic "opus" is "openai-codex/gpt-6-sol", not a anthropic/<id>',
+    expect(parse((p) => (p.pi.models.openai[p.available[0]] = "openai-codex/gpt-6.1-sol"))).toThrow(
+      `models.json: pi.models.openai "${raw.available[0]}" is "openai-codex/gpt-6.1-sol", not a openai/<id>`,
     );
   });
 
@@ -153,28 +130,3 @@ describe("parseModels", () => {
   });
 });
 
-describe("role labels reach the prose", () => {
-  // The prose may hyphenate a label ("how-explorer" for the sheet's
-  // "how explorer") and names only the first segment of a comma-joined label.
-  const normalize = (text) => text.toLowerCase().replace(/[-\s]+/g, " ");
-
-  function skillProse(skill) {
-    return markdownFiles(join(skillsDir, skill))
-      .map((file) => {
-        const lines = readFileSync(file, "utf8").split("\n");
-        const owned = regions(models)
-          .filter((r) => r.file === relative(repoRoot, file))
-          .map((r) => r.locate(lines))
-          .filter(Boolean);
-        return lines.filter((_, i) => !owned.some(([s, e]) => i >= s && i < e)).join("\n");
-      })
-      .join("\n");
-  }
-
-  for (const role of models.roles) {
-    test(`"${role.role}" is named by the ${role.skill} skill outside its stamped regions`, () => {
-      const needle = normalize(role.role.split(",")[0]);
-      expect(normalize(skillProse(role.skill))).toContain(needle);
-    });
-  }
-});

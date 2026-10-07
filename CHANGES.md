@@ -16,7 +16,9 @@ The local `nuclear-code-quality-review` rubric now replaces the duplicate `therm
 
 `poteto-mode` routes PR drafting to a reader-focused description policy shared with `make-pr-easy-to-review`. PR bodies explain intent, observable changes, and actual verification; risks, limitations, migration steps, and reviewer decisions appear only when material. Required repository templates and language are respected. Empty sections, agent work diaries, duplicate facts, and inaccessible local evidence are omitted, without hiding breaking changes or verification gaps. Live model scenarios exercised Japanese editing, review-only output, the nuclear rubric, and compact versus breaking-change PR drafts.
 
-The generator reports 84 current files, skill-tree validation passes, and `bun test tests/` passes 1,188 tests with 40 skips and no failures. The imported Japanese MIT license matches its local source.
+The shared skill model policy now uses `gpt-6.1-sol @medium` for former Opus roles, `gpt-6.1-sol @xhigh` for former Fable roles, and `gpt-6-luna @xhigh` for former Sonnet panel entries. Generated Models sections, reviewer tables, setup sheets, and runtime guidance carry these choices. Three-worker panels retain two distinct models and two effort levels on Sol. Pi defaults resolve only through OpenAI provider tables, with `openai-codex` as the fallback; Claude Code requires an explicit supported override instead of an automatic Claude substitution. Existing personal model sheets are unchanged and still override defaults. The generator and direct model-resolution smoke passed for all 17 roles and the three panel selections. Pi typechecking could not run because no Pi package is installed.
+
+The generator reports 84 current files and skill-tree validation passes. After the GPT model-policy change, `bun test tests/` passed 1,164 tests with 40 skips and no failures. The imported Japanese MIT license matches its local source.
 
 ## 0.9.75 - add native oh-my-pi support
 

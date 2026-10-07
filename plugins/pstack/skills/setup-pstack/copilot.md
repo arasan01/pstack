@@ -1,6 +1,6 @@
 # Setup pstack on GitHub Copilot
 
-On GitHub Copilot this file replaces the model, effort, and hook questions in steps 1, 3, and 4 of [setup-pstack](SKILL.md), the sheet header in step 6, and step 7. Steps 2, 5, 8, and 9 still apply. pstack ships no Copilot model defaults, so every model in the sheet comes from the user's answers. Never pick a model the user has not chosen, and never write the Claude Code names in [Models](SKILL.md#models) or step 6's values into a Copilot sheet.
+On GitHub Copilot this file replaces the model, effort, and hook questions in steps 1, 3, and 4 of [setup-pstack](SKILL.md), the sheet header in step 6, and step 7. Steps 2, 5, 8, and 9 still apply. pstack ships no Copilot model defaults, so every model in the sheet comes from the user's answers. Never pick a model the user has not chosen. The GPT names in [Models](SKILL.md#models) and step 6 are not evidence that those models are available through Copilot; confirm each choice against the detected enum.
 
 Run setup on a model at least as strong as gpt-5.4-mini or a Sonnet-class Claude model. On a Haiku-class model, setup picked models the user never chose in about half of the smoke runs.
 
@@ -30,7 +30,7 @@ Per-role model choices for pstack skills on GitHub Copilot, written by setup-pst
 
 ## Detect models
 
-The detected set is the `model` enum of the `task` tool, with full IDs exactly as the enum lists them. Never shorten one to a family name. If this session has no `task` tool or its enum is not visible, write `inherit-parent` for every role, skip the model questions, and tell the user to rerun `setup-pstack` in a session with the `task` tool. The Claude Code names in [Models](SKILL.md#models) and the values in step 6's sheet shape are not Copilot model IDs; never write them into a Copilot sheet.
+The detected set is the `model` enum of the `task` tool, with full IDs exactly as the enum lists them. Never shorten one to a family name. If this session has no `task` tool or its enum is not visible, write `inherit-parent` for every role, skip the model questions, and tell the user to rerun `setup-pstack` in a session with the `task` tool. Write a GPT default from [Models](SKILL.md#models) or step 6 only if its bare model ID is detected and the user chooses it; separate any `@<level>` suffix into `reasoning_effort` when dispatching.
 
 Group the detected IDs by vendor, from each ID's text before its first hyphen. `claude` is Claude, `gpt` is GPT, `gemini` is Gemini, `grok` is Grok, `kimi` is Kimi, and any other ID is Other. Keep the enum's order within a vendor.
 

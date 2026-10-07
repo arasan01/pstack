@@ -38,7 +38,7 @@
     },
     "plugins/pstack/skills/poteto-mode/SKILL.md": {
       "kind": "policy",
-      "why": "Adds multi-runtime adaptation, project-derived drivers, native task tracking, workflow triggers including nuclear review and reader-focused PR drafting, project playbooks, full-access worker policy, closed independent-review gates, concise evidence-based replies, and operator-controlled landing.",
+      "why": "Adds multi-runtime adaptation, OpenAI GPT defaults with explicit effort and no implicit Claude substitution, project-derived drivers, native task tracking, workflow triggers including nuclear review and reader-focused PR drafting, project playbooks, full-access worker policy, closed independent-review gates, concise evidence-based replies, and operator-controlled landing.",
       "since": "0.9.2",
       "upstream": "not-proposed"
     },
@@ -254,7 +254,7 @@
     },
     "plugins/pstack/skills/setup-pstack/SKILL.md": {
       "kind": "port-feature",
-      "why": "Writes the override sheet at each runtime's own path, loaded by @-include on Claude Code and pasted into AGENTS.md on Codex since neither has Cursor's always-applied rules, replaces Cursor's budget step with a default effort and per-role effort levels, adds the SessionStart hook toggle and names the Pi extension as a reader of it, lists every runtime's sheet path in a table, and routes GitHub Copilot to copilot.md and oh-my-pi to omp.md.",
+      "why": "Writes each runtime's override sheet, starts from GPT defaults with explicit reasoning effort, requires explicit supported overrides on Claude Code instead of automatic substitution, adds per-role effort and the session hook toggle, and routes Copilot and oh-my-pi to their native setup guides.",
       "since": "0.9.2",
       "upstream": "not-proposed"
     },

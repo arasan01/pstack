@@ -18,7 +18,7 @@ const agentParams = Type.Object(
     model: Type.Optional(
       Type.String({
         description:
-          "Optional model for this agent: a family name (opus, fable, sonnet, haiku) or a full provider/id. If omitted, the agent runs on the parent's model.",
+          "Optional model for this agent: gpt-6.1-sol, gpt-6-luna, or a full provider/id. Pass reasoning effort through the corresponding pstack effort agent, not in this field. If omitted, the agent runs on the parent's model.",
       }),
     ),
     run_in_background: Type.Optional(Type.Boolean({ description: "Return at once; a completion notice arrives when the agent exits." })),

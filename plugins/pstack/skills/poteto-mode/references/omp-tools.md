@@ -28,11 +28,11 @@ Writing workers need isolated worktrees or disjoint output paths. Use the sessio
 
 ## Model names
 
-Skills print Claude defaults, but omp must not inherit those provider choices. Without an omp model sheet, omit each child's `model` so it uses the current session model. `inherit-parent` and `auto` also omit `model`. A saved role row overrides this with an exact `provider/model` selector or an omp-supported role alias. List the catalog with `omp models --json` and validate the chosen selector against the session's task schema. Never silently fall back to a different model when dispatch fails.
+Skills default to `gpt-6.1-sol @medium` for ordinary roles and `gpt-6.1-sol @xhigh` for strongest judgment. The panel adds `gpt-6-luna @xhigh`, preserving three entries across two distinct models. Resolve each bare GPT name to an available OpenAI `provider/model` selector, then translate its effort as described below. Never replace a GPT default with Claude implicitly. A saved role row overrides the default with an exact `provider/model` selector or an omp-supported role selector such as `@task`, `@slow`, or `@plan`. Pass native role selectors unchanged so omp owns their configured model, effort, and fallback chain. `inherit-parent` and `auto` omit the child's `model`, leaving selection to omp's native agent policy. List the catalog with `omp models --json` and validate the chosen selector against the session's task schema. Never silently fall back to a different model when dispatch fails.
 
-Translate a sheet's `@<level>` suffix to omp's `provider/model:level` selector where supported; `default effort: session` leaves thinking unchanged. Explicit effort with an inherited model uses the current-model selector `@default:<level>` if the runtime supports it. Do not dispatch Claude effort agents.
+Translate a sheet's `@<level>` suffix to omp's `provider/model:level` selector where supported; `default effort: session` adds no pstack effort override; native role effort still applies. Explicit effort with an inherited model uses the current-model selector `@default:<level>` if the runtime supports it. Do not dispatch Claude effort agents.
 
-For diverse-model panels, dispatch one child per configured entry on distinct reachable models. Until setup chooses a diverse panel, keep the workflow's reviewer count on the session model and state that model diversity is reduced. See [omp setup](../../setup-pstack/omp.md).
+For panels, dispatch one child per configured entry. Keep all three default entries, but disclose that two entries share a model at different effort levels. Different native roles also do not guarantee distinct models. See [omp setup](../../setup-pstack/omp.md).
 
 ## Session routing
 

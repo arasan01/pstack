@@ -70,7 +70,7 @@ export const RUNTIMES = [
     : null,
 }));
 
-// Codex has no Claude aliases, so its block gives an example model per tier.
+// Codex lists a model and reasoning effort example per tier.
 function checkCodexModels(codex, { raw, fail, unique }) {
   for (const tier of Object.keys(raw.tiers)) {
     if (!Object.hasOwn(codex, tier)) fail(`codex has no example for tier "${tier}"`);
@@ -81,9 +81,9 @@ function checkCodexModels(codex, { raw, fail, unique }) {
   }
 }
 
-// The pstack Pi extension resolves each Claude alias a skill names through the
-// table of the session's provider, or the fallback table on any other provider,
-// so every table maps exactly the available aliases to that provider's models.
+// The pstack Pi extension resolves each GPT name through the session provider's
+// table, or the fallback table for another provider. Every table maps exactly
+// the available names to that provider's models.
 function checkPiModels(pi, { raw, fail, isObject }) {
   for (const key of Object.keys(pi)) {
     if (key !== "fallback" && key !== "models") fail(`pi names "${key}"; its keys are "fallback" and "models"`);
@@ -108,16 +108,17 @@ function checkPiModels(pi, { raw, fail, isObject }) {
 export function codexModelNamesSection(models) {
   const strongest = models.roles.filter((r) => r.tier === "strongest");
   return (
-    "Skills name Claude defaults (a single-role default for code/prose/judgment plus a diverse-model panel for " +
-    "diverse-model panels; each model-consuming skill lists its own in a Models section). These slugs do not " +
-    "resolve on Codex. Substitute your configured Codex models:\n\n" +
+    "Skills default to GPT models with explicit reasoning effort. Each model-consuming skill lists its defaults " +
+    "in a Models section. On Codex, split each `<model> @<level>` value into the model slug and the " +
+    "runtime's `reasoning_effort` parameter. Confirm that both are available:\n\n" +
     `- Single-model roles: your primary Codex model (for example ${code(models.codex.default)}).\n` +
-    `- Roles that default to the strongest Claude model (${strongest.map((r) => code(r.role)).join(", ")}): ` +
+    `- Strongest-judgment roles (${strongest.map((r) => code(r.role)).join(", ")}): ` +
     `your strongest Codex model (for example ${code(models.codex.strongest)}).\n` +
     "- Diverse-model panels (`arena`, `architect`, `interrogate`, `how` critics, `reflect`): the adversarial " +
     "signal comes from model diversity, so use the distinct Codex models available to you. A good default panel " +
     `on ChatGPT is ${codeList(models.codex.panel)}. If only one model family is reachable, vary reasoning ` +
-    "effort and note in the verdict that diversity was reduced.\n\n" +
+    "effort and note in the verdict that diversity was reduced. The default panel has three entries but only " +
+    "two distinct models; different effort levels do not make the same model independent.\n\n" +
     "`/setup-pstack` writes the configured model list. On Codex, set it to your Codex model slugs."
   );
 }
@@ -126,41 +127,45 @@ export function piModelNamesSection(models) {
   const { fallback, models: tables } = models.pi;
   const columns = Object.keys(tables);
   const table =
-    `| Alias | ${columns.map(code).join(" | ")} |\n| --- |${" --- |".repeat(columns.length)}\n` +
+    `| Model name | ${columns.map(code).join(" | ")} |\n| --- |${" --- |".repeat(columns.length)}\n` +
     models.available.map((alias) => `| ${code(alias)} | ${columns.map((p) => code(tables[p][alias])).join(" | ")} |`).join("\n");
   return (
-    "Skills name models by the Claude aliases in their Models sections. On Pi, pass the alias as the `agent` " +
-    "tool's `model`. The pstack extension resolves it in the column of the provider the session's current model " +
-    `comes from, and in the ${code(fallback)} column for any other provider:\n\n` +
+    "Skills name GPT models in their Models sections. Split `<model> @<level>` into the bare GPT name for " +
+    "the `agent` tool's `model` and the level for its effort agent, which passes `--thinking` to the child. The extension resolves the name through " +
+    "the session's OpenAI provider table (`openai` or `openai-codex`), " +
+    `or the ${code(fallback)} table for any other session provider. It never substitutes an Anthropic model:\n\n` +
     table +
-    "\n\nPi warns that Anthropic bills Claude used through Pi per token, as extra usage, even on a Claude subscription. " +
-    "Pi shows that warning only in interactive mode, never for the `pi --mode rpc` children the `agent` tool runs.\n\n" +
-    "A `pi models: opus=<provider/id>, sonnet=<provider/id>` line in the Pi override sheet points each alias " +
+    "\n\nA `pi models: gpt-6.1-sol=<provider/id>, gpt-6-luna=<provider/id>` line in the Pi override sheet points each name " +
     "it names at another Pi model, whatever the session's provider. Add one when the session's provider has no " +
-    `column above and Pi has no credentials for ${code(fallback)}, because each alias then resolves to an ${code(`${fallback}/*`)} ` +
+    `column above and Pi has no credentials for ${code(fallback)}, because each name then resolves to an ${code(`${fallback}/*`)} ` +
     `ID and the ${code("agent")} call fails with ${code(`No API key found for ${fallback}`)}. ` +
     "The `agent` tool also takes a full " +
     "`provider/id`, passed through unchanged, and `inherit-parent`, `auto`, or no `model` runs the child on the " +
     "parent's current model. Diverse-model panels (`arena`, `architect`, `interrogate`, `how` critics, `reflect`) " +
-    "stay diverse only while their aliases resolve to distinct models. If one model family is all you can reach, " +
+    "stay diverse only while their names resolve to distinct models. The default three-entry panel uses two " +
+    "distinct models; effort differences do not add an independent model. If one model family is all you can reach, " +
     "vary the reasoning effort and note in the verdict that diversity was reduced.\n\n" +
-    "`/setup-pstack` writes the configured model list. On Pi, keep the aliases and remap them with `pi models:`."
+    "`/setup-pstack` writes the configured model list. On Pi, keep the GPT names and remap them with `pi models:`."
   );
 }
 
 export function ompModelNamesSection() {
   return (
-    "Skills print Claude defaults, but omp must not inherit those provider choices. Without an omp model sheet, " +
-    "omit each child's `model` so it uses the current session model. `inherit-parent` and `auto` also omit `model`. " +
-    "A saved role row overrides this with an exact `provider/model` selector or an omp-supported role alias. " +
+    "Skills default to `gpt-6.1-sol @medium` for ordinary roles and `gpt-6.1-sol @xhigh` for strongest judgment. " +
+    "The panel adds `gpt-6-luna @xhigh`, preserving three entries across two distinct models. Resolve each bare " +
+    "GPT name to an available OpenAI `provider/model` selector, then translate its effort as described below. " +
+    "Never replace a GPT default with Claude implicitly. A saved role row overrides the default with an exact " +
+    "`provider/model` selector or an omp-supported role selector such as `@task`, `@slow`, or `@plan`. Pass native " +
+    "role selectors unchanged so omp owns their configured model, effort, and fallback chain. " +
+    "`inherit-parent` and `auto` omit the child's `model`, leaving selection to omp's native agent policy. " +
     "List the catalog with `omp models --json` and validate the chosen selector against the session's task schema. " +
     "Never silently fall back to a different model when dispatch fails.\n\n" +
     "Translate a sheet's `@<level>` suffix to omp's `provider/model:level` selector where supported; " +
-    "`default effort: session` leaves thinking unchanged. Explicit effort with an inherited model uses " +
+    "`default effort: session` adds no pstack effort override; native role effort still applies. Explicit effort with an inherited model uses " +
     "the current-model selector `@default:<level>` if the runtime supports it. Do not dispatch Claude effort agents.\n\n" +
-    "For diverse-model panels, dispatch one child per configured entry on distinct reachable models. " +
-    "Until setup chooses a diverse panel, keep the workflow's reviewer count on the session model and " +
-    "state that model diversity is reduced. See [omp setup](../../setup-pstack/omp.md)."
+    "For panels, dispatch one child per configured entry. Keep all three default entries, but disclose that " +
+    "two entries share a model at different effort levels. Different native roles also do not guarantee distinct " +
+    "models. See [omp setup](../../setup-pstack/omp.md)."
   );
 }
 
@@ -238,9 +243,9 @@ export const roleSkills = (models) => [...new Set(models.roles.map((r) => r.skil
 export function copilotModelNamesSection(models) {
   const strongest = models.roles.filter((r) => r.tier === "strongest");
   return (
-    "Skills name Claude Code model aliases in their Models sections. Those aliases are not Copilot model IDs, " +
-    "and the Copilot build ships no default model IDs: the models an account can reach depend on its plan " +
-    "and policy, so the user picks them once.\n\n" +
+    "Skills name GPT defaults with reasoning effort in their Models sections. Confirm the bare names against " +
+    "Copilot's model IDs and pass the level separately as `reasoning_effort`. The Copilot build ships no default " +
+    "model IDs: account access depends on its plan and policy, so the user picks them once.\n\n" +
     "- The model sheet is `${COPILOT_HOME:-~/.copilot}/pstack-models.md`. It sits outside the workspace, so reading it " +
     "asks for path access. The plugin's SessionStart hook reads it, checks it, and adds its role lines to the " +
     "session context as the user's saved pstack model choices. Take role models from that block and do not `view` the " +

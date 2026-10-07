@@ -31,11 +31,11 @@ The Codex home directory is `$CODEX_HOME` when that variable is set and `~/.code
 
 ### 1. Detect available models
 
-Enumerate the model names the `Agent` tool's `model` parameter accepts in this session. That is the dependable source. On Claude Code they are the family names listed in [Models](#models) below, each running that family's current model, and a full model ID is rejected. The default panel is listed there too. The panel is chosen for cross-family diversity. Ask the user to confirm or paste any additional slugs they want available. Never write a real slug you have not confirmed is available. The aliases `inherit-parent` and `auto` are always valid even though they are not detected slugs. Both mean the role runs on the parent session's model, which the `Agent` call expresses by omitting `model`.
+Enumerate the model names the runtime's subagent tool accepts in this session. That is the dependable source. The GPT defaults in [Models](#models) include explicit reasoning effort; the default panel keeps three entries across two distinct models. Claude Code cannot execute these GPT defaults. Detect its supported Claude family names from the `Agent` tool and ask for explicit overrides for every role before dispatch. Never automatically substitute Claude for GPT. Never write a real slug you have not confirmed is available. Offer `inherit-parent` and `auto` as explicit choices that omit `model`; on omp, native agent policy determines selection when it is omitted.
 
 ### 2. Load current state
 
-The default role-to-model mapping is the rule shape shown in the Write the override sheet step below. If the current runtime's sheet already exists, read it and treat its values as the current choices. Otherwise start from those defaults. A line whose role is not in that shape, such as `how critics`, is from a retired role. Drop it. An older sheet may name full model IDs that start with `claude-`, which the `Agent` tool rejects. Replace each with its family name, the word after `claude-`.
+The default role-to-model mapping is the rule shape shown in the Write the override sheet step below. If the current runtime's sheet already exists, read it and treat its values as the current choices. Otherwise start from those defaults. A line whose role is not in that shape, such as `how critics`, is from a retired role. Drop it. On Claude Code only, an older sheet may name full model IDs that start with `claude-`, which its `Agent` tool rejects. Ask the user to confirm a supported family name instead. Do not rewrite GPT model names into Claude aliases.
 
 ### 3. Map and confirm
 
@@ -53,30 +53,30 @@ Every real slug written must be in the detected set. `inherit-parent` and `auto`
 
 ### 6. Write the override sheet
 
-Write the current runtime's sheet with the shape below. Overwrite the whole file so re-runs stay idempotent.
+Write the current runtime's sheet with the shape below. Overwrite the whole file so re-runs stay idempotent. These are GPT defaults, not executable Claude Code model choices. On Claude Code, replace every role with the user's explicitly confirmed supported override before writing; do not treat this example as permission to choose Claude automatically.
 
 ```markdown
 # pstack model configuration
 
-Per-role model overrides for pstack skills. Each pstack SKILL.md names its defaults in a Models section; the values here override those defaults. Delete a line to fall back to the skill default. A value of `inherit-parent` or `auto` runs that role on the parent session's model (the `Agent` call omits `model`); an alias entry in a panel list still counts toward that panel's fan-out. A model may carry a reasoning effort, as in `opus @xhigh` (levels: low, medium, high, xhigh, max); the role then runs through the pstack effort agent of that level, each entry of a panel list on its own. `default effort` sets the level for a value without one; `session` keeps the parent session's effort. `session hook: off` stops the Claude Code or Codex SessionStart hook, or the pstack Pi extension, from injecting the poteto-mode mandate; any other value, or no line, leaves it on.
+Per-role model overrides for pstack skills. Each pstack SKILL.md names its defaults in a Models section; the values here override those defaults. Delete a line to use the skill default. `inherit-parent` and `auto` omit the child model override; native runtime policy determines selection. Every panel entry counts toward fan-out. Values separate a model from reasoning effort, as in `gpt-6.1-sol @xhigh`. On Codex, pass the bare slug as `model` and the level as `reasoning_effort`; on Pi, select the effort agent that passes `--thinking` to the child; on omp, translate to `provider/model:level`. Pass omp native role selectors unchanged when no effort override is requested. Claude Code requires explicitly selected supported models and uses pstack effort agents for their levels. `default effort` supplies the level when a value has no suffix; `session` adds no pstack effort override. `session hook: off` disables automatic pstack routing for the runtime's hook or adapter.
 
-feature, refactoring: opus
-bug-fix: fable
-perf-issue: fable
-hillclimb: fable
-judgment and prose: opus
-strongest judgment: fable
-how explorer: opus
-how explainer: opus
-why investigators: opus
-why synthesizer: opus
-reflect tooling: opus
-reflect judgment, divergent, synthesizer: opus
-arena runners: opus, fable, sonnet
-arena cross-judge pool: opus, fable, sonnet
-swarm workers: opus
-architect runners: opus, fable, sonnet
-interrogate reviewers: opus, fable, sonnet
+feature, refactoring: gpt-6.1-sol @medium
+bug-fix: gpt-6.1-sol @xhigh
+perf-issue: gpt-6.1-sol @xhigh
+hillclimb: gpt-6.1-sol @xhigh
+judgment and prose: gpt-6.1-sol @medium
+strongest judgment: gpt-6.1-sol @xhigh
+how explorer: gpt-6.1-sol @medium
+how explainer: gpt-6.1-sol @medium
+why investigators: gpt-6.1-sol @medium
+why synthesizer: gpt-6.1-sol @medium
+reflect tooling: gpt-6.1-sol @medium
+reflect judgment, divergent, synthesizer: gpt-6.1-sol @medium
+arena runners: gpt-6.1-sol @medium, gpt-6.1-sol @xhigh, gpt-6-luna @xhigh
+arena cross-judge pool: gpt-6.1-sol @medium, gpt-6.1-sol @xhigh, gpt-6-luna @xhigh
+swarm workers: gpt-6.1-sol @medium
+architect runners: gpt-6.1-sol @medium, gpt-6.1-sol @xhigh, gpt-6-luna @xhigh
+interrogate reviewers: gpt-6.1-sol @medium, gpt-6.1-sol @xhigh, gpt-6-luna @xhigh
 
 default effort: session
 session hook: on
@@ -115,8 +115,8 @@ The role lines are the same everywhere. What differs is the sheet path, how the 
 
 Stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`).
 
-- Available Claude models: `opus`, `fable`, `sonnet`, `haiku`
-- Default panel: `opus`, `fable`, `sonnet`
+- Available GPT models: `gpt-6.1-sol`, `gpt-6-luna`
+- Default panel: `gpt-6.1-sol @medium`, `gpt-6.1-sol @xhigh`, `gpt-6-luna @xhigh`
 - Reasoning effort levels: `low`, `medium`, `high`, `xhigh`, `max`
 - Default reasoning effort: `session`
-- Single-role default: `opus`
+- Single-role default: `gpt-6.1-sol @medium`

@@ -44,11 +44,11 @@ poteto-mode's Subagents section sets Claude-specific defaults (`subagent_type: "
 
 ## Model names
 
-Skills name Claude defaults (a single-role default for code/prose/judgment plus a diverse-model panel for diverse-model panels; each model-consuming skill lists its own in a Models section). These slugs do not resolve on Codex. Substitute your configured Codex models:
+Skills default to GPT models with explicit reasoning effort. Each model-consuming skill lists its defaults in a Models section. On Codex, split each `<model> @<level>` value into the model slug and the runtime's `reasoning_effort` parameter. Confirm that both are available:
 
-- Single-model roles: your primary Codex model (for example `gpt-6-sol`).
-- Roles that default to the strongest Claude model (`bug-fix`, `perf-issue`, `hillclimb`, `strongest judgment`): your strongest Codex model (for example `gpt-6-astra`).
-- Diverse-model panels (`arena`, `architect`, `interrogate`, `how` critics, `reflect`): the adversarial signal comes from model diversity, so use the distinct Codex models available to you. A good default panel on ChatGPT is `gpt-6-astra`, `gpt-6-sol`, `gpt-6-luna`. If only one model family is reachable, vary reasoning effort and note in the verdict that diversity was reduced.
+- Single-model roles: your primary Codex model (for example `gpt-6.1-sol @medium`).
+- Strongest-judgment roles (`bug-fix`, `perf-issue`, `hillclimb`, `strongest judgment`): your strongest Codex model (for example `gpt-6.1-sol @xhigh`).
+- Diverse-model panels (`arena`, `architect`, `interrogate`, `how` critics, `reflect`): the adversarial signal comes from model diversity, so use the distinct Codex models available to you. A good default panel on ChatGPT is `gpt-6.1-sol @medium`, `gpt-6.1-sol @xhigh`, `gpt-6-luna @xhigh`. If only one model family is reachable, vary reasoning effort and note in the verdict that diversity was reduced. The default panel has three entries but only two distinct models; different effort levels do not make the same model independent.
 
 `/setup-pstack` writes the configured model list. On Codex, set it to your Codex model slugs.
 

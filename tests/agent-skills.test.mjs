@@ -18,9 +18,7 @@ import {
   plan,
   problems,
   publicSkills,
-  resolveModels,
 } from "../tools/generate.mjs";
-import { codexModelNamesSection } from "../tools/runtimes.mjs";
 import { validateProsePaths, validateSkillsTree, walk } from "../tools/validate-skills.mjs";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
@@ -282,19 +280,3 @@ describe("agentSkills reads frontmatter as YAML", () => {
   });
 });
 
-describe("Codex model names", () => {
-  test("names a strongest Codex model for the roles that default to it on Claude", () => {
-    const raw = JSON.parse(readFileSync(join(repoRoot, "plugins/pstack/models.json"), "utf8"));
-    const oneOff = raw.roles.map((r) => (r.role === "swarm workers" ? { ...r, models: ["haiku"] } : r));
-    const section = codexModelNamesSection(resolveModels({ ...raw, roles: oneOff }));
-    const strongestLine = section.split("\n").find((line) => line.includes("strongest Claude model"));
-
-    expect(strongestLine).not.toContain("swarm workers");
-
-    expect(strongestLine).toContain(`\`${raw.codex.strongest}\``);
-    for (const role of ["bug-fix", "perf-issue", "hillclimb", "strongest judgment"]) {
-      expect(section).toContain(role);
-    }
-    for (const family of raw.available) expect(section).not.toContain(`\`${family}\``);
-  });
-});

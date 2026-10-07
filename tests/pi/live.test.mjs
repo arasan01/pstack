@@ -5,8 +5,8 @@
 //
 // The aliases resolve through the shipped models.json table of
 // PSTACK_PI_LIVE_PROVIDER (default openai), or through the `pi models:`
-// line in PSTACK_PI_LIVE_MODELS when it is set. The parent runs on the sonnet
-// alias. PSTACK_PI_LIVE_KEEP=1 keeps the throwaway directory for inspection.
+// line in PSTACK_PI_LIVE_MODELS when it is set. The parent runs on gpt-6-luna.
+// PSTACK_PI_LIVE_KEEP=1 keeps the throwaway directory for inspection.
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
@@ -21,7 +21,7 @@ import { agentByDescription, assistantModels, childEntries, descendants, findSes
 const LIVE = process.env.PSTACK_PI_LIVE === "1";
 const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
 const { sheet: SHEET, models: MODELS } = liveModels(pluginRoot, "# pstack live test sheet\n\n");
-const PARENT_MODEL = MODELS.get("sonnet");
+const PARENT_MODEL = MODELS.get("gpt-6-luna");
 const MANDATE = readFileSync(join(pluginRoot, "hooks/session-start-context.md"), "utf8");
 const MANDATE_KEY = "pstack-session-start";
 const SHEET_KEY = "pstack-models";
@@ -88,15 +88,15 @@ suite("pstack on live pi", () => {
   });
 
   test(
-    "panel: three background agents on opus, fable, and sonnet each notify, on their own resolved model",
+    "panel: three GPT background agents each notify with their selected model and effort",
     async () => {
       await withParent(async (parent) => {
         const from = await parent.run(
           [
             "In this one turn, make exactly three agent tool calls, each with run_in_background true:",
-            '1. description "panel-opus", model "opus", prompt "Reply with exactly one word: alpha"',
-            '2. description "panel-fable", model "fable", prompt "Reply with exactly one word: beta"',
-            '3. description "panel-sonnet", model "sonnet", prompt "Reply with exactly one word: gamma"',
+            '1. description "panel-sol-medium", model "gpt-6.1-sol", subagent_type "pstack:effort-medium", prompt "Reply with exactly one word: alpha"',
+            '2. description "panel-sol-xhigh", model "gpt-6.1-sol", subagent_type "pstack:effort-xhigh", prompt "Reply with exactly one word: beta"',
+            '3. description "panel-luna-xhigh", model "gpt-6-luna", subagent_type "pstack:effort-xhigh", prompt "Reply with exactly one word: gamma"',
             "After the calls, reply with exactly one word: started. Reply to each completion notice with exactly one word: noted.",
           ].join("\n"),
         );
@@ -104,14 +104,14 @@ suite("pstack on live pi", () => {
         await parent.idle(from);
         const file = await parent.sessionFile();
 
-        const expected = { "panel-opus": ["opus", "alpha"], "panel-fable": ["fable", "beta"], "panel-sonnet": ["sonnet", "gamma"] };
+        const expected = { "panel-sol-medium": ["gpt-6.1-sol", "medium", "alpha"], "panel-sol-xhigh": ["gpt-6.1-sol", "xhigh", "beta"], "panel-luna-xhigh": ["gpt-6-luna", "xhigh", "gamma"] };
         const notices = parent.notices(from);
         expect(notices).toHaveLength(3);
         const seen = new Set();
-        for (const [description, [alias, word]] of Object.entries(expected)) {
+        for (const [description, [alias, effort, word]] of Object.entries(expected)) {
           const snaps = agentByDescription(file, description);
           const last = snaps.at(-1);
-          expect(last).toMatchObject({ status: "completed", agent: { model: MODELS.get(alias) } });
+          expect(last).toMatchObject({ status: "completed", agent: { model: MODELS.get(alias), thinking: effort } });
           expect(pidAlive(last.pid)).toBe(false);
           const notice = notices.find((n) => n.details.agentId === last.agent.id);
           expect(notice.details.status).toBe("completed");
@@ -121,7 +121,7 @@ suite("pstack on live pi", () => {
           const childSections = sections(child);
           expect(childSections[SHEET_KEY]).toBe(tagged(SHEET_KEY, SHEET));
           expect(childSections[MANDATE_KEY]).toBeUndefined();
-          seen.add(MODELS.get(alias));
+          seen.add(`${MODELS.get(alias)}:${effort}`);
         }
         expect(seen.size).toBe(3);
       });
