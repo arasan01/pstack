@@ -30,27 +30,33 @@
       "since": "0.9.29",
       "upstream": "not-proposed"
     },
+    "plugins/pstack/skills/ketchup/SKILL.md": {
+      "kind": "port-feature",
+      "why": "Uses runtime-native charts and rendered tables instead of assuming Cursor's /visualize command.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
     "plugins/pstack/skills/poteto-help/SKILL.md": {
       "kind": "port-feature",
-      "why": "Routes installation, model-sheet loading, and persistent routing preferences to the current runtime's setup sources, including the oh-my-pi mapping, directs repository links to the private arasan01/pstack hard fork, gives installed playbooks precedence over upstream guides, and keeps the port's public skill loading, hidden principles, verification-skill naming, local-worker advice, driver and built-in equivalents, excluded make-bot-ui row, and orchestrate wording as prose changes in this fork.",
+      "why": "Uses this fork's private installation links and runtime setup sources, keeps native omp role and agent configuration instead of a model sheet or mandatory routing, and retains project-derived drivers, local workers, nuclear review, and the port's verification-skill names while exposing upstream's new skills.",
       "since": "0.9.71",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/SKILL.md": {
       "kind": "policy",
-      "why": "Adds multi-runtime adaptation, OpenAI GPT defaults with explicit effort and no implicit Claude substitution, project-derived drivers, native task tracking, workflow triggers including nuclear review and reader-focused PR drafting, project playbooks, full-access worker policy, closed independent-review gates, concise evidence-based replies, and operator-controlled landing.",
+      "why": "Adds multi-runtime adaptation with native omp policy taking precedence over model sheets, wrapper agents, mandatory routing, and lifecycle rules; retains GPT defaults for other builds, project-derived drivers, project playbooks, independent-review gates, reader-focused PR drafting, and operator-controlled landing.",
       "since": "0.9.2",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/playbooks/autopilot-full.md": {
       "kind": "policy",
-      "why": "Owners stop at merge-ready and the operator clicks every merge, with the patch-id rule governing re-verification if trunk moves first, instead of each owner merging after a clean verdict, and the root writes the program objective into standing orders on the go and re-reads it each tick, arms the tick as a dynamic-mode /loop, proves the live lane through the driver skill, takes the pre-review checks from CLAUDE.md files, states the program's size before the first owner starts and waits for the operator's go above three owners, sends an owner only the findings its diff causes, runs the full swarm in the first round only, and stops a PR at two fix-forwards.",
+      "why": "Keeps operator-controlled merging, head/base and patch-id applicability checks, isolated single-writer ownership, bounded fix-forwards and native project-driver verification while adopting upstream's durable owner trail, full-swarm-once review and ketchup reporting.",
       "since": "0.9.39",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/playbooks/autopilot-stack.md": {
       "kind": "policy",
-      "why": "Records each verdict's head SHA, base SHA, base branch, and patch-id, cancels pending merges and leases each push against the captured remote head before the root rewrites or retargets the chain, and re-verifies a verdict whose applicability to the new base is uncertain, while the root writes the program objective into standing orders on the go, re-reads it each tick, and arms the tick as a dynamic-mode /loop.",
+      "why": "Keeps verdict head/base/branch/patch-id records, cancels pending merges before topology changes, leases pushes to captured heads, and re-verifies uncertain applicability while leaving scheduling, agents and models under native runtime policy.",
       "since": "0.9.34",
       "upstream": "not-proposed"
     },
@@ -68,7 +74,7 @@
     },
     "plugins/pstack/skills/poteto-mode/playbooks/feature.md": {
       "kind": "policy",
-      "why": "Gives every file-writing delegate its own worktree and forbids writing in a worktree a delegate still holds.",
+      "why": "Follows native delegation and writer isolation: separate worktrees or disjoint outputs, with unrelated tracked and untracked work preserved.",
       "since": "0.9.39",
       "upstream": "not-proposed"
     },
@@ -80,19 +86,19 @@
     },
     "plugins/pstack/skills/poteto-mode/playbooks/multi-phase-plan.md": {
       "kind": "port-feature",
-      "why": "Plans use installed-plugin sources, the local agent store, dynamic objective audits, isolated project-driver lanes, configured worker models, and execution-playbook topology and merge authority; evidence formats follow the target product instead of requiring screenshots from services or libraries, with explicit nonvisual operator review gates.",
+      "why": "Plans use installed sources, the runtime's agent store and native workers, preserve execution topology and merge authority, and name product-appropriate evidence including explicit nonvisual review gates.",
       "since": "0.9.19",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/playbooks/opening-a-pr.md": {
       "kind": "policy",
-      "why": "Stops every live worktree holder before commit/merge/deploy and writes PR bodies from reviewer-relevant intent, behavior, proof, risks, and operational decisions instead of mandatory boilerplate sections or agent work logs, applying prose-only Japanese deslop.",
+      "why": "Requires quiescent writer ownership under the native runtime before commit, merge or deploy, and writes PR bodies from reviewer-relevant behavior, evidence and material risks rather than fixed boilerplate or agent diaries.",
       "since": "0.9.10",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/playbooks/orchestrate.md": {
       "kind": "port-feature",
-      "why": "Runs workers as background subagents in per-writer worktrees under a ~/.claude/orchestrate store because Claude Code has no cloud worker environment, and keeps human rulings in their original wording.",
+      "why": "Uses native delegation, isolated writers, the current runtime's agent store and project drivers instead of Cursor cloud workers, preserves original human rulings, and applies operator authority and the port's safe frontier bookkeeping.",
       "since": "0.9.29",
       "upstream": "not-proposed"
     },
@@ -144,15 +150,63 @@
       "since": "0.9.19",
       "upstream": "not-proposed"
     },
+    "plugins/pstack/skills/poteto-mode/playbooks/authoring-a-skill.md": {
+      "kind": "port-feature",
+      "why": "Uses available runtime authoring guidance and editable source or project-local skill paths instead of requiring Claude-only tooling or editing installed caches.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/autonomous-run.md": {
+      "kind": "policy",
+      "why": "Keeps autonomy within the requested scope and native delegation and lifecycle rules rather than treating the workflow as authority to take over the runtime.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/eval.md": {
+      "kind": "port-feature",
+      "why": "Uses native model and delegation policy and the project's actual verification driver instead of Cursor dispatch and lifecycle assumptions.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/hillclimb.md": {
+      "kind": "port-feature",
+      "why": "Keeps experiment workers and reasoning under native agent policy while selecting measurement tools and evidence for the actual target product.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/prototype.md": {
+      "kind": "port-feature",
+      "why": "Delegates and isolates prototypes through native runtime policy and chooses the target product's real driver rather than Cursor-only controls.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/refactoring.md": {
+      "kind": "port-feature",
+      "why": "Preserves product-derived verification and native agent, model and lifecycle policy while applying the upstream refactoring workflow.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/playbooks/visual-parity.md": {
+      "kind": "port-feature",
+      "why": "Selects project-supported UI drivers and native worker isolation instead of assuming Cursor controls or fixed dispatch fields.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/poteto-mode/scripts/check-plan.test.ts": {
+      "kind": "port-feature",
+      "why": "Runs upstream's checker scenarios with the port's program and completion checklists, standing-orders and installed-plugin markers, and configured swarm-worker wording.",
+      "since": "0.9.78",
+      "upstream": "not-proposed"
+    },
     "plugins/pstack/skills/poteto-mode/scripts/orch/orch.test.ts": {
       "kind": "policy",
-      "why": "Covers the guards the port adds to orch/store.ts: nested-paren status rows, leading-dash branch names, single-line table cells, frontier SHAs from exact branch refs, and colour and hyperlink codes in gt output, injecting the fake gt through the store's gt option instead of rewriting PATH and giving the CLI only PATH and ORCH_STORE instead of the whole environment. For the stale-lock takeover it races two processes for a stale lock to show only one replaces it, refuses every writer, forced or not, while a live writer holds the takeover claim, pauses a second process at its unlink of the lock to show a forced writer is refused mid-takeover, kills one there to show the next writer clears its claim, removes the lock there to show the takeover carries on, and pauses one after it has listed a dead claimant to show it leaves alone a claim made since. Kills a writer after every lock call, with and without a stale lock, to show the next writer gets in, fails the hard link to show the exclusive open still refuses a live lock, plants and removes a rival lock between a failed create and the read to show the create is retried, and points the lock at a missing file to show the retry ends. Expects unit add to return ids and tracks as written, round-trips unit cells and inbox pointers that start with a formula or quote character and pins their quoted form on disk, reads rows written before the quote was stripped without dropping a leading quote, and times out gt log and gt info against a gt that ignores SIGTERM, with a budget a saturated machine can meet.",
+      "why": "Covers forge frontier identity and active OPEN selection, non-main trunk and missing tracking metadata, full result-page refusal, preservation of the saved frontier on failure, exact local branch refs, bounded commands, stale-lock takeover races and crash recovery, and safe TSV and inbox serialization.",
       "since": "0.9.47",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/poteto-mode/scripts/orch/store.ts": {
       "kind": "policy",
-      "why": "Adds guards for temp-file cleanup, single-line status table cells, nested-paren gt status rows, leading-dash branch names, and frontier SHAs resolved from exact local branch refs, runs gt and git without an env override and strips terminal control sequences from gt output instead of setting NO_COLOR, and takes the gt path as an open option so tests can inject a fake. Serializes stale-lock takeovers behind a claim directory that holds one file named for the claimant's pid, staged under a private name and renamed into place. A live claim refuses every other writer, forced or not, and the next writer removes a dead claimant's file by name before it claims. Inside the claim the takeover re-reads the lock, refuses when the holder changed, and carries on when the lock is already gone. Creates the lock by writing the pid to a private file and hard-linking it into place, so a writer killed mid-create cannot leave a lock with no pid in it, and falls back to an exclusive open where the link fails for any reason other than an existing lock. Creates the lock again, twice at most, when it vanishes between a failed create and the read of its holder, and reports a lock it cannot read as held by an unknown pid. Quotes a cell that starts with a spreadsheet formula character or a quote only when writing a TSV or an inbox pointer, and strips that quote when reading one, so ids and branches round-trip unchanged. A row written before this change keeps a leading quote unless another quote or a formula character follows it; that is the shape the store writes, so such a row loses its first quote on read. Bounds each gt call with a timeout that kills gt with SIGKILL and that the gtTimeoutMs open option overrides.",
+      "why": "Preserves lock and TSV safety while requiring authoritative trunk tracking and head-repository identity, refusing full result pages, limiting Origin discovery to non-mirrored repositories, and retaining exact local refs and bounded SIGKILL forge commands.",
       "since": "0.9.13",
       "upstream": "not-proposed"
     },
@@ -242,19 +296,19 @@
     },
     "plugins/pstack/skills/recall/SKILL.md": {
       "kind": "policy",
-      "why": "Sweeps the locations the project's standing rules name before reporting anything as never recorded and applies the human-rulings epistemics, on top of Claude Code's transcript path.",
+      "why": "Sweeps the project's durable records and current runtime's workspace-scoped transcripts before saying a decision was never recorded, preserving the human ruling's original wording and scope.",
       "since": "0.9.2",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/reflect/SKILL.md": {
       "kind": "port-feature",
-      "why": "Finds the session transcript with the port's find-transcript.mjs under Claude Code's projects directory and drops Cursor's readonly agent mode and inline model column.",
+      "why": "Finds active workspace transcripts through the streaming runtime-aware helper, preserves native agent and model policy, retains approval before skill edits, and keeps installed plugin caches read-only while identifying an editable project, user, or source-checkout destination.",
       "since": "0.1.0",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/setup-pstack/SKILL.md": {
       "kind": "port-feature",
-      "why": "Writes each runtime's override sheet, starts from GPT defaults with explicit reasoning effort, requires explicit supported overrides on Claude Code instead of automatic substitution, adds per-role effort and the session hook toggle, and routes Copilot and oh-my-pi to their native setup guides.",
+      "why": "Uses native omp role and agent configuration without a parallel model sheet or mandatory routing, retains model sheets, explicit GPT overrides, per-role effort and hook controls on other builds, and offers both project verification and formal verification skills.",
       "since": "0.9.2",
       "upstream": "not-proposed"
     },
@@ -268,6 +322,12 @@
       "kind": "policy",
       "why": "Prefixes a cell opening with a double quote so a spreadsheet or TSV reader cannot parse it as a quoted field, appends each row through one perl syswrite so parallel writers cannot interleave rows longer than the shell's stdio buffer, reports a short or failed write, and falls back to upstream's printf when perl is missing or does not work.",
       "since": "0.9.41",
+      "upstream": "not-proposed"
+    },
+    "plugins/pstack/skills/statechart/scripts/test/cli.test.ts": {
+      "kind": "port-feature",
+      "why": "Canonicalizes the temporary symlink directory before calculating a relative launcher target, so macOS /var aliases do not create a dangling test fixture.",
+      "since": "0.9.78",
       "upstream": "not-proposed"
     },
     "plugins/pstack/skills/tdd/SKILL.md": {

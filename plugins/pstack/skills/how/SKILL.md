@@ -11,62 +11,42 @@ On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Each spawn below names a role line in `pstack-models.md` and a default in [Models](#models). Set `model` to that line's value, or to the default if the sheet or the line is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the `Agent` tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message.
+Every spawn is a `Agent` subagent with `subagent_type: "general-purpose"` and `readonly: true`. Explorers use the `how explorer` line in `pstack-models.md` (default in [Models](#models)), and every explainer uses the `how explainer` line (default in [Models](#models)). Set `model` to that line's value, or to the default if the sheet or the line is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the `Agent` tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message. Pick each subagent's reasoning level and fast or standard speed for the job, per the Subagents section of the **poteto-mode** skill.
 
-## Step 1. Assess Complexity
+## 1. Assess complexity
 
 If the scope is ambiguous, state your interpretation and explore. The user can redirect.
 
-- **Simple** (a single module, a small utility, a narrow question such as "how does function X work"): no explorers. One explainer explores and explains in a single pass. Go to Step 2b.
-- **Complex** (a subsystem spanning multiple files or services, a cross-cutting feature, a full architectural overview): spawn parallel explorers first, then hand off to the explainer. Go to Step 2a.
+- **Simple** (a single module, a small utility, a narrow question such as "how does function X work"): no explorers. Spawn one explainer that explores and explains in one pass, built from `references/explainer-prompt.md` without the explorer-findings section. Go to step 4.
+- **Complex** (a subsystem spanning multiple files or services, a cross-cutting feature, a full architectural overview): go to step 2.
 
 When in doubt, take the simple path.
 
-## Step 2a. Explore (complex questions only)
+## 2. Explore (complex only)
 
-Decompose the question into 2 to 4 exploration angles, each a distinct slice of the subsystem. Spawn all explorers in a single message:
+Decompose the question into 2 to 4 angles, each a distinct slice of the subsystem. Spawn all explorers in a single message, each with `references/explorer-prompt.md` and its angle filled in.
 
-- `subagent_type`: `general-purpose`
-- `model`: the `how explorer` line, default in [Models](#models)
-- `readonly`: `true`
+## 3. Synthesize (complex only)
 
-Each explorer gets the prompt in `references/explorer-prompt.md` with its angle filled in. Then go to Step 3.
+Once all explorers have returned, spawn one explainer with `references/explainer-prompt.md` and every explorer's findings filled in.
 
-## Step 2b. Direct Explain (simple questions)
+## 4. Present
 
-Spawn one `Agent` subagent that explores and explains in one pass:
+Present the explainer's output. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
 
-- `subagent_type`: `general-purpose`
-- `model`: the `how explainer` line, default in [Models](#models)
-- `readonly`: `true`
-
-Build its prompt from `references/explainer-prompt.md` without the explorer-findings section. Go to Step 4.
-
-## Step 3. Synthesize (complex questions only)
-
-Once all explorers have returned, spawn one `Agent` subagent to synthesize their findings into one explanation:
-
-- `subagent_type`: `general-purpose`
-- `model`: the `how explainer` line, default in [Models](#models)
-- `readonly`: `true`
-
-Build its prompt from `references/explainer-prompt.md` with every explorer's findings filled in.
-
-## Step 4. Present
-
-Present the explainer's output to the user. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
-
-## Output Format
+## Output format
 
 The explanation uses the sections defined in `references/explainer-prompt.md`, dropping any that do not apply: Overview, Key Concepts, How It Works, Where Things Live, Gotchas.
 
 ## Models
 
-Role defaults, stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`). A matching role line in the `pstack-models.md` override sheet overrides each at runtime; `/setup-pstack` writes it and lists its path per runtime.
+Role defaults, stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`). Where the runtime supports pstack model configuration, a matching line in `pstack-models.md` overrides these defaults. On omp, use native model roles and agent settings instead; do not load this sheet or pass a worker `model`. `/setup-pstack` follows the current runtime's configuration.
 
 - how explorer: `gpt-6.1-sol @medium`
 - how explainer: `gpt-6.1-sol @medium`
 
 ## Reasoning effort
+
+On omp, reasoning effort, model selection, fallback chains, and service tiers belong to native agent policy. Do not apply the pstack override-sheet or effort-agent instructions below on omp.
 
 A role value in the override sheet may name a reasoning effort after its model, as in `gpt-6.1-sol @xhigh`. Levels on Claude Code: `low`, `medium`, `high`, `xhigh`, `max`. Which ones apply depends on the model. A value without `@` takes the sheet's `default effort` line, a level or `session`, and `session` when the sheet has no such line. `session` sets no effort, so the dispatch is the usual one. Strip the suffix before reading the model: `inherit-parent` or `auto` still omits `model` at every level, and a model name is passed as `model`. On Claude Code, a level picks the effort agent from the `subagent_type` you would otherwise use. `pstack:poteto-agent` becomes `subagent_type: "pstack:poteto-agent-<level>"`. `general-purpose`, or no `subagent_type`, becomes `subagent_type: "pstack:effort-<level>"`. The effort agents set only `effort`, so the model you pass still decides the model. On Codex, pass the level as `spawn_agent`'s `reasoning_effort` and keep the usual instructions.

@@ -4,7 +4,7 @@ Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) is an 
 
 Tell `poteto-mode` your goal and it will invoke the correct workflow for the task. This fork is for developing your own projects, not Cursor itself. Skills select commands, verification drivers, and diagnostic tools from the target repository and platform, whether you are working on a web app, native/mobile app, CLI, service, library, or development tool. Cursor attribution describes provenance, not a required product or toolchain.
 
-For concurrency bugs and invariants that tests cannot reach, see the separate [agent-formal-verify](https://github.com/michael-denyer/agent-formal-verify) plugin, which adds TLA+ model checking and Lean proofs.
+For concurrency bugs and invariants that tests cannot reach, use [create-formal-verification-skill](plugins/pstack/skills/create-formal-verification-skill/SKILL.md), then [maintain-formal-verification-skill](plugins/pstack/skills/maintain-formal-verification-skill/SKILL.md) as the code changes. The bundled [statechart](plugins/pstack/skills/statechart/SKILL.md) checks TLA+ models and draws state transitions and violation paths. The separate [agent-formal-verify](https://github.com/michael-denyer/agent-formal-verify) plugin remains an optional alternative, not a dependency.
 
 ## Install
 
@@ -36,9 +36,9 @@ From this checkout's root, run:
 omp install ./plugins/pstack
 ```
 
-Start a new omp session, then request `poteto-mode` or `setup-pstack` by name. The separate [omp package](plugins/pstack/package.json) loads the shared skills and an omp routing adapter, not the Pi extension. Delegation, questions, and task tracking use omp's native `task`, `ask`, and `todo`. Without model overrides, workers use the session's model; `setup-pstack` can choose available provider/model IDs for each role and panel.
+Start a new omp session, then request the skill you need by name, such as `poteto-mode`, `sharpen`, or `statechart`. The separate [omp package](plugins/pstack/package.json) loads the shared skills and a thin runtime mapping, not the Pi extension. pstack does not require its wrapper agents, install mandatory task routing, or load a parallel model sheet. Native agents, `modelRoles`, permissions, delegation, reasoning, fallback, and lifecycle remain in control. `setup-pstack` explains the native setup without changing it.
 
-This links the checkout. Keep it at this path, and update it to update the installed skills. See [omp runtime details](docs/reference.md#oh-my-pi-omp) for profiles, routing, and differences from Pi.
+This links the checkout. Keep it at this path, and update it to update the installed skills. See [omp runtime details](docs/reference.md#oh-my-pi-omp) for native model configuration and differences from Pi.
 
 ### Pi
 
@@ -63,9 +63,9 @@ This installs pstack for the Copilot CLI and the GitHub Copilot app, which share
 
 The Copilot build is tested on Copilot CLI 1.0.87 through 1.0.92. On those versions the routing hook's context reaches the session alongside other plugins' session-start context. If a later version keeps only one plugin's context, `setup-pstack` offers a [standing instruction](plugins/pstack/skills/setup-pstack/copilot.md#wire-it-in) for `~/.copilot/copilot-instructions.md` instead. On 1.0.92, once the CLI caches its computer-use experiment assignment, `copilot -p` sessions list no plugin skills and a `skill` call returns "Skill not found". Interactive sessions, the hooks, and the agents are unaffected.
 
-The shared skills default to OpenAI GPT models. Former Opus roles use `gpt-6.1-sol @medium`, former Fable roles use `gpt-6.1-sol @xhigh`, and former Sonnet panel entries use `gpt-6-luna @xhigh`. Panels retain three workers on two distinct models, with different reasoning effort on Sol. On omp, these become provider-qualified selectors with `:medium` or `:xhigh`; on Codex, pass the model and `reasoning_effort` separately. Claude Code cannot run these GPT defaults and requires an explicit model override; pstack must not silently substitute Claude.
+Where a runtime uses pstack model defaults, the shared skills select OpenAI GPT models with explicit reasoning effort. Panels retain three workers across two distinct models. Codex passes the model and `reasoning_effort` separately; Claude Code requires an explicitly supported override rather than an automatic substitution. omp does not import these defaults or panel models; its native role and agent configuration owns those choices.
 
-Run `setup-pstack` to override model defaults or reasoning effort, or turn automatic routing off. A saved role row takes precedence over the skill default. The plugin installs the routing hook on Claude Code, Codex, and GitHub Copilot; Codex asks you to trust it through `/hooks` before it runs. On Pi and omp, their separate adapters inject the routing instruction. In Claude Code and the Copilot CLI, use `/pstack:setup-pstack`.
+On Claude Code, Codex, Pi, and GitHub Copilot, `setup-pstack` configures model defaults, reasoning effort, and automatic routing. The plugin installs hooks on Claude Code, Codex, and Copilot; Codex asks you to trust them through `/hooks`. Pi's separate adapter injects the routing instruction. omp is explicit-invocation only and ignores old pstack model sheets. In Claude Code and the Copilot CLI, use `/pstack:setup-pstack`.
 
 For Prime Agent, OpenCode, Gemini CLI, or skills-only installs for any harness, see [shared installation](docs/reference.md#shared-skills-installation).
 

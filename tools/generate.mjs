@@ -674,7 +674,9 @@ export function modelsSection(roles) {
   const bullets = roles.map((r) => `- ${r.role}: ${codeList(r.models)}`).join("\n");
   return (
     "Role defaults, stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`). " +
-    "A matching role line in the `pstack-models.md` override sheet overrides each at runtime; `/setup-pstack` writes it and lists its path per runtime.\n\n" +
+    "Where the runtime supports pstack model configuration, a matching line in `pstack-models.md` overrides these defaults. " +
+    "On omp, use native model roles and agent settings instead; do not load this sheet or pass a worker `model`. " +
+    "`/setup-pstack` follows the current runtime's configuration.\n\n" +
     bullets
   );
 }
@@ -685,6 +687,8 @@ export function modelsSection(roles) {
 // dispatched through, with the model still passed on the call.
 export function effortSection(levels, defaultEffort) {
   return (
+    "On omp, reasoning effort, model selection, fallback chains, and service tiers belong to native agent policy. " +
+    "Do not apply the pstack override-sheet or effort-agent instructions below on omp.\n\n" +
     "A role value in the override sheet may name a reasoning effort after its model, as in `gpt-6.1-sol @xhigh`. " +
     "Levels on Claude Code: " + codeList(levels) + ". Which ones apply depends on the model. " +
     "A value without `@` takes the sheet's `default effort` line, a level or `session`, " +
@@ -763,7 +767,8 @@ export function stampAgentPaths(manifestText, paths) {
 
 export function setupModelsSection(models) {
   return (
-    "Stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`).\n\n" +
+    "Stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`). " +
+    "These are defaults for runtimes with pstack model configuration; omp uses its native roles and agent settings.\n\n" +
     `- Available GPT models: ${codeList(models.available)}\n` +
     `- Default panel: ${codeList(models.tiers.panel)}\n` +
     `- Reasoning effort levels: ${codeList(models.efforts)}\n` +
@@ -783,8 +788,8 @@ export function overrideSheetBlock(models) {
     "`inherit-parent` and `auto` omit the child model override; native runtime policy determines selection. " +
     "Every panel entry counts toward fan-out. Values separate a model from reasoning effort, as in `gpt-6.1-sol @xhigh`. " +
     "On Codex, pass the bare slug as `model` and the level as `reasoning_effort`; " +
-    "on Pi, select the effort agent that passes `--thinking` to the child; on omp, translate to `provider/model:level`. " +
-    "Pass omp native role selectors unchanged when no effort override is requested. " +
+    "on Pi, select the effort agent that passes `--thinking` to the child. " +
+    "This sheet is not used on omp; its native model roles and agent settings own selection and reasoning. " +
     "Claude Code requires explicitly selected supported models and uses pstack effort agents for their levels. " +
     "`default effort` supplies the level when a value has no suffix; `session` adds no pstack effort override. " +
     "`session hook: off` disables automatic pstack routing for the runtime's hook or adapter.\n\n" +

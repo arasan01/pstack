@@ -4,13 +4,17 @@ Start with the [README](../README.md) for installation and your first task.
 
 ## Slash commands
 
-The package includes 58 skill directories: 34 public skills and 24 `principle-*` references. Claude Code uses `/pstack:<name>`, and Pi uses `/skill:<name>`. In Codex, request a skill by name or install the [optional shortcuts](#codex) for the `/name` form below.
+The package includes 65 skill directories: 41 public skills and 24 `principle-*` references. Claude Code uses `/pstack:<name>`, and Pi uses `/skill:<name>`. In omp, request the skill you need by name; native agent policy remains in control. In Codex, request a skill by name or install the [optional shortcuts](#codex) for the `/name` form below.
 
 Find each skill's instructions in the [skills tree](../plugins/pstack/skills/).
 
 | command | use it when |
 | --- | --- |
 | `/poteto-mode` | default entry point for any non-trivial task |
+| `/in-your-own-words` | restate the user's goal and the problem before starting |
+| `/sharpen` | rewrite a prompt with deeper source material, methods, and checks without expanding its scope |
+| `/ketchup` | catch up on this chat's changes and every decision waiting on the user |
+| `/ketchup-video` | explain this chat's changes in a short silent video with decisions in text |
 | `/how` | walk through how a subsystem works |
 | `/why` | investigate why something was built this way (parallel multi-MCP evidence) |
 | `/architect` | settle types and module shape before writing code that crosses a function boundary |
@@ -36,6 +40,9 @@ Find each skill's instructions in the [skills tree](../plugins/pstack/skills/).
 | `/no-comments` | strip comments before review, fix the accepted findings, encode claimed constraints |
 | `/create-verification-skill` | generate a project-local verification skill and feature map |
 | `/maintain-verification-skill` | re-sync a drifted verification skill and its feature map |
+| `/create-formal-verification-skill` | generate a project-local check for a high-risk property beyond the cases tests reach |
+| `/maintain-formal-verification-skill` | re-sync formal verification with changed code and distinguish drift from bugs |
+| `/statechart` | check a TLA+ model and show state transitions and shortest invariant-violation paths |
 | `/deslop` | clean a code diff or edit Japanese prose, PR text, and reports without changing facts |
 | `/babysit` | monitor an open PR, fix CI/comments, keep it merge-ready |
 | `/nuclear-code-quality-review` | extremely strict maintainability audit |
@@ -47,14 +54,14 @@ Find each skill's instructions in the [skills tree](../plugins/pstack/skills/).
 
 ## Runtime support
 
-All runtimes share [one skills tree](../plugins/pstack/skills/). A skills-only installation includes the skills, scripts, agent references, and license notices. The Claude Code, Codex, and GitHub Copilot plugins also install automatic routing hooks. The Pi package adds routing and tools through its extension; the separate omp package adds routing while using omp's native tools. Codex command shortcuts are separate.
+All runtimes share [one skills tree](../plugins/pstack/skills/). A skills-only installation includes the skills, scripts, agent references, and license notices. The Claude Code, Codex, and GitHub Copilot plugins also install automatic routing hooks. The Pi package adds routing and tools through its extension. The separate omp package supplies only optional workflow adaptation, using native tools, agents, model roles, and lifecycle. Codex command shortcuts are separate.
 
 | Runtime | Setup and recorded verification |
 | --- | --- |
 | Claude Code | Install the marketplace plugin. Skills use Claude tool names and model defaults; the plugin installs automatic routing. |
 | Codex | Install the native plugin through the repository's marketplace and trust its hook through `/hooks`. The [Codex mapping](../plugins/pstack/skills/poteto-mode/references/codex-tools.md) translates Claude tools and model names. Shared skill symlinks were also detected in a live session. |
 | Pi | Install the repository as a Pi package with `pi install`. The [Pi extension](../plugins/pstack/pi/index.ts) registers the subagent, question, and wake-up tools and `/loop`, and the [Pi mapping](../plugins/pstack/skills/poteto-mode/references/pi-tools.md) translates Claude tools and model names. The [equivalence table](pi-equivalence.md) records each Claude Code mechanism and how it was verified on Pi 1.0. |
-| oh-my-pi (`omp`) | Install this checkout with `omp install ./plugins/pstack`. The [omp adapter](../plugins/pstack/omp/index.ts) adds routing and model-sheet context; [omp mapping](../plugins/pstack/skills/poteto-mode/references/omp-tools.md) uses native task, ask, and todo tools, with no Pi child-process extension. |
+| oh-my-pi (`omp`) | Install with `omp install ./plugins/pstack`. The [omp adapter](../plugins/pstack/omp/index.ts) supplies the [runtime mapping](../plugins/pstack/skills/poteto-mode/references/omp-tools.md), without automatic routing, model sheets, wrapper-agent requirements, or replacement tools. |
 | GitHub Copilot | Install the plugin through the repository's marketplace; the CLI and the GitHub Copilot app share it. The [Copilot mapping](../plugins/pstack/skills/poteto-mode/references/copilot-tools.md) translates Claude tools, paths, and model roles, and maps app-only tools to CLI fallbacks. Install, routing, agent dispatch, and first-run setup are smoke-tested on the CLI; see [GitHub Copilot](#github-copilot). |
 | Prime Agent | Its documentation describes shared-directory discovery; it has not been tested in a live session. Choose tools and models through Prime's configuration. |
 | opencode | Discovery and reading a linked skill were verified on version 1.18.25. Configure agents, commands, and permissions in `opencode.json`. Its picker also lists principle skills. |
@@ -73,6 +80,8 @@ The Claude Code, Codex, and GitHub Copilot plugins load the same short [routing 
 Smaller tasks proceed directly. The full skill loads when invoked, and explicit user instructions take precedence.
 
 To disable routing, run `setup-pstack` and turn off the session hook. In Claude Code, use `/pstack:setup-pstack`. You can also write `session hook: off` in the runtime's sheet, at the path in [setup-pstack's runtime table](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes). The hook reads that setting before injecting its instruction. Without the setting, routing stays on.
+
+omp does not install this mandatory routing instruction. Invoke a pstack skill explicitly when its workflow helps; installing the plugin does not take over native delegation or model configuration.
 
 Skills-only installs and other runtimes do not include a routing adapter. Request `poteto-mode` explicitly, or add a standing instruction to the runtime's instruction file.
 
@@ -141,7 +150,9 @@ Each shortcut invokes its skill. The commands skip existing files and links. Rem
 
 Run `omp install ./plugins/pstack` from this checkout's root. The [nested omp package](../plugins/pstack/package.json) sits beside the conventional shared `skills/` directory, so omp discovers the skills without a duplicated tree. The repository-root package remains Pi-only. Request skills by name, for example `Use poteto-mode to fix the search filter.` For a one-session extension load, `omp -e ./plugins/pstack/omp/index.ts` loads the adapter but does not install the skill tree for later sessions or children; prefer the package installation.
 
-The adapter appends the [omp mapping](../plugins/pstack/skills/poteto-mode/references/omp-tools.md) and the model sheet on every agent start. It routes nontrivial root-session tasks to poteto-mode unless the sheet says `session hook: off`. It does not replace omp's native tools. The sheet lives in the active omp agent directory, with `PI_CODING_AGENT_DIR` and named profiles respected. Run `setup-pstack` to choose models from `omp models --json`; without a sheet, workers inherit the current session model rather than choosing a Claude provider. Configure distinct models for panels or report reduced diversity.
+The adapter adds only a pointer to the [omp mapping](../plugins/pstack/skills/poteto-mode/references/omp-tools.md). It preserves the native prompt and never loads a pstack model sheet or injects a mandatory workflow. Native `modelRoles`, agent definitions, `task.agentModelOverrides`, reasoning settings, permissions, and lifecycle remain authoritative. Ordinary `task` calls choose an agent, not a `model`; the current native schema reserves that parameter for historical `seance` consults. Use the native default worker, `scout`, `reviewer`, or another configured agent rather than requiring `poteto-agent`. `setup-pstack` explains this native setup and can offer optional project verification skills.
+
+Older installations may leave `pstack-models.md` in an omp agent directory. This adapter ignores it and does not migrate or delete it. Other builds still use their own model sheets. No user or project omp configuration changes merely because the plugin loads. Independent workers do not imply distinct models; report reduced diversity when native routes resolve to the same model.
 
 The omp build does not implement the Pi extension's `/loop`, `schedule_wakeup`, or process-based subagent controls. Follow the mapping's native dispatch and background-work rules. A workflow that needs recurring agent turns must use a scheduler exposed by the session or report that it cannot run unattended.
 
@@ -174,9 +185,9 @@ Copilot lists only part of a large plugin's skills in its prompt, so some pstack
 
 ## Configuration and dependencies
 
-Invoke [setup-pstack](../plugins/pstack/skills/setup-pstack/SKILL.md) to choose models for each role. It detects available models, confirms the choices, and writes an override sheet. Its [runtime table](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes) names the sheet path and loading mechanism for each runtime. Defaults live in [models.json](../plugins/pstack/models.json).
+On omp, use native role and agent settings; [setup-pstack](../plugins/pstack/skills/setup-pstack/omp.md) explains the boundary without writing a parallel configuration. Other builds use [setup-pstack](../plugins/pstack/skills/setup-pstack/SKILL.md) to detect available models, confirm choices, and write an override sheet. Its [runtime table](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes) names each path and loading mechanism. Shared defaults live in [models.json](../plugins/pstack/models.json).
 
-For design comparisons and reviews, choose distinct models available to your runtime. The default panel uses different Claude models.
+For design comparisons and reviews, choose distinct configured models where the runtime supports them. The shared default panel has three workers across two GPT models; omp keeps its native model policy rather than importing that panel configuration.
 
 Install dependencies for the workflows you use:
 
@@ -184,7 +195,8 @@ Install dependencies for the workflows you use:
 | --- | --- |
 | GitHub CLI, `gh` | PR monitoring and shipping. Authenticate with `gh auth login`. |
 | Bun | The bundled `watch-pr` and `orch` scripts. Their bootstrap installs script dependencies on first run. |
-| Graphite CLI, `gt` | The Orchestrate playbook and `orch` stack frontier. Shipping and autopilot playbooks use `gh` or Origin's CLI when available. |
+| Origin CLI, `origin` | Optional PR forge for `orch`, shipping, and autopilot. `orch` requires valid `origin/HEAD` tracking metadata and rejects ambiguous or full result pages. Origin frontier discovery supports non-mirrored repositories; use `--forge gh` for mirrors. GitHub CLI is the default; Graphite is not required. |
+| TypeScript-capable Node, Bun, or Deno; Java and TLC | `statechart` model checking. The first run installs Java and TLC through mise unless the documented tool overrides are supplied. |
 | `plugin-dev` | Claude Code skill-authoring guidance used by `automate-me`, `reflect`, and `poteto-mode`. |
 
 Install the Claude Code skill-authoring companion with:
@@ -214,7 +226,7 @@ plugins/pstack/
   .github/plugin/plugin.json      GitHub Copilot plugin manifest
   pi/                            Pi extension (subagent, question, and wake-up tools)
   package.json                   oh-my-pi package manifest (install this directory)
-  omp/                           oh-my-pi routing and model-sheet adapter
+  omp/                           Optional oh-my-pi workflow adaptation; no model or lifecycle controller
   skills/                        Shared skills, references, and scripts
   agents/                        Claude Code subagent definitions
   hooks/                         Startup routing for Claude Code, Codex, and Copilot; Copilot tool checks
@@ -244,7 +256,7 @@ CI also checks shell scripts, workflows, Markdown, relative links, and the bundl
 
 ### Port scope and attribution
 
-The skill tree is synced against upstream `2cbf585` (v0.15.13).
+The skill tree is synced against upstream `519d36a` (v0.15.34).
 
 This repository ports Lauren Tan's pstack from Cursor to Claude Code and shares the skills with other runtimes. It includes seven cursor-team-kit skills and an independently authored `babysit` skill. The port supplies Claude Code plugin registration and routing, Codex manifests and shortcuts, the Codex tool mapping, the Pi package, extension, and tool mapping, and the GitHub Copilot hooks and tool mapping.
 

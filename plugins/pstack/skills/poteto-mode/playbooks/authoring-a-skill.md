@@ -2,7 +2,7 @@
 
 **You own the skill's voice.**
 
-1. Use the **plugin-dev:skill-development** skill (Claude Code's authoring guidance for SKILL.md files).
+1. Use the runtime's installed skill-authoring guidance. **plugin-dev:skill-development** is a Claude option only when available, not a required tool on omp. Follow the native mapping and project discovery paths. Never edit an installed plugin or cache; show the intended source-checkout or project-local destination and obtain the approval the request requires before changing a skill's future behavior. User-wide paths and global settings need explicit authority.
 2. Validate the skill: frontmatter has `name` and `description`, referenced files exist, cross-skill links resolve.
 3. Test cases if structural. Skip if subjective.
 4. Run **Opening a PR**.

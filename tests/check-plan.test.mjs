@@ -128,3 +128,24 @@ describe("fenced plan evidence", () => {
     });
   }
 });
+
+describe("inline plan evidence", () => {
+  for (const count of [1, 2, 3, 4]) {
+    test(`ignores punctuation inside matching ${count}-backtick spans`, () => {
+      const delimiter = "`".repeat(count);
+      const command = count === 1 ? "echo x" : "echo `x`";
+      expect(run(skeleton + `\nUse ${delimiter}${command}: “quoted” — output${delimiter}.\n`).code).toBe(0);
+      const outside = run(skeleton + `\nUse ${delimiter}${command}${delimiter}. Prose: “invalid”.\n`);
+      expect(outside.code).toBe(1);
+      expect(outside.out).toContain("mid-sentence colon");
+      expect(outside.out).toContain("curly quote");
+    });
+  }
+
+  test("unmatched delimiter lengths do not hide prose punctuation", () => {
+    const result = run(skeleton + "\nUse ``unclosed: “invalid”`.\n");
+    expect(result.code).toBe(1);
+    expect(result.out).toContain("mid-sentence colon");
+    expect(result.out).toContain("curly quote");
+  });
+});

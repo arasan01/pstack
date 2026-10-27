@@ -2,6 +2,16 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first. The Cursor-to-Claude rewrite rules live in [`tools/substitutions.json`](tools/substitutions.json), and the [sync boundary](CONTRIBUTING.md#the-sync-boundary) in `CONTRIBUTING.md` defines how a change to upstream's skill content is declared.
 
+## 0.9.78 - sync upstream skills and keep omp native
+
+The skill tree tracks Cursor pstack `519d36a`, version 0.15.34. New skills include `in-your-own-words`, `sharpen`, `ketchup`, `ketchup-video`, `create-formal-verification-skill`, `maintain-formal-verification-skill`, and the TypeScript `statechart` compiler. Existing workflows take upstream's shorter guidance, explicit parent-runner ownership, progress reporting, verification-readiness checks, and installed-cache edit protection. Local operator-controlled landing, isolated writers, runtime-aware transcripts, nonvisual evidence, and merge-safety checks remain.
+
+On oh-my-pi, pstack is an optional skill library. The adapter no longer reads `pstack-models.md` or injects mandatory routing. Native model roles, agent settings, permissions, delegation, reasoning, fallback, concurrency, and lifecycle own execution. pstack does not require `poteto-agent`, pass unsupported worker-model arguments, synthesize per-model agents, or change user configuration. Existing omp sheets are ignored and left untouched; other runtimes retain their model configuration.
+
+`orch` resolves PR base chains through GitHub CLI or Origin instead of requiring Graphite. It prefers an active OPEN PR over branch history and retains exact local-ref verification, bounded commands, serialized stale-lock recovery, and safe TSV handling. Frontier discovery requires valid `origin/HEAD` tracking metadata, rejects unverifiable head-repository identity and full result pages, and supports only non-mirrored Origin repositories; use `--forge gh` for mirrors. `watch-pr` distinguishes an owner-approval `ACTION_REQUIRED` gate from a CI failure while retaining the shared deadline and head/base landing proof. The plan checker recognizes matching multi-backtick code spans without weakening its nonvisual verification gates.
+
+The statechart package has locked test dependencies and a CI job using checksum-pinned TLC. The port keeps its own distribution manifests rather than importing Cursor's root manifest and identity.
+
 ## 0.9.77 - use GPT models with explicit reasoning effort
 
 The shared skill model policy uses `gpt-6.1-sol @medium` for former Opus roles, `gpt-6.1-sol @xhigh` for former Fable roles, and `gpt-6-luna @xhigh` for former Sonnet panel entries. Generated Models sections, reviewer tables, setup sheets, and runtime guidance carry these choices. Three-worker panels retain two distinct models and two effort levels on Sol. Pi defaults resolve only through OpenAI provider tables, with `openai-codex` as the fallback; Claude Code requires an explicit supported override instead of an automatic Claude substitution. Existing personal model sheets are unchanged and still override defaults.

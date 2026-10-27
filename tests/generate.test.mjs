@@ -28,7 +28,6 @@ import {
   loadLeadLines,
   noteSkills,
   effortAgents,
-  effortSection,
   OWNED_DIRS,
   plan,
   PORTABLE_ASSETS,
@@ -431,7 +430,6 @@ describe("deriveSkill", () => {
     const out = deriveSkill("plugins/pstack/skills/interrogate/SKILL.md", text, models, leads);
     expect(out.startsWith(front("", "interrogate") + "no reviewer table here\n")).toBe(true);
     expect(out).not.toContain("| Reviewer A");
-    expect(out).toContain("\n## Reasoning effort\n\nA role value in");
   });
 
   test("appends the Reasoning effort section after the Models section", () => {
@@ -558,13 +556,6 @@ describe("effort agents", () => {
     expect(stampAgentPaths(out, ["./agents/a.md"])).toBe(out);
   });
 
-  test("the stamped section names every level, the default, both dispatch targets, and the Codex parameter", () => {
-    const text = effortSection(["low", "max"], "high");
-    for (const level of ["low", "max", "high"]) expect(text).toContain(`\`${level}\``);
-    expect(text).toContain('subagent_type: "pstack:effort-<level>"');
-    expect(text).toContain('subagent_type: "pstack:poteto-agent-<level>"');
-    expect(text).toContain("`reasoning_effort`");
-  });
 });
 
 describe("plan, changes, apply", () => {

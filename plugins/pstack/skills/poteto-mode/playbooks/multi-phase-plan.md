@@ -2,12 +2,14 @@
 
 Resolve the driver skill through [poteto-mode's Non-negotiables](../SKILL.md#non-negotiables).
 
+On omp, [the native mapping](../references/omp-tools.md) controls agent selection, model roles, effort, permissions, task lifecycle, concurrency, and delegation. The plan does not install a wrapper or override native limits.
+
 **You own the plan, not the code. The plan is a checklist an owner runs box by box and the operator audits from the evidence.** The plan is the deliverable. Do not implement.
 
 1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
-2. Settle open questions by prototype before you write. Run `playbooks/prototype.md` for each. Keep the branch, the SHA, and the proof artifacts for Appendix A. Ask the operator only about a product or preference call that no run can settle. Give options (the **never-block-on-the-human** principle skill).
-3. Explore in subagents with `subagent_type: "pstack:poteto-agent"` and an explicit model per the Subagents section (the **guard-the-context-window** principle skill). Each returns file pointers, conventions, test commands, and entry points. No inlined dumps.
-4. Copy the skeleton below into the plan file and fill every placeholder. Unless the operator names a path, write the file under the agent store (`~/.claude/orchestrate/<slug>/docs/`). Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence (the **sequence-verifiable-units** principle skill). Name the execution playbook in **How to read this**. Pick between `playbooks/autopilot-full.md` and `playbooks/autopilot-stack.md` per the rule at the end of `playbooks/autopilot-stack.md`. A standing program takes `playbooks/orchestrate.md`. The execution playbook owns base selection, topology changes, and merge authority. Do not copy its rebase steps into the plan.
+2. Settle open questions with `playbooks/prototype.md` before writing. Preserve the branch, SHA, and proof artifacts for Appendix A. Ask the operator only about product or preference calls an experiment cannot settle.
+3. Use read-only native investigators for independent exploration when delegation rules permit. Resolve model, effort, and supported speed through the runtime mapping and Subagents section. Return file pointers, conventions, check commands, and entry points, not raw dumps.
+4. Fill the skeleton below without leaving placeholders in the delivered plan. Unless the operator names a path, use `docs/` under the program's agreed durable project store. Keep one section per independently verifiable PR. Name its execution playbook in **How to read this**. Pick Autopilot-full for independent items, Autopilot-stack for a dependency chain, or Orchestrate for a standing program. The execution playbook owns bases, topology, and merge authority; do not duplicate its rebase steps.
 5. Write under `/technical-writing` in full, then `/unslop`. The body is one Diátaxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
 6. Run `node skills/poteto-mode/scripts/check-plan.mjs <plan.md>` from the installed plugin and fix every line it prints (the **encode-lessons-in-structure** principle skill).
 7. Hand back. Post the plan path and the script's output, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
@@ -41,8 +43,8 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
   - [ ] `<driver skill path>`
   - [ ] `skills/poteto-mode/playbooks/opening-a-pr.md`
   - [ ] `skills/<each other leaf skill the program uses>/SKILL.md`
-- [ ] Arm the hourly audit tick as a real `/loop` in dynamic mode, which schedules its own wake-up rather than blocking on a sleep. Never leave the cadence to memory.
-- [ ] Use this tick prompt, verbatim. "Re-read the execution playbook from the installed plugin and the standing objective. Audit the operation against both and fix drift in this tick. Probe every active lane and judge progress by side effects only. Stand down a stuck lane and dispatch its replacement now. Then post a short status message to the operator in chat only when the audit found a tracked change that no earlier status message reported, such as a PR opened, a code-ready head, a round launched or closed, a verdict, a merge, a stuck agent and the action taken, a blocker added or cleared, or a decision only the operator can make. Name every such change and nothing else. Do not repeat a table, the merged list, or an unchanged blocker. If the audit found none, end the turn with no reply text. Either way, log this tick's row in your decision trail. The row names the items reported, or none."
+- [ ] Arrange the hourly audit through a scheduler the runtime exposes, or record the missing recurring-wakeup capability and keep an actual watcher through native background-process tools. Do not invent `/loop`, a scheduler, or an agent wakeup from a shell timer.
+- [ ] Use this tick prompt. "Re-read the execution playbook from the installed plugin and the standing objective. Audit both, fix drift through its owner, and judge active lanes by observed side effects. Reconcile a stuck writer before reusing its worktree or branch. If stopping it is unavailable, isolate the replacement's output. Post a short status message through the ketchup skill only for newly changed PRs, heads, verdicts, landings, blockers, or operator decisions. Do not repeat unchanged state. Log every tick in the decision trail, including one that has nothing new to report."
 - [ ] On the operator's hold or stand-down, send every owner a zero-writes order at once.
 
 ### Spawn owners
@@ -65,8 +67,9 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 
 ### Verdict and merge, for every PR
 
-- [ ] At the code-ready head SHA and at each later push that changes the patch, run the swarm per `skills/swarm/SKILL.md`. One gates lane. The ten live lanes from the PR's **Verify, live** block. The perf lane from its **Verify, perf** block. Two or more audit lanes, each with its own focus, that read the diff and the receipts and distrust the PR body. The root audits the receipts in the merge-ready report before the verdict.
-- [ ] Clean only when every lane is `PASS`. Findings go back to the owner, including a defect that a lane filed as a note. A new head gets a fresh swarm and a fresh verdict, except for results that stay valid under the patch-id rule in `playbooks/shipping.md`.
+- [ ] Run a full independent swarm once at the code-ready head and again for new behavior, a redesign, or a large new diff, per `skills/swarm/SKILL.md`. Include a gates lane, the ten live lanes, the applicable perf lane, and at least two focused correctness-audit lanes. The root audits the receipts, not the PR body's claims.
+- [ ] A rebase, conflict resolution, or minor fix gets an independent verifier at the new head, current gates, relevant behavioral probes, and review of the changed diff. Preserve older lane results only under the shipping patch-id and context rule. No author, bot, or green CI substitutes for independent correctness review.
+- [ ] Clean means every required lane passes. Send every proven PR-caused finding to the owner, even if labeled a note. Report missing reviewers or evidence as an unmet gate, not a pass.
 - [ ] <The merge or append rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>
 
 ### Boot recipe, for every live lane
@@ -124,14 +127,14 @@ Each live lane runs in its own worktree at the PR head. Drive through the skill 
 
 - [ ] For visual interaction changes, copy lane <n> screenshots into `<media path>/<pr-id>-review-<slug>.png` and record a 30 to 60 second video at `<media path>/<pr-id>-review.mp4`.
 - [ ] Save `<evidence path>` from lane <n> for a nonvisual change and the operator's review. Do not invent screenshots or a video for a product with no UI.
-- [ ] Post the applicable evidence in chat. If review-gated, stop at merge-ready and wait for the operator's click. Otherwise follow the execution playbook's merge authority.
+- [ ] Post the applicable evidence in chat and stop at merge-ready for the operator's review and merge click. Neither a clean verdict nor this plan grants an owner landing authority.
 
 **Merge.**
 
 - [ ] Root's clean verdict at the exact head SHA.
 - [ ] Bugbot triage done.
 - [ ] Base and verdict are current under the execution playbook and the patch-id rule in `playbooks/shipping.md`.
-- [ ] <The owner squash-merges its own PR, or the root appends it to the base-branch stack and the operator lands it bottom-up.>
+- [ ] <The owner hands off its verified independent PR, or the root appends it to the base-branch chain. The operator lands it within the execution playbook's gates.>
 
 ## Close the program
 

@@ -10,43 +10,45 @@ afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: 
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), "pstack-omp-"));
   roots.push(root);
-  const pluginRoot = join(root, "plugin");
-  const agentDir = join(root, "profile-agent");
-  mkdirSync(join(pluginRoot, "hooks"), { recursive: true });
-  mkdirSync(agentDir);
-  writeFileSync(join(pluginRoot, "hooks/session-start-context.md"), "ROUTE_TASKS");
-  return { pluginRoot, agentDir, systemPrompt: ["EXISTING_POLICY"], isMain: true };
+  return {
+    root,
+    input: {
+      pluginRoot: join(root, "plugin"),
+      systemPrompt: Object.freeze(["NATIVE_POLICY", "NATIVE_MODEL_ROLES"]),
+    },
+  };
 }
 
-test("root routing preserves existing policy, and children get model choices without the root mandate", () => {
-  const input = fixture();
-  const sheet = "arena runners: provider/one, provider/two\nsession hook: on\n";
-  writeFileSync(join(input.agentDir, "pstack-models.md"), sheet);
-  const main = systemPromptForPstack(input);
-  const child = systemPromptForPstack({ ...input, isMain: false });
-  expect(main[0]).toBe("EXISTING_POLICY");
-  expect(main).toContain("ROUTE_TASKS");
-  expect(child).not.toContain("ROUTE_TASKS");
-  expect(child).toContain(`pstack model configuration for this runtime:\n${sheet}`);
-  expect(input.systemPrompt).toEqual(["EXISTING_POLICY"]);
+test("mapping context preserves native prompt blocks without mutating them", () => {
+  const { input } = fixture();
+  const result = systemPromptForPstack(input);
+  expect(result.slice(0, input.systemPrompt.length)).toEqual(input.systemPrompt);
+  expect(result).not.toBe(input.systemPrompt);
+  expect(result).toHaveLength(input.systemPrompt.length + 1);
+  expect(input.systemPrompt).toEqual(["NATIVE_POLICY", "NATIVE_MODEL_ROLES"]);
 });
 
-test("routing and model changes take effect on the next turn, including UTF-16 and CRLF sheets", () => {
-  const input = fixture();
-  expect(systemPromptForPstack(input)).toContain("ROUTE_TASKS");
-  const sheet = "feature, refactoring: provider/model\r\nsession hook: off\r\n";
-  writeFileSync(join(input.agentDir, "pstack-models.md"), Buffer.from(`\uFEFF${sheet}`, "utf16le"));
-  const off = systemPromptForPstack(input);
-  expect(off).not.toContain("ROUTE_TASKS");
-  expect(off).toContain(`pstack model configuration for this runtime:\n${sheet}`);
-  writeFileSync(join(input.agentDir, "pstack-models.md"), "session hook: on\n");
-  expect(systemPromptForPstack(input)).toContain("ROUTE_TASKS");
-});
+test("legacy model sheets and routing hooks cannot alter the native prompt", () => {
+  const { root, input } = fixture();
+  const profileDir = join(root, "profile-agent");
+  const previousAgentDir = process.env.PI_CODING_AGENT_DIR;
+  process.env.PI_CODING_AGENT_DIR = profileDir;
+  try {
+    const baseline = systemPromptForPstack(input);
+    mkdirSync(profileDir);
+    mkdirSync(join(input.pluginRoot, "hooks"), { recursive: true });
+    const sheet = join(profileDir, "pstack-models.md");
+    writeFileSync(sheet, "feature, refactoring: provider/legacy\nsession hook: on\n");
+    writeFileSync(join(input.pluginRoot, "hooks/session-start-context.md"), "LEGACY_ROUTING_MANDATE");
+    expect(systemPromptForPstack(input)).toEqual(baseline);
 
-test("an inaccessible or invalid sheet path is not treated as an absent preference", () => {
-  const input = fixture();
-  mkdirSync(join(input.agentDir, "pstack-models.md"));
-  expect(() => systemPromptForPstack(input)).toThrow();
+    rmSync(sheet);
+    mkdirSync(sheet);
+    expect(systemPromptForPstack(input)).toEqual(baseline);
+  } finally {
+    if (previousAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
+    else process.env.PI_CODING_AGENT_DIR = previousAgentDir;
+  }
 });
 
 test("omp packaging rejects missing entrypoints and cross-loading the Pi adapter", () => {

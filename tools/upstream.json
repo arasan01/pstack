@@ -4,12 +4,13 @@
     "pstack": {
       "upstreamPath": "pstack",
       "localPath": "plugins/pstack",
-      "sha": "2cbf585",
+      "sha": "519d36aa98955bf680db01bcde5fdfba686dc901",
       "exclude": [
         ".cursor-plugin/",
         ".gitignore",
         "LICENSE",
         "README.md",
+        "plugin.json",
         "assets/",
         "automations/",
         "docs/",

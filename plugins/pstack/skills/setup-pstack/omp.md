@@ -1,25 +1,40 @@
 # Setup pstack on oh-my-pi
 
-Use the common setup steps' role list, but use these omp rules for model detection, validation, effort, routing, and sheet loading. Do not rewrite provider/model IDs into Claude family aliases.
+On omp, setup inspects and explains native configuration. It does not write pstack configuration. Follow this page instead of the common setup skill's model-sheet, effort-wrapper, include, and session-hook steps.
 
-## Detect and choose models
+## Inspect the active runtime
 
-Run `omp models --json` through `bash` to inspect the available catalog. The session's `task` schema determines how to dispatch a selector. Use exact `provider/model` IDs from the catalog or a runtime-supported role selector. Catalog presence alone does not prove that credentials or quota allow a request; do not silently substitute another model when a chosen model fails.
+Read the current session's tool schemas, available agents, and runtime documentation. Locate the active profile's `config.yml` and agent definitions through that documentation rather than assuming a global path. Inspect only the relevant settings, not auth files or unrelated profiles.
 
-Without a saved sheet, start from the GPT model and effort defaults in the common setup skill's [Models](SKILL.md#models) section. Resolve bare GPT names to available OpenAI `provider/model` IDs and translate the effort suffix to `provider/model:level`. Never implicitly substitute Claude. If a default is unavailable, ask for an explicit supported choice. Offer `inherit-parent` and `auto`, which omit `model` and leave selection to native agent policy. Keep all three panel entries, but disclose that the defaults contain only two distinct models.
+Explain the effective native `modelRoles` and agent settings that apply to the requested work. Include reasoning effort, fallback chains, service tiers, and `task.agentModelOverrides` where the runtime exposes them. Do not infer a model from an agent's name or copy resolved model IDs into a second routing table. If an effective choice cannot be inspected, say that it is unknown.
 
-Read the existing sheet before asking for changes. Show the common role list with its saved choices, or the GPT defaults when no sheet exists. Ask with native `ask`, offering only supported selectors and effort levels. Native role selectors such as `@task`, `@slow`, and `@plan` are valid explicit overrides. Pass them unchanged so omp resolves the configured model, effort, and fallback chain; do not copy resolved IDs or implement a second fallback policy in pstack. An explicit task `model` selector takes precedence over named-agent model overrides. Different native roles do not guarantee model diversity. A sheet is pstack configuration, not permission to change omp's global model roles or fallback chains.
+When the user needs to inspect model availability, run `omp models --json` through `bash`. A catalog entry does not prove credentials, quota, the selected agent's effective model, or successful execution. Do not send a model probe or change a setting merely to complete setup.
 
-## Reasoning effort
+## Use native agent selection
 
-Use the levels supported by the chosen model and omp's dispatch schema. In a role row, write the common `<selector> @<level>` form. Before dispatch, remove that sheet suffix and translate the level to omp's `provider/model:level` selector when supported. Preserve native role selectors without an explicit effort suffix unchanged. When omp configuration should own effort, leave suffixes off the role rows. For `inherit-parent` or `auto` with an explicit level, use the runtime's current-model selector with that level, rather than dropping the requested effort. `default effort: session` makes no pstack effort override; a native role's configured effort still applies. Never pass Claude's `pstack:effort-*` or `pstack:poteto-agent-*` names to select thinking on omp.
+Ordinary `task` entries have no `model` parameter. Omit it. Use the default task worker for general work, `scout` for read-only codebase discovery, `reviewer` for independent review with a no-edits brief, and `sonic` for strictly mechanical work. A user-configured agent can be used when appropriate to the task and permitted by native policy.
 
-If the session cannot express a requested per-child level, explain that constraint and get a supported choice before writing the sheet; do not store a choice that dispatch will ignore.
+Native `modelRoles` and agent settings choose models, effort, fallbacks, and service tiers. Do not translate pstack's model names or effort suffixes into task arguments. Do not require `poteto-agent` or effort-wrapper agents, synthesize per-model agents, or use `eval` to bypass dispatch policy.
 
-## Write and load the sheet
+Native permissions, delegation gates, concurrency limits, and task lifecycle remain authoritative. Choosing a pstack workflow does not change them.
 
-Resolve the active omp agent directory, respecting `PI_CODING_AGENT_DIR` and the selected profile, before writing `pstack-models.md` there. Use the same role names and header shape as the common Write the override sheet step, with the confirmed GPT selectors or the user's explicit omp overrides. Do not replace the GPT defaults with inherited selection unless the user chooses that override. Preserve one entry per requested panel reviewer.
+## Preserve useful panels
 
-Ask whether automatic routing should stay enabled. Write `session hook: on` or `session hook: off`. The omp routing adapter reads both the sheet and this switch on every agent start, so no `@` include and no pasted model rows in AGENTS.md are needed for a native install. A skills-only install must read the sheet explicitly or keep the role rows in its instruction file; it has no adapter.
+When native delegation rules permit a panel, keep its independent candidates, review, and synthesis. Select available native or user-configured agents appropriate to those jobs, and batch independent work with the native `task` schema.
 
-Confirm the resolved path, selected models, any reduced panel diversity, and routing state. Do not edit the user's omp config, auth files, or Codex sheet as part of setup.
+Different agent names or reasoning levels do not establish different models. Report whether model diversity is confirmed, reduced, or unknown. Do not claim a diverse-model panel from role names alone or create new agents to manufacture that claim. If native constraints prevent a required independent review, report the missing review rather than counting the author or tests as a substitute.
+
+## Invoke skills explicitly
+
+Invoke `poteto-mode` or another pstack skill when its workflow is wanted. Explicit skill invocation is the opt-in. No pstack settings file, model sheet, include, or mandatory session-start hook is needed.
+
+The omp adapter preserves the existing system prompt blocks and adds only a pointer to the [omp mapping](../poteto-mode/references/omp-tools.md). It does not inject the routing mandate or load `pstack-models.md` for either parent or child agents.
+
+An old sheet may remain on disk, but its role rows, effort defaults, and `session hook` setting have no effect on the omp adapter. Do not treat it as an override, add an instruction-file include, delete it, or migrate its contents into native configuration as part of setup. A skills-only installation also uses explicit invocation.
+
+## Report without changing settings
+
+Summarize the native configuration sources inspected, available agents relevant to the work, effective model settings that were actually observable, and any unconfirmed panel diversity. Explain how to invoke the desired skill.
+
+Leave user and project settings, agent definitions, auth files, instruction files, and existing model sheets unchanged. If the user wants different models, effort, fallbacks, service tiers, or agents, explain the native configuration mechanism. Configuration changes require a separate explicit request and the runtime's own configuration workflow.
+

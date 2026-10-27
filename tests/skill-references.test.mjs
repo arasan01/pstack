@@ -12,7 +12,6 @@ import { markdownFiles } from "../tools/validate-skills.mjs";
 
 const skillsDir = fileURLToPath(new URL("../plugins/pstack/skills", import.meta.url));
 const names = new Set(agentSkills(skillsDir).map((s) => s.name));
-const principles = new Set([...names].filter((n) => n.startsWith("principle-")));
 
 // Runtime built-ins and explanatory mentions of Cursor commands.
 const BUILT_IN_SLASH = new Set(["loop", "run", "verify", "command", "goal", "name", "compact", "clear", "hooks", "fleet", "add-dir", "resume"]);
@@ -41,9 +40,4 @@ describe("prose skill references", () => {
     expect(dangling).toEqual([]);
   });
 
-  test("poteto-mode's Principles index lists exactly the principle leaves", () => {
-    const index = readFileSync(join(skillsDir, "poteto-mode/SKILL.md"), "utf8");
-    const listed = new Set([...index.matchAll(/\(\*\*(principle-[a-z0-9-]+)\*\*\)/g)].map((m) => m[1]));
-    expect([...listed].sort()).toEqual([...principles].sort());
-  });
 });

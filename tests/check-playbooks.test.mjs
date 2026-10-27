@@ -31,12 +31,24 @@ function run(playbooks, { throughSymlink = false, cwd = ".", args = ["."] } = {}
   }
 }
 
+function checkFixture(text) {
+  const root = mkdtempSync(join(tmpdir(), "pstack-check-playbooks-"));
+  try {
+    const bundled = join(root, "bundled");
+    mkdirSync(bundled);
+    writeFileSync(join(bundled, "bug-fix.md"), "1. Binary-search the cause.\n");
+    mkdirSync(join(root, ".agents/playbooks"), { recursive: true });
+    writeFileSync(join(root, ".agents/playbooks/bug-fix.md"), text);
+    return checkPlaybooks(root, bundled);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+}
+
 describe("project playbooks", () => {
   test("a change anchored on a bundled step passes", () => {
-    const result = run({
-      "bug-fix.md": '---\nextends: bug-fix\nwhen: Use it for any bug report.\n---\n- **In** "Binary-search the cause": compare with main.\n',
-    });
-    expect(result).toEqual({ code: 0, out: "Every project playbook matches this pstack's playbooks.\n" });
+    const problems = checkFixture('---\nextends: bug-fix\nwhen: Use it for any bug report.\n---\n- **In** "Binary-search the cause": compare with main.\n');
+    expect(problems).toEqual([]);
   });
 
   test("an unknown base, step text the base does not say, and an unquoted change all fail", () => {
@@ -72,17 +84,13 @@ describe("project playbooks", () => {
   });
 
   test("a playbook saved with CRLF line endings passes", () => {
-    const result = run({
-      "bug-fix.md": '---\r\nextends: bug-fix\r\nwhen: Use it for any bug report.\r\n---\r\n- **In** "Binary-search the cause": compare with main.\r\n',
-    });
-    expect(result).toEqual({ code: 0, out: "Every project playbook matches this pstack's playbooks.\n" });
+    const problems = checkFixture('---\r\nextends: bug-fix\r\nwhen: Use it for any bug report.\r\n---\r\n- **In** "Binary-search the cause": compare with main.\r\n');
+    expect(problems).toEqual([]);
   });
 
   test("a playbook saved with a UTF-8 byte-order mark passes", () => {
-    const result = run({
-      "bug-fix.md": '\uFEFF---\r\nextends: bug-fix\r\nwhen: Use it for any bug report.\r\n---\r\n- **In** "Binary-search the cause": compare with main.\r\n',
-    });
-    expect(result).toEqual({ code: 0, out: "Every project playbook matches this pstack's playbooks.\n" });
+    const problems = checkFixture('\uFEFF---\r\nextends: bug-fix\r\nwhen: Use it for any bug report.\r\n---\r\n- **In** "Binary-search the cause": compare with main.\r\n');
+    expect(problems).toEqual([]);
   });
 
   test("with no argument the root is the working directory", () => {

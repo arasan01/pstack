@@ -1,17 +1,27 @@
 ---
 name: principle-test-behavior-not-implementation
-description: "Apply when you write, change, or keep a test. Identify a relevant defect and check that the test detects it. Assert the required result or observable effect, including absence when the contract requires it."
+description: "Apply when you write, change, or keep a test. Assert the result or effect its users can observe, including required absence. Check that a relevant defect fails the test and an internal refactor does not."
 user-invocable: false
 ---
 
 # Test behavior, not implementation
 
-Before keeping a test, name a relevant defect and determine whether the complete test arrangement detects it. Where practical, introduce that defect temporarily and observe the failure. Exercise the subject through its public interface and check the required result or effect.
+A test claims something about what a caller, end user, or another service can observe through its interface: return values, errors, readable state, requests, writes, or messages. Private helpers, internal call order, and intermediate data are implementation.
 
-- A missing-result experiment helps when the contract requires a result. `toBeDefined` detects a missing result, but accepts the wrong one. Strengthen it to check the particular result when correctness requires one.
-- Keep absence assertions when absence is required. For a denied operation that must send no email, exercise the denial and check the outbox is empty. Temporarily make the denied path send an email and confirm the test fails. An assertion on absence does not require a positive case in the same test.
-- Keep fixed-value checks when the value is an explicit user-facing contract, such as a promised default or instruction. Name that contract and the defect a changed value would cause. Avoid freezing incidental constants or prompt wording with no such contract.
-- Keep comparisons between results when disagreement exposes a real defect. An expected result computed through the same faulty path as the actual result can confirm itself. Use an independent expectation or a relation that the identified defect actually violates.
-- Assess shared setup and the test body together. Calling the subject in `beforeEach` is valid; asserting only untouched fixture data is not.
+Judge the complete arrangement, including shared setup, against two edits:
 
-Reject tests that exercise nothing relevant, assert nothing meaningful, or only show that a substitute was called without checking the required effect. Check its payload or resulting state when that establishes the contract. An assertion's syntax alone cannot tell you whether it detects a defect.
+- Break the behavior. Name a relevant defect, such as a wrong result, a skipped effect, or a duplicate effect. The test must detect it. Where practical, introduce it temporarily and observe the failure.
+- Change the internals while preserving every required result and effect. The test should still pass.
+
+Keep a test that catches the first edit and survives the second. Drive the subject through its users' interface with a concrete input. Derive the expectation from the requirement, not from the same code path as the actual value. A restated source constant, prompt string, or untouched fixture does not exercise the consumer that reads it.
+
+The contract decides, not the assertion's syntax:
+
+- `toBeDefined` detects a missing result but accepts a wrong one. Check the particular result when correctness requires it.
+- Keep absence assertions when absence is required. Exercise a denied operation and check that it sends no email. A temporary defect that sends one can prove detection; a positive case need not be in the same test.
+- A mocked external service's payload is observable behavior. Calling an internal helper is not. Checking only that a substitute ran is insufficient when its payload or resulting state defines correctness.
+- Keep fixed-value checks for an explicit user-facing contract, such as a promised default or required instruction. Name that contract and the defect a changed value causes. Do not pin incidental wording.
+- Keep comparisons between results when disagreement exposes the identified defect. An expectation computed through the same faulty path can confirm itself.
+- An invariant or compile-time type check can express a consumer contract. Name the failure it prevents rather than calling every internal relationship behavior.
+
+Rewrite or delete tests that exercise nothing relevant or assert nothing meaningful.

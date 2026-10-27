@@ -6,12 +6,10 @@ import { systemPromptForPstack } from "./prompt.mjs";
 
 export default function pstackOmp(omp: ExtensionAPI): void {
   const pluginRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
-  omp.on("before_agent_start", (event, ctx) => ({
+  omp.on("before_agent_start", (event) => ({
     systemPrompt: systemPromptForPstack({
       systemPrompt: event.systemPrompt,
       pluginRoot,
-      agentDir: omp.pi.getAgentDir(),
-      isMain: ctx.agent.kind === "main",
     }),
   }));
 }

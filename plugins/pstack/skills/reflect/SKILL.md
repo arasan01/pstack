@@ -9,31 +9,29 @@ On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md),
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-Mine the current conversation for durable learnings, then route them into skill edits.
+On oh-my-pi, read the [omp mapping](../poteto-mode/references/omp-tools.md) first. Native agent selection, model roles, effort, permissions, lifecycle, concurrency, and delegation rules win over generic dispatch guidance. Do not install a replacement runtime.
 
-## When to invoke
+Mine the current conversation for durable learnings, then route them into skill edits.
 
 Invoke when the user says "reflect" or "/reflect". Skip when the conversation is trivial, off-topic, or already covered by an existing skill the parent followed correctly. One-offs are not learnings.
 
-## Process
+## 1. Locate the active transcript
 
-### 1. Locate the active transcript
+Find this conversation in the current runtime's workspace-scoped transcript directory. Never search other workspaces' private chats.
 
-The parent finds its own transcript file before fanning out. The system prompt names Claude Code's per-project transcripts directory at `~/.claude/projects/<encoded-cwd>/`. Use that path. Do not glob across `~/.claude/projects/`. That crosses workspace boundaries and reads private chats from unrelated projects.
-
-Run the finder at `skills/reflect/scripts/find-transcript.mjs` under the installed plugin with the projects directory and a fragment of the conversation's opening user prompt:
+Run the streaming finder under the installed plugin with the sessions directory, an opening-prompt fragment, and the workspace:
 
 ```bash
-node <plugin>/skills/reflect/scripts/find-transcript.mjs ~/.claude/projects/<encoded-cwd> "<opening prompt fragment>"
+node <plugin>/skills/reflect/scripts/find-transcript.mjs <workspace-transcripts-dir> "<opening prompt fragment>" "<workspace>"
 ```
 
-It covers the three layouts (flat `<id>.jsonl`, nested `<id>/<id>.jsonl`, subagent `<parent>/subagents/<child>.jsonl`), newest first, and prints the first path whose opening typed prompt carries the fragment. Do not reimplement the scan by hand: the first line of a transcript is session metadata, not a message, a session that starts with `/clear` or a `!` shell command records that command's wrapper and output as `user` records before the prompt, and files run to several megabytes, so the finder streams each candidate and stops at its first typed `user` record. If it exits 1, write a tight digest of the session and pass that instead.
+Use the active omp profile's sessions path from the mapping, not a Claude-only path. The helper supports Claude's flat, nested, and subagent layouts, Pi and omp session JSONL, and Copilot event logs. It orders candidates newest first, validates the workspace where the format records it, and streams the records. It skips metadata and command wrappers before the opening typed prompt; for branched Pi and omp sessions it reads through the active branch. Do not replace it with a first-line parser or hand-written scan. If it exits 1, pass a tight session digest instead.
 
-### 2. Spawn three reviewers in parallel
+## 2. Spawn three reviewers in parallel
 
-One message, three `Agent` calls, `subagent_type: "general-purpose"`, with `model` set as below. Reviewers need MCP access for context lookups (tickets, chat threads, observability traces referenced in the transcript). Pick a subagent_type that retains MCP access. The prompt forbids file writes. The parent applies edits.
+Dispatch three independent reviewers in one native batch, using the runtime mapping and **poteto-mode**'s Subagents section. Give them read-only briefs. They may need MCP access to cited tickets, chat threads, or traces; choose an available reviewer with that access without disabling native permission controls. The parent applies edits. If an evidence source is unavailable, report the gap.
 
-Each reviewer and the synthesizer name a role line in `pstack-models.md` and a default in [Models](#models). Set `model` to that line's value, or to the default if the sheet or the line is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the `Agent` tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message.
+Each reviewer and the synthesizer name a role in `pstack-models.md` and a default in [Models](#models). Resolve model, effort, and supported speed through the runtime mapping. Omit model fields the native schema does not support. Do not guess replacement model slugs or switch families after an error.
 
 | Lens | Role line | Prompt template |
 |---|---|---|
@@ -41,32 +39,32 @@ Each reviewer and the synthesizer name a role line in `pstack-models.md` and a d
 | Tooling | `reflect tooling` | `references/tooling-reviewer.md` |
 | Divergent | `reflect judgment, divergent, synthesizer` | `references/divergent-reviewer.md` |
 
-Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Agent` response body.
+Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings through native result delivery.
 
-### 3. Synthesize
+## 3. Synthesize
 
-One `Agent` call, `subagent_type: "general-purpose"`, with `model` from the `reflect judgment, divergent, synthesizer` line (default in [Models](#models)). Pick a subagent_type that retains MCP access. The synthesizer's quality check includes spot-verifying citations, which can require MCP access. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
+After all three results arrive, dispatch a separate read-only synthesizer with the `reflect judgment, divergent, synthesizer` role under the same runtime policy. It needs source access to spot-check citations. Use `references/synthesizer.md` verbatim with the reviewers' full outputs inlined. It returns an Accepted / Rejected / Backlog list.
 
-### 4. Structural enforcement check
+## 4. Structural enforcement check
 
-Sanity-check the synthesizer's Accepted list. For any item that would be enforced more reliably by a lint rule, script, metadata flag, or runtime check, move it from Accepted to Backlog. See the **encode-lessons-in-structure** principle skill.
+Move any Accepted item that a lint rule, script, metadata flag, or runtime check would enforce more reliably to Backlog. See the **encode-lessons-in-structure** principle skill.
 
-### 5. Apply
+## 5. Apply
 
-Before applying any Accepted edit, present the synthesizer's full Accepted/Rejected/Backlog output to the user and wait for explicit approval. The user picks which subset to apply and may redirect routings. Skill changes affect every future agent in the org. Do not auto-apply.
+Present the synthesizer's full Accepted / Rejected / Backlog output and wait for explicit approval before applying any Accepted edit. Show each intended editable destination and whether it is project-local or user-wide before approval. The user picks the subset and may redirect routings. Do not auto-apply.
 
-Backlog items file to whatever devex / backlog tracker your team uses automatically. Only the Accepted list waits for approval.
+File Backlog items only through an authorized team tracker. If access or authority is missing, report them without claiming they were filed.
 
-For each approved Accepted item, follow the Routing field exactly:
+Never edit an installed plugin or any `plugins/cache/` copy. Edit its source checkout when that is the approved destination. Otherwise copy the needed skill into an approved project-local discovery directory, such as `.omp/skills/<skill>/` or `.agents/skills/<skill>/` on omp, and edit that copy. A user-wide destination requires explicit approval for that exact path. Do not change global settings or other installed skills implicitly. Never open a PR or push.
 
-- Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): parent does directly.
-- Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): hand to the **plugin-dev:skill-development** skill and run its draft / test / iterate loop.
-- `tune description: <skill path>` (the skill exists but didn't trigger when it should have): hand to `plugin-dev:skill-development` and run its description-optimization loop.
-- `new skill via plugin-dev:skill-development: <kebab-name>`: hand creation to `plugin-dev:skill-development`. Do not invent the shape ad hoc.
+Follow each approved row's Routing exactly:
 
-If your environment ships a SKILL.md validator, run it on every touched skill before declaring done. Skip this step if it doesn't.
+- Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): the parent does it directly.
+- Substantive existing-skill edit, description tuning, or an approved new skill: use the runtime's available skill-authoring guidance and its draft / test / iterate process. Use **plugin-dev:skill-development** only when installed. Do not invent an unavailable tool or bypass approval.
 
-### 6. Summarize for the user
+If your environment ships a SKILL.md validator, run it on every touched skill before declaring done.
+
+## 6. Summarize for the user
 
 Short list, no preamble:
 
@@ -77,11 +75,13 @@ Short list, no preamble:
 
 ## Models
 
-Role defaults, stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`). A matching role line in the `pstack-models.md` override sheet overrides each at runtime; `/setup-pstack` writes it and lists its path per runtime.
+Role defaults, stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`). Where the runtime supports pstack model configuration, a matching line in `pstack-models.md` overrides these defaults. On omp, use native model roles and agent settings instead; do not load this sheet or pass a worker `model`. `/setup-pstack` follows the current runtime's configuration.
 
 - reflect tooling: `gpt-6.1-sol @medium`
 - reflect judgment, divergent, synthesizer: `gpt-6.1-sol @medium`
 
 ## Reasoning effort
+
+On omp, reasoning effort, model selection, fallback chains, and service tiers belong to native agent policy. Do not apply the pstack override-sheet or effort-agent instructions below on omp.
 
 A role value in the override sheet may name a reasoning effort after its model, as in `gpt-6.1-sol @xhigh`. Levels on Claude Code: `low`, `medium`, `high`, `xhigh`, `max`. Which ones apply depends on the model. A value without `@` takes the sheet's `default effort` line, a level or `session`, and `session` when the sheet has no such line. `session` sets no effort, so the dispatch is the usual one. Strip the suffix before reading the model: `inherit-parent` or `auto` still omits `model` at every level, and a model name is passed as `model`. On Claude Code, a level picks the effort agent from the `subagent_type` you would otherwise use. `pstack:poteto-agent` becomes `subagent_type: "pstack:poteto-agent-<level>"`. `general-purpose`, or no `subagent_type`, becomes `subagent_type: "pstack:effort-<level>"`. The effort agents set only `effort`, so the model you pass still decides the model. On Codex, pass the level as `spawn_agent`'s `reasoning_effort` and keep the usual instructions.

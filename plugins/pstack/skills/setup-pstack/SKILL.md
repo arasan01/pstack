@@ -1,6 +1,6 @@
 ---
 name: setup-pstack
-description: Configure which models pstack uses per role. Detects available models and writes the current runtime's override sheet. Use for /setup-pstack, "configure pstack models", changing pstack's model choices, or turning the SessionStart hook on or off.
+description: Configure pstack for the current runtime. On omp, inspect native role and agent settings without a parallel model sheet. Other builds configure pstack per-role models and routing. Use for /setup-pstack, "configure pstack models", or changing pstack setup.
 ---
 
 # Setup pstack
@@ -11,7 +11,7 @@ On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot
 
 On GitHub Copilot, follow [the Copilot setup](copilot.md) in place of steps 1, 3, 4, and 7 and step 6's header.
 
-On oh-my-pi (`omp`), follow [the omp setup](omp.md) for model detection, validation, reasoning effort, routing, and sheet wiring instead of the Claude-specific instructions below.
+On oh-my-pi (`omp`), follow [the omp setup](omp.md) instead of the model-sheet steps below. Native roles and agent settings own models, reasoning effort, and fallback. Do not create or load `pstack-models.md` or enable mandatory pstack routing. After the native setup, the optional project verification offers in steps 9 and 10 still apply.
 
 On another runtime, read [Other runtimes](#other-runtimes) below for where the sheet lives and how it loads; the steps are the same.
 
@@ -58,7 +58,7 @@ Write the current runtime's sheet with the shape below. Overwrite the whole file
 ```markdown
 # pstack model configuration
 
-Per-role model overrides for pstack skills. Each pstack SKILL.md names its defaults in a Models section; the values here override those defaults. Delete a line to use the skill default. `inherit-parent` and `auto` omit the child model override; native runtime policy determines selection. Every panel entry counts toward fan-out. Values separate a model from reasoning effort, as in `gpt-6.1-sol @xhigh`. On Codex, pass the bare slug as `model` and the level as `reasoning_effort`; on Pi, select the effort agent that passes `--thinking` to the child; on omp, translate to `provider/model:level`. Pass omp native role selectors unchanged when no effort override is requested. Claude Code requires explicitly selected supported models and uses pstack effort agents for their levels. `default effort` supplies the level when a value has no suffix; `session` adds no pstack effort override. `session hook: off` disables automatic pstack routing for the runtime's hook or adapter.
+Per-role model overrides for pstack skills. Each pstack SKILL.md names its defaults in a Models section; the values here override those defaults. Delete a line to use the skill default. `inherit-parent` and `auto` omit the child model override; native runtime policy determines selection. Every panel entry counts toward fan-out. Values separate a model from reasoning effort, as in `gpt-6.1-sol @xhigh`. On Codex, pass the bare slug as `model` and the level as `reasoning_effort`; on Pi, select the effort agent that passes `--thinking` to the child. This sheet is not used on omp; its native model roles and agent settings own selection and reasoning. Claude Code requires explicitly selected supported models and uses pstack effort agents for their levels. `default effort` supplies the level when a value has no suffix; `session` adds no pstack effort override. `session hook: off` disables automatic pstack routing for the runtime's hook or adapter.
 
 feature, refactoring: gpt-6.1-sol @medium
 bug-fix: gpt-6.1-sol @xhigh
@@ -82,6 +82,7 @@ default effort: session
 session hook: on
 ```
 
+
 ### 7. Wire it in
 
 On Claude Code, if `<config>/CLAUDE.md` does not already include `<config>/pstack-models.md`, append an `@` line naming the sheet's resolved path, such as `@~/.claude/pstack-models.md`, so the model rows load on every session. If the user prefers project scope, add the include to the project's `CLAUDE.md` instead.
@@ -96,16 +97,20 @@ Tell the user where the override was written, how its model rows load, and wheth
 
 Check whether the project has a way to drive the real app for proof (a project `verify` or `verify-*` skill, or an existing harness). If not, offer once: "want a project-local verification skill, so agents can drive the app the way a user does and prove changes work? I can generate one with /create-verification-skill." On yes, invoke [`/create-verification-skill`](../create-verification-skill/SKILL.md). On no, move on without pushing.
 
+### 10. Offer a formal verification skill (optional)
+
+If the project has no skill that runs a model checker, proof, or code-level verifier, offer [`/create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) once. It verifies a high-risk property and leaves a rerunnable project skill. On acceptance, follow that skill; otherwise continue without creating files.
+
 ## Other runtimes
 
-The role lines are the same everywhere. What differs is the sheet path, how the runtime loads it, and how you list models. Detect models with the runtime's own tool and never write a slug you have not seen listed. A runtime whose subagent call has no model parameter still gets the sheet, as the record of the user's choice, and applies it where it can. The `session hook` line applies to the Claude Code, Codex, and GitHub Copilot plugins and to the separate pstack Pi and omp adapters.
+Runtimes that support pstack model overrides use the role lines above, with the sheet path and loading method shown below. Detect models through that runtime's own tools. omp does not use this model sheet or its `session hook` setting; native role and agent configuration stays authoritative.
 
 | Runtime | Sheet | Load | List models | Status |
 | --- | --- | --- | --- | --- |
 | Claude Code | `<config>/pstack-models.md` | `@<config>/pstack-models.md` in `<config>/CLAUDE.md` | the `Agent` tool's model parameter | verified live |
 | Codex | `<codex-home>/pstack-models.md` | model rows: paste into `<codex-home>/AGENTS.md`; hook setting: read by the plugin | your configured Codex models, see [codex-tools.md](../poteto-mode/references/codex-tools.md#model-names) | hook contract tested; discovery verified |
 | Pi | `pstack-models.md` in the Pi agent directory, `$PI_CODING_AGENT_DIR` or `~/.pi/agent` | read by the pstack Pi extension, model rows and hook setting both; no include line | `pi --list-models`, see [pi-tools.md](../poteto-mode/references/pi-tools.md#model-names) and its `setup-pstack` note | extension contract tested offline; live results in the repository's `docs/pi-equivalence.md` |
-| oh-my-pi (`omp`) | `pstack-models.md` in the active omp agent directory, respecting `PI_CODING_AGENT_DIR` and profiles | read by the omp routing adapter on every agent start; no include line | `omp models --json`; see [omp setup](omp.md) | routing contract tested; native install, skill reads, and two-child dispatch verified on omp 18.7.0 |
+| oh-my-pi (`omp`) | none; native `modelRoles` and agent settings | native configuration; invoke pstack skills explicitly | `omp models --json`; see [omp setup](omp.md) | thin optional adapter; no pstack model or routing overrides |
 | GitHub Copilot (CLI and app) | `${COPILOT_HOME:-~/.copilot}/pstack-models.md` | the plugin hook checks it and injects its role lines at session start; skills-only installs read it with `view` | the `task` tool's `model` enum, see [copilot-tools.md](../poteto-mode/references/copilot-tools.md#model-names) | hook contract tested; CLI install smoke-tested |
 | opencode | `~/.config/opencode/pstack-models.md` | add the path to the `instructions` array in `opencode.json` | the `models` slash command in the session | from published docs, no live session |
 | Gemini CLI | `~/.gemini/pstack-models.md` | `@~/.gemini/pstack-models.md` in `~/.gemini/GEMINI.md` | the `model` slash command in the session | from published docs, no live session |
@@ -113,7 +118,7 @@ The role lines are the same everywhere. What differs is the sheet path, how the 
 
 ## Models
 
-Stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`).
+Stamped from `plugins/pstack/models.json` (edit there, rerun `tools/generate.mjs`). These are defaults for runtimes with pstack model configuration; omp uses its native roles and agent settings.
 
 - Available GPT models: `gpt-6.1-sol`, `gpt-6-luna`
 - Default panel: `gpt-6.1-sol @medium`, `gpt-6.1-sol @xhigh`, `gpt-6-luna @xhigh`

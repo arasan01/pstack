@@ -1,6 +1,90 @@
 {
   "substitutions": [
     {
+      "pattern": "subagent_type: \"comment-sicko\"",
+      "replacement": "subagent_type: \"pstack:comment-sicko\"",
+      "rationale": "upstream's lowercase comment reviewer still needs the Claude plugin namespace"
+    },
+    {
+      "regex": "\\*\\*Match the model to the job\\.\\*\\*[^\\n]*",
+      "files": "^skills/poteto-mode/SKILL\\.md$",
+      "replacement": "**Match effort to the job.** Use the role's configured model and the reasoning controls supported by the current runtime. Keep model selection, fallback chains, and service tiers under that runtime's policy. Do not rewrite model IDs or invent a per-call model or effort parameter. Native runtime mappings take precedence over this skill's default dispatch instructions.",
+      "rationale": "reasoning and speed are separate runtime controls, not Cursor model-slug suffixes"
+    },
+    {
+      "regex": "Defaults `grok-[^`]+` for code, `claude-[^`]+` for prose and judgment",
+      "replacement": "Role defaults are listed in [Models](#models)",
+      "rationale": "shared prose refers to the generator-owned model policy"
+    },
+    {
+      "regex": "strongest judgment model \\(`[^`]+`\\)",
+      "files": "^skills/poteto-mode/SKILL\\.md$",
+      "replacement": "strongest-judgment model (the `strongest judgment` role in [Models](#models))",
+      "rationale": "the port names its strongest role instead of embedding Cursor's model slug"
+    },
+    {
+      "pattern": "hardest changes read `hardest tasks`",
+      "replacement": "hardest changes read `strongest judgment`",
+      "rationale": "the port's model policy names this role strongest judgment"
+    },
+    {
+      "pattern": "Families go by prefix: `claude-*`, and `grok-*` with `cursor-grok-*` and `composer-*`.",
+      "replacement": "Use the model families exposed by the current runtime.",
+      "rationale": "Cursor-specific family aliases do not select models on the port's runtimes"
+    },
+    {
+      "regex": "A refused `composer-\\*` entry runs on `[^`]+`\\.",
+      "replacement": "If a configured entry is unavailable, report it instead of silently changing its model family.",
+      "rationale": "the runtime owns model availability and fallback selection"
+    },
+    {
+      "regex": " So `unlimited` turns [^\\n]*",
+      "files": "^skills/setup-pstack/SKILL\\.md$",
+      "replacement": " Use only reasoning levels supported by the selected model and the current runtime.",
+      "rationale": "Cursor's concrete budget examples do not describe the port's separate model and effort settings"
+    },
+    {
+      "pattern": "the `agent-transcripts/` directory the system prompt names",
+      "replacement": "the current workspace's transcript directory documented by the runtime mapping",
+      "rationale": "transcript discovery must follow the active runtime and stay within the workspace"
+    },
+    {
+      "pattern": "omit Task `model`",
+      "replacement": "omit the `Agent` tool's `model`",
+      "rationale": "the Claude-native prose names its actual delegation tool"
+    },
+    {
+      "pattern": "full Task schema including `environment`",
+      "replacement": "current runtime's delegation schema",
+      "rationale": "nested agents inherit the native runtime's tools and schema, not Cursor's environment field"
+    },
+    {
+      "regex": "- \\*\\*Worker / verifier\\.\\*\\* Always `environment: \"cloud\"`[^\\n]*",
+      "files": "^skills/poteto-mode/playbooks/orchestrate\\.md$",
+      "replacement": "- **Worker / verifier.** Use the current runtime's native delegation and isolation. Give each writer its own worktree or disjoint files. Use the project's driver skill when verification needs an app, CLI, simulator, or local credentials. Workers receive the context they need in their briefs. Run independent verification through a suitable native reviewer.",
+      "rationale": "worker placement follows native delegation and project drivers rather than Cursor cloud environments"
+    },
+    {
+      "pattern": "each a Cursor cloud agent, runs the change the way a user would with the matching control skill (such as `control-ui` or `control-cli` from `cursor-team-kit`)",
+      "replacement": "each independently delegated through the current runtime, runs the change the way a user would with the project's matching driver skill",
+      "rationale": "shipping verification uses the target product's driver and the native runtime's independent reviewers"
+    },
+    {
+      "pattern": "Each owner is a Cursor cloud agent that",
+      "replacement": "Each owner is an isolated background subagent that",
+      "rationale": "the port delegates locally and isolates writers rather than requiring Cursor cloud agents"
+    },
+    {
+      "pattern": "through its control skill (such as `control-ui` or `control-cli` from `cursor-team-kit`) or a named driver",
+      "replacement": "through the project's matching driver skill",
+      "rationale": "autopilot proof uses the actual product's driver instead of Cursor-only control skills"
+    },
+    {
+      "pattern": "`environment: \"cloud\"`, `run_in_background: true`, and the step 3 model, left unset for `auto` or `inherit-parent`. Use `environment: \"local\"` only when the worker needs access to something on the user's computer.",
+      "replacement": "`run_in_background: true` and the step 3 model where the runtime supports it, left unset for `auto` or `inherit-parent`. Follow the runtime mapping for native delegation and writer isolation.",
+      "rationale": "the renumbered swarm step delegates through the current runtime rather than a cloud environment field"
+    },
+    {
       "pattern": "`https://github.com/cursor/plugins/blob/main/pstack/` followed by its path",
       "replacement": "`https://github.com/arasan01/pstack/blob/main/plugins/pstack/` followed by its path",
       "rationale": "the repository copy of a fork skill file lives in arasan01/pstack under plugins/pstack"
@@ -48,13 +132,13 @@
       "rationale": "where Claude Code exposes its MCP servers"
     },
     {
-      "regex": "default to one each on `(?:claude|gpt|grok|gemini|composer)-[^`]+`, `(?:claude|gpt|grok|gemini|composer)-[^`]+`, `(?:claude|gpt|grok|gemini|composer)-[^`]+`\\.",
+      "regex": "default to one each on `(?:claude|gpt|grok|gemini|composer)-[^`]+`(?:, `(?:claude|gpt|grok|gemini|composer)-[^`]+`,| and) `(?:claude|gpt|grok|gemini|composer)-[^`]+`\\.",
       "files": "^skills/arena/SKILL\\.md$",
       "replacement": "run one each on the defaults in [Models](#models).",
       "rationale": "the runner defaults are stamped into the Models section"
     },
     {
-      "regex": "choose from `(?:claude|gpt|grok|gemini|composer)-[^`]+`, `(?:claude|gpt|grok|gemini|composer)-[^`]+`, `(?:claude|gpt|grok|gemini|composer)-[^`]+`\\.",
+      "regex": "choose from `(?:claude|gpt|grok|gemini|composer)-[^`]+`(?:, `(?:claude|gpt|grok|gemini|composer)-[^`]+`,| and) `(?:claude|gpt|grok|gemini|composer)-[^`]+`\\.",
       "files": "^skills/arena/SKILL\\.md$",
       "replacement": "choose from the runner defaults in [Models](#models).",
       "rationale": "the cross-judge pool defaults to the stamped runners"
@@ -66,7 +150,7 @@
       "rationale": "the fallback model is the stamped single-role default"
     },
     {
-      "regex": "use `(?:claude|gpt|grok|gemini|composer)-[^`]+`, `(?:claude|gpt|grok|gemini|composer)-[^`]+`, `(?:claude|gpt|grok|gemini|composer)-[^`]+`\\.",
+      "regex": "use `(?:claude|gpt|grok|gemini|composer)-[^`]+`(?:, `(?:claude|gpt|grok|gemini|composer)-[^`]+`,| and) `(?:claude|gpt|grok|gemini|composer)-[^`]+`\\.",
       "files": "^skills/architect/SKILL\\.md$",
       "replacement": "use the defaults in [Models](#models).",
       "rationale": "the runner defaults are stamped into the Models section"
@@ -234,6 +318,12 @@
       "files": "/SKILL\\.md$",
       "replacement": ", default in [Models](#models)",
       "rationale": "a role bullet's default model is stamped into the skill's Models section, never hard-coded in prose"
+    },
+    {
+      "regex": "(?:claude|grok)-[a-z0-9][a-z0-9.-]*",
+      "files": "^skills/(?:reflect|setup-pstack)/SKILL\\.md$",
+      "replacement": "inherit-parent",
+      "rationale": "upstream's inline configuration examples use the portable inheritance alias; generated Models sections still supply the port's actual defaults"
     },
     {
       "pattern": "the `pstack-models.mdc` rule and a default.",

@@ -151,21 +151,17 @@ export function piModelNamesSection(models) {
 
 export function ompModelNamesSection() {
   return (
-    "Skills default to `gpt-6.1-sol @medium` for ordinary roles and `gpt-6.1-sol @xhigh` for strongest judgment. " +
-    "The panel adds `gpt-6-luna @xhigh`, preserving three entries across two distinct models. Resolve each bare " +
-    "GPT name to an available OpenAI `provider/model` selector, then translate its effort as described below. " +
-    "Never replace a GPT default with Claude implicitly. A saved role row overrides the default with an exact " +
-    "`provider/model` selector or an omp-supported role selector such as `@task`, `@slow`, or `@plan`. Pass native " +
-    "role selectors unchanged so omp owns their configured model, effort, and fallback chain. " +
-    "`inherit-parent` and `auto` omit the child's `model`, leaving selection to omp's native agent policy. " +
-    "List the catalog with `omp models --json` and validate the chosen selector against the session's task schema. " +
-    "Never silently fall back to a different model when dispatch fails.\n\n" +
-    "Translate a sheet's `@<level>` suffix to omp's `provider/model:level` selector where supported; " +
-    "`default effort: session` adds no pstack effort override; native role effort still applies. Explicit effort with an inherited model uses " +
-    "the current-model selector `@default:<level>` if the runtime supports it. Do not dispatch Claude effort agents.\n\n" +
-    "For panels, dispatch one child per configured entry. Keep all three default entries, but disclose that " +
-    "two entries share a model at different effort levels. Different native roles also do not guarantee distinct " +
-    "models. See [omp setup](../../setup-pstack/omp.md)."
+    "On omp, model selection, reasoning effort, fallback chains, and service tiers belong to native " +
+    "`modelRoles` and agent settings. The model defaults and effort wrappers in pstack skills do not " +
+    "override those settings. Ordinary `task` entries have no `model` parameter; omit it and use the " +
+    "default task agent, a native specialist, or a user-configured agent appropriate to the work. " +
+    "Do not create per-model agents, translate pstack model names or effort suffixes, or use `eval` " +
+    "to bypass native dispatch policy.\n\n" +
+    "For panels, preserve independent candidates, review, and synthesis through the available native " +
+    "or user-configured agents, within omp's delegation and concurrency limits. Different agent names " +
+    "or reasoning levels do not establish model diversity. Disclose when distinct models cannot be " +
+    "confirmed. The omp adapter ignores `pstack-models.md`; setup inspects native configuration " +
+    "without creating a sheet or changing settings. See [omp setup](../../setup-pstack/omp.md)."
   );
 }
 
