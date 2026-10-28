@@ -1,4 +1,4 @@
-# NOTICE for the skills-only distribution
+# NOTICE for skills distribution
 
 This distribution contains MIT-licensed work from the sources below. The copyright notices and license terms travel beside this file.
 
@@ -10,4 +10,4 @@ This distribution contains MIT-licensed work from the sources below. The copyrig
 | `deslop`, `nuclear-code-quality-review`, `make-pr-easy-to-review`, `fix-ci`, `fix-merge-conflicts`, `get-pr-comments`, and `what-did-i-get-done` | [cursor/plugins/cursor-team-kit](https://github.com/cursor/plugins/tree/e46364b8be46000b7df0f260550cd712afbb8d36/cursor-team-kit) | (c) 2026 Cursor | [MIT](LICENSE-cursor-team-kit) |
 | Japanese prose rules integrated into `deslop` | [iKora128/stop-ai-slop-jp](https://github.com/iKora128/stop-ai-slop-jp) | (c) 2026 Daichi Nagashima | [MIT](LICENSE-stop-ai-slop-jp) |
 
-Michael Denyer's pstack-claude port changes runtime names, tool calls, model defaults, and supporting prose. The port's modifications and additions are (c) 2026 Michael Denyer under the same [MIT license](LICENSE). This distribution is maintained as the private arasan01/pstack hard fork. Its [repository notice](https://github.com/arasan01/pstack/blob/main/NOTICE.md) records provenance, its [change log](https://github.com/arasan01/pstack/blob/main/CHANGES.md) records releases, and [`tools/forks.json`](https://github.com/arasan01/pstack/blob/main/tools/forks.json) names each forked file and why. These repository links require access.
+Michael Denyer's pstack port changed runtime names, tool calls, model defaults, and supporting prose. The port's modifications and additions are (c) 2026 Michael Denyer under the same [MIT license](LICENSE). This distribution is maintained as the private arasan01/pstack hard fork, canonicalized for Oh My Pi (OMP). Its [repository notice](https://github.com/arasan01/pstack/blob/main/NOTICE.md) records provenance and its [change log](https://github.com/arasan01/pstack/blob/main/CHANGES.md) records releases. These repository links require access.

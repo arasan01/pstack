@@ -5,11 +5,10 @@ import { homedir, tmpdir } from "node:os";
 import { dirname, join, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 
-import { defaultSettings, PSTACK_STATE_DIR } from "../plugins/pstack/pi/config.ts";
-import { audit, classify, defaultTranscriptRoots, duSize, lastChats, pathSpellings, symlinkTargets } from "../plugins/pstack/skills/poteto-mode/scripts/worktree-audit.mjs";
+import { audit, classify, defaultTranscriptRoots, duSize, lastChats, pathSpellings, symlinkTargets } from "../skills/poteto-mode/scripts/worktree-audit.mjs";
 import { removeDuring } from "./remove-during.mjs";
 
-const script = join(import.meta.dir, "../plugins/pstack/skills/poteto-mode/scripts/worktree-audit.mjs");
+const script = join(import.meta.dir, "../skills/poteto-mode/scripts/worktree-audit.mjs");
 // node's ESM loader takes a file URL, not a drive-lettered path.
 const scriptUrl = pathToFileURL(script).href;
 const noNode = spawnSync("node", ["--version"]).status !== 0;
@@ -341,20 +340,6 @@ test.each(["", "work"])("an OMP session under the selected %s profile marks only
   expect(rowFor(rows, quiet).slice(6, 8)).toEqual(["-", "safe"]);
 });
 
-for (const dir of ["sessions", "archived_sessions"]) {
-  test(`a Codex session in ~/.codex/${dir} marks the worktree it ran in as a recent chat`, () => {
-    const fixture = createFixture();
-    const chatted = addWorktree(fixture, "codex-chatted");
-    const session = join(fixture.root, ".codex", dir, "2026/10/05/rollout.jsonl");
-    mkdirSync(dirname(session), { recursive: true });
-    writeFileSync(session, `${JSON.stringify({ type: "session_meta", payload: { cwd: chatted } })}\n`);
-    const transcripts = defaultTranscriptRoots({ env: {}, home: fixture.root });
-    expect(transcripts).toEqual([join(fixture.root, ".codex", dir)]);
-    const { rows, warnings } = runAudit(fixture, { transcripts });
-    expect(warnings).toEqual([]);
-    expect(rowFor(rows, chatted).slice(6, 8)).toEqual([ymd(Math.floor(Date.now() / 1000)), "verify-recent-chat"]);
-  });
-}
 
 describe("lastChats matches a path as JSONL spells it, never a sibling's prefix", () => {
   const scan = (path, cwd, spellings = [path]) => {
@@ -568,28 +553,15 @@ describe("pathSpellings", () => {
 
 describe("default transcripts roots", () => {
   const home = "/home/u";
-  const claude = "/home/u/.claude/projects";
   // These paths are POSIX literals, which path.join spells with backslashes on Windows.
   const roots = ({ exists, ...options }) =>
     defaultTranscriptRoots({ ...options, home, exists: (path) => exists(gitPath(path)) }).map(gitPath);
 
-  test("every runtime directory that exists, Pi's under PI_CODING_AGENT_DIR when set", () => {
-    const present = new Set([claude, "/home/u/.codex/sessions", "/pi/sessions", "/pi/pstack", "/home/u/.pi/agent/sessions"]);
-    const exists = (path) => present.has(path);
-    expect(roots({ env: { PI_CODING_AGENT_DIR: "/pi" }, exists })).toEqual([
-      claude,
-      "/home/u/.codex/sessions",
-      "/pi/sessions",
-      "/pi/pstack",
-    ]);
-    expect(roots({ env: {}, exists })).toEqual([claude, "/home/u/.codex/sessions", "/home/u/.pi/agent/sessions"]);
-  });
-
   test("OMP's default root is included without leaking it through an explicit agent override", () => {
-    const present = new Set(["/home/u/.omp/agent/sessions", "/pi/sessions", "/pi/pstack"]);
+    const present = new Set(["/home/u/.omp/agent/sessions"]);
     const exists = (path) => present.has(path);
     expect(roots({ env: {}, exists })).toEqual(["/home/u/.omp/agent/sessions"]);
-    expect(roots({ env: { PI_CODING_AGENT_DIR: "/pi" }, exists })).toEqual(["/pi/sessions", "/pi/pstack"]);
+    expect(roots({ env: { PI_CODING_AGENT_DIR: "/pi" }, exists })).toEqual(["/pi/sessions"]);
   });
 
   test.each([
@@ -605,11 +577,11 @@ describe("default transcripts roots", () => {
     expect(roots({ env, exists: (path) => present.has(path) })).toEqual([selected]);
   });
 
-  test("a named OMP profile ignores the agent override while Pi retains it", () => {
+  test("a named OMP profile ignores the agent override", () => {
     const selected = "/home/u/.omp/profiles/work/agent/sessions";
     const present = new Set(["/pi/sessions", "/home/u/.omp/agent/sessions", selected]);
     expect(roots({ env: { OMP_PROFILE: "work", PI_CODING_AGENT_DIR: "/pi" }, exists: (path) => present.has(path) }))
-      .toEqual(["/pi/sessions", selected]);
+      .toEqual([selected]);
   });
 
   test("OMP routes sessions to initialized XDG data roots, not state or other profiles", () => {
@@ -626,39 +598,10 @@ describe("default transcripts roots", () => {
     expect(roots({ env: { ...env, OMP_PROFILE: "work" }, exists, platform: "darwin" }))
       .toEqual(["/data/omp/profiles/work/sessions"]);
     expect(roots({ env, exists, platform: "win32" })).toEqual(["/home/u/.omp/agent/sessions"]);
-    expect(roots({ env: { ...env, PI_CODING_AGENT_DIR: "/pi" }, exists, platform: "linux" })).toEqual([claude]);
   });
 
-  test("Codex's sessions and archived_sessions, under CODEX_HOME when set", () => {
-    const present = new Set(["/home/u/.codex/sessions", "/home/u/.codex/archived_sessions", "/cx/sessions", "/cx/archived_sessions"]);
-    const exists = (path) => present.has(path);
-    expect(roots({ env: {}, exists })).toEqual(["/home/u/.codex/sessions", "/home/u/.codex/archived_sessions"]);
-    expect(roots({ env: { CODEX_HOME: "/cx" }, exists })).toEqual(["/cx/sessions", "/cx/archived_sessions"]);
-  });
-
-  test("Claude Code's projects under CLAUDE_CONFIG_DIR when set", () => {
-    const exists = (path) => path === claude || path === "/cc/projects";
-    expect(roots({ env: { CLAUDE_CONFIG_DIR: "/cc" }, exists })).toEqual(["/cc/projects"]);
-  });
-
-  test("Copilot's session-state, under COPILOT_HOME when set", () => {
-    const present = new Set([claude, "/cp/session-state", "/home/u/.copilot/session-state"]);
-    const exists = (path) => present.has(path);
-    expect(roots({ env: { COPILOT_HOME: "/cp" }, exists })).toEqual([claude, "/cp/session-state"]);
-    expect(roots({ env: {}, exists })).toEqual([claude, "/home/u/.copilot/session-state"]);
-  });
-
-  test("Claude Code's directory when no runtime directory exists, so the audit warns about it", () => {
-    expect(roots({ env: {}, exists: () => false })).toEqual([claude]);
-  });
-
-  test.each([
-    ["PI_CODING_AGENT_DIR", { PI_CODING_AGENT_DIR: "/pi" }],
-    ["the default agent directory", {}],
-  ])("the Pi roots are where the extension keeps sessions and agent state under %s", (_, env) => {
-    const { agentDir } = defaultSettings(() => 0, env);
-    const roots = defaultTranscriptRoots({ env, home: homedir(), exists: () => true });
-    expect(roots).toEqual(expect.arrayContaining([join(agentDir, "sessions"), join(agentDir, PSTACK_STATE_DIR)]));
+  test("OMP's default directory is returned when no session directory exists", () => {
+    expect(roots({ env: {}, exists: () => false })).toEqual(["/home/u/.omp/agent/sessions"]);
   });
 });
 

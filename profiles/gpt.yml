@@ -1,0 +1,18 @@
+# Example native OMP overlay. Confirm these selectors with omp models --json.
+modelRoles:
+  default: openai-codex/gpt-6.1-sol:xhigh
+  smol: openai-codex/gpt-6-luna:high
+  slow: openai-codex/gpt-6.1-sol:max
+  plan: openai-codex/gpt-6.1-sol:xhigh
+  task: "@slow"
+  review: openai-codex/gpt-6.1-sol:xhigh
+
+task:
+  agentModelOverrides:
+    task: "@task"
+    sonic: "@smol"
+    scout: "@smol"
+    reviewer: "@review"
+
+retry:
+  modelFallback: false

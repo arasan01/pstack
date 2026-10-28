@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const logScript = fileURLToPath(new URL("../plugins/pstack/skills/show-me-your-work/scripts/log.sh", import.meta.url));
+const logScript = fileURLToPath(new URL("../skills/show-me-your-work/scripts/log.sh", import.meta.url));
 
 // A spreadsheet runs a leading = + - @ as a formula, and a quote-aware TSV
 // reader unwraps a leading " (or runs an unterminated one into later rows).

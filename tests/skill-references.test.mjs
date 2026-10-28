@@ -4,17 +4,31 @@
 // renamed directory left dangling references no tool could see.
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { join, relative } from "node:path";
+import { relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { agentSkills } from "../tools/generate.mjs";
-import { markdownFiles } from "../tools/validate-skills.mjs";
+import { agentSkills, markdownFiles } from "../tools/validate-package.mjs";
 
-const skillsDir = fileURLToPath(new URL("../plugins/pstack/skills", import.meta.url));
+const skillsDir = fileURLToPath(new URL("../skills", import.meta.url));
 const names = new Set(agentSkills(skillsDir).map((s) => s.name));
 
 // Runtime built-ins and explanatory mentions of Cursor commands.
-const BUILT_IN_SLASH = new Set(["loop", "run", "verify", "command", "goal", "name", "compact", "clear", "hooks", "fleet", "add-dir", "resume"]);
+const BUILT_IN_SLASH = new Set([
+  "loop",
+  "run",
+  "verify",
+  "command",
+  "goal",
+  "name",
+  "compact",
+  "clear",
+  "hooks",
+  "fleet",
+  "add-dir",
+  "resume",
+  "help",
+  "pstack",
+]);
 
 function references(text) {
   const found = [];
@@ -39,5 +53,4 @@ describe("prose skill references", () => {
     }
     expect(dangling).toEqual([]);
   });
-
 });

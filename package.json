@@ -1,8 +1,8 @@
 {
   "name": "pstack",
   "private": true,
-  "version": "0.9.78",
-  "description": "If you want to go fast, go deep first. pstack helps you write less, but higher quality code. rigorous agent workflows you can parallelize with confidence. Pi package of the Claude Code plugin; skills are shared, tool names resolve via skills/poteto-mode/references/pi-tools.md. Original pstack by Lauren Tan (poteto).",
+  "version": "0.10.0",
+  "description": "Rigorous agent workflows, skills, and principles for Oh My Pi (OMP).",
   "author": {
     "name": "arasan01",
     "url": "https://github.com/arasan01"
@@ -10,40 +10,31 @@
   "homepage": "https://github.com/arasan01/pstack",
   "repository": "https://github.com/arasan01/pstack",
   "license": "MIT",
+  "type": "module",
   "keywords": [
-    "pi-package",
+    "omp-package",
     "pstack",
-    "poteto-mode",
-    "workflow",
+    "oh-my-pi",
+    "skills",
+    "workflows",
     "principles",
     "agent-style",
-    "subagents",
-    "unslop",
-    "claude-code",
-    "skills",
-    "tdd",
     "code-review",
-    "parallel-agents",
-    "codex",
-    "opencode",
-    "gemini-cli",
-    "prime-agent"
+    "tdd"
   ],
-  "pi": {
-    "skills": [
-      "./plugins/pstack/skills"
-    ],
+  "omp": {
     "extensions": [
-      "./plugins/pstack/pi/index.ts"
+      "./omp/index.ts"
     ]
   },
-  "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "*",
-    "typebox": "*"
+  "scripts": {
+    "validate": "node tools/validate-package.mjs",
+    "test": "bun test tests/",
+    "test:unit": "bun test tests/",
+    "test:smoke": "bun tools/omp-smoke.mjs"
   },
-  "peerDependenciesMeta": {
-    "@earendil-works/pi-coding-agent": {
-      "optional": true
-    }
+  "devDependencies": {
+    "@oh-my-pi/pi-natives": "18.13.2",
+    "yaml": "^2.7.0"
   }
 }

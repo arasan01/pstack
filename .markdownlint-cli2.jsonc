@@ -15,7 +15,6 @@
   },
   "ignores": [
     "**/node_modules/**",
-    ".git/**",
-    ".agents/**"
+    ".git/**"
   ]
 }

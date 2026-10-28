@@ -1,73 +1,42 @@
 # pstack
 
-Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) is an opinionated Cursor skill stack that improves agent outcomes. [arasan01/pstack](https://github.com/arasan01/pstack) is a private hard fork of Michael Denyer's Claude Code port, with support for Codex, oh-my-pi, Pi, GitHub Copilot and other agent harnesses. It tracks Cursor's upstream skills and also carries named policy forks, each declared in [`tools/forks.json`](tools/forks.json).
+[pstack](https://github.com/cursor/plugins/tree/main/pstack) is an opinionated skill stack created by Lauren Tan (poteto). This fork of Michael Denyer's port targets Oh My Pi (OMP) exclusively, with native GPT and DeepSeek model-role examples.
 
-Tell `poteto-mode` your goal and it will invoke the correct workflow for the task. This fork is for developing your own projects, not Cursor itself. Skills select commands, verification drivers, and diagnostic tools from the target repository and platform, whether you are working on a web app, native/mobile app, CLI, service, library, or development tool. Cursor attribution describes provenance, not a required product or toolchain.
+Tell `poteto-mode` your goal and it will invoke the correct workflow for the task. This package is for developing your own projects. Skills select commands, verification drivers, and diagnostic tools from the target repository and platform, whether you are working on a web app, native/mobile app, CLI, service, library, or development tool.
 
-For concurrency bugs and invariants that tests cannot reach, use [create-formal-verification-skill](plugins/pstack/skills/create-formal-verification-skill/SKILL.md), then [maintain-formal-verification-skill](plugins/pstack/skills/maintain-formal-verification-skill/SKILL.md) as the code changes. The bundled [statechart](plugins/pstack/skills/statechart/SKILL.md) checks TLA+ models and draws state transitions and violation paths. The separate [agent-formal-verify](https://github.com/michael-denyer/agent-formal-verify) plugin remains an optional alternative, not a dependency.
+For concurrency bugs and invariants that tests cannot reach, use [create-formal-verification-skill](skills/create-formal-verification-skill/SKILL.md), then [maintain-formal-verification-skill](skills/maintain-formal-verification-skill/SKILL.md) as the code changes. The bundled [statechart](skills/statechart/SKILL.md) checks TLA+ models and draws state transitions and violation paths.
 
-## Install
+## Installation
 
-This repository is private. Installations need GitHub access to `arasan01/pstack` and authentication in the relevant runtime or Git client. For a local installation, run `gh repo clone arasan01/pstack` after `gh auth login`, then use the checkout's package or shared-skills instructions below.
+### OMP package install
 
-### Claude Code
-
-Run in Claude Code:
-
-```text
-/plugin marketplace add arasan01/pstack
-/plugin install pstack@pstack
-```
-
-### Codex
-
-Run in your terminal:
+To install pstack into OMP, run in your terminal:
 
 ```shell
-codex plugin marketplace add arasan01/pstack
-codex plugin add pstack@pstack
+omp install github:arasan01/pstack
 ```
 
-### oh-my-pi (omp)
-
-From this checkout's root, run:
+For a local checkout or development clone:
 
 ```shell
-omp install ./plugins/pstack
+cd pstack
+omp install .
 ```
 
-Start a new omp session, then request the skill you need by name, such as `poteto-mode`, `sharpen`, or `statechart`. The separate [omp package](plugins/pstack/package.json) loads the shared skills and a thin runtime mapping, not the Pi extension. pstack does not require its wrapper agents, install mandatory task routing, or load a parallel model sheet. Native agents, `modelRoles`, permissions, delegation, reasoning, fallback, and lifecycle remain in control. `setup-pstack` explains the native setup without changing it.
-
-This links the checkout. Keep it at this path, and update it to update the installed skills. See [omp runtime details](docs/reference.md#oh-my-pi-omp) for native model configuration and differences from Pi.
-
-### Pi
-
-Run in your terminal:
+To load the extension for a single session without installing:
 
 ```shell
-pi install git:github.com/arasan01/pstack
+omp -e .
 ```
 
-The package loads the skills and the pstack Pi extension, which adds the subagent, question, and wake-up tools the skills use, plus `/loop` and the routing instruction. Invoke a skill with `/skill:<name>`.
+### Usage
 
-### GitHub Copilot
+Start an omp session and request the skill you need by name, such as `poteto-mode`, `sharpen`, `architect`, `interrogate`, or `statechart`.
 
-Run in your terminal:
-
-```shell
-copilot plugin marketplace add arasan01/pstack
-copilot plugin install pstack@pstack
-```
-
-This installs pstack for the Copilot CLI and the GitHub Copilot app, which share `~/.copilot`. Start a new session afterwards. Copilot ships no default pstack models, so the first skill that needs one runs `setup-pstack` to pick from the models your account lists, and later sessions reuse that choice.
-
-The Copilot build is tested on Copilot CLI 1.0.87 through 1.0.92. On those versions the routing hook's context reaches the session alongside other plugins' session-start context. If a later version keeps only one plugin's context, `setup-pstack` offers a [standing instruction](plugins/pstack/skills/setup-pstack/copilot.md#wire-it-in) for `~/.copilot/copilot-instructions.md` instead. On 1.0.92, once the CLI caches its computer-use experiment assignment, `copilot -p` sessions list no plugin skills and a `skill` call returns "Skill not found". Interactive sessions, the hooks, and the agents are unaffected.
-
-Where a runtime uses pstack model defaults, the shared skills select OpenAI GPT models with explicit reasoning effort. Panels retain three workers across two distinct models. Codex passes the model and `reasoning_effort` separately; Claude Code requires an explicitly supported override rather than an automatic substitution. omp does not import these defaults or panel models; its native role and agent configuration owns those choices.
-
-On Claude Code, Codex, Pi, and GitHub Copilot, `setup-pstack` configures model defaults, reasoning effort, and automatic routing. The plugin installs hooks on Claude Code, Codex, and Copilot; Codex asks you to trust them through `/hooks`. Pi's separate adapter injects the routing instruction. omp is explicit-invocation only and ignores old pstack model sheets. In Claude Code and the Copilot CLI, use `/pstack:setup-pstack`.
-
-For Prime Agent, OpenCode, Gemini CLI, or skills-only installs for any harness, see [shared installation](docs/reference.md#shared-skills-installation).
+pstack integrates cleanly with native OMP execution:
+- **Native lifecycle and roles**: Native `modelRoles`, `task.agentModelOverrides`, permissions, delegation, reasoning, fallback, and session lifecycle remain authoritative.
+- **No foreign wrappers**: pstack does not require wrapper agents, subprocess runtimes, or replacement task tools.
+- **Readonly root setup**: `setup-pstack` provides readonly guidance and diagnostics for native model roles and verification readiness; it never mutates global or user settings unless you explicitly choose to persist configuration.
 
 ## Getting started
 
@@ -75,27 +44,27 @@ For Prime Agent, OpenCode, Gemini CLI, or skills-only installs for any harness, 
 Use poteto-mode to fix the search filter resetting when I change pages.
 ```
 
-For a bug, it reproduces the failure, uses `how` and `why` to investigate, delegates the fix, then reruns the failing case. If the fix crosses a function boundary, it brings in `architect` before implementation. You receive the fix and the failing and passing evidence.
+For a bug, it reproduces the failure, investigates the cause, chooses design or delegation work when warranted, and reruns the failing case. Investigation-only and planning-only requests stop at their requested deliverable; they do not automatically become implementation or PR work.
 
-[Other playbooks](plugins/pstack/skills/poteto-mode/SKILL.md#playbooks) cover planning, features, refactoring, performance issues, investigations, prototypes, PR maintenance, shipping, and longer projects.
+[Other playbooks](skills/poteto-mode/SKILL.md#playbooks) cover planning, features, refactoring, performance issues, investigations, prototypes, PR maintenance, shipping, and longer projects.
 
-![poteto-mode on Claude Code, Codex, and Pi turns a request into verified work. Choose a playbook, plan and delegate with architect, arena, or swarm, then review and verify with interrogate, tests, and measurements. Project playbooks customize the workflow, and setup-pstack configures the model and reasoning effort per role. Supporting skills include how, why, and unslop.](assets/pstack-overview.png)
+![poteto-mode turns a request into verified work. Choose a playbook, plan and delegate with architect, arena, or swarm, then review and verify with interrogate, tests, and measurements. Supporting skills include how, why, and unslop.](assets/pstack-overview.png)
 
 ## Details
 
 - [Skills and slash commands](docs/reference.md#slash-commands)
-- [Runtime setup](docs/reference.md#runtime-support)
-- [Models and dependencies](docs/reference.md#configuration-and-dependencies)
-- [Maintenance and port scope](docs/reference.md#maintenance)
+- [Model guidance and configuration](docs/models.md)
+- [Verification procedures](docs/verification.md)
+- [Runtime reference](docs/reference.md)
 
 ## Data handling
 
-pstack has no server or telemetry. Anything its skills ask your agent to read, including session transcripts, goes to your model provider. Scripts run locally, and PR tools use your GitHub CLI login.
+pstack has no server or telemetry. Anything its skills ask your agent to read goes directly to your configured model provider. Scripts run locally, and PR tools use your local GitHub CLI login.
 
 ## Contributing
 
-Thanks for helping make this port better. Bug reports, documentation fixes, and runtime improvements are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the checks and where your change belongs. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+Bug reports, documentation fixes, and skill improvements are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development checks and workflows. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
-This port, including its modifications and additions, is also [MIT-licensed](LICENSE), © 2026 Michael Denyer. Original pstack © 2026 Lauren Tan; imported cursor-team-kit skills © 2026 Cursor. Japanese prose rules from stop-ai-slop-jp are © 2026 Daichi Nagashima under [MIT](LICENSE-stop-ai-slop-jp). See [LICENSE-cursor-team-kit](LICENSE-cursor-team-kit) and [NOTICE.md](NOTICE.md).
+This package and its modifications are [MIT-licensed](LICENSE), © 2026 Michael Denyer. Original pstack © 2026 Lauren Tan; imported cursor-team-kit skills © 2026 Cursor. Japanese prose rules from stop-ai-slop-jp are © 2026 Daichi Nagashima under [MIT](LICENSE-stop-ai-slop-jp). See [LICENSE-cursor-team-kit](LICENSE-cursor-team-kit) and [NOTICE.md](NOTICE.md).

@@ -3,11 +3,11 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { checkPlaybooks } from "../plugins/pstack/skills/poteto-mode/scripts/check-playbooks.mjs";
+import { checkPlaybooks } from "../skills/poteto-mode/scripts/check-playbooks.mjs";
 
 setDefaultTimeout(30_000);
 
-const script = join(import.meta.dir, "../plugins/pstack/skills/poteto-mode/scripts/check-playbooks.mjs");
+const script = join(import.meta.dir, "../skills/poteto-mode/scripts/check-playbooks.mjs");
 
 function run(playbooks, { throughSymlink = false, cwd = ".", args = ["."] } = {}) {
   // The script reports the resolved working directory; macOS tmpdir() sits behind the /var symlink.
@@ -46,6 +46,20 @@ function checkFixture(text) {
 }
 
 describe("project playbooks", () => {
+  test("native .omp playbooks cannot bypass missing-base validation", () => {
+    const root = mkdtempSync(join(tmpdir(), "pstack-native-playbooks-"));
+    try {
+      mkdirSync(join(root, ".omp/playbooks"), { recursive: true });
+      writeFileSync(join(root, ".omp/playbooks/local.md"), "---\nextends: missing-base\nwhen: Local work.\n---\n");
+      const problems = checkPlaybooks(root);
+      expect(problems.some(problem => problem.includes(".omp/playbooks/local.md") && problem.includes("missing-base"))).toBe(true);
+      writeFileSync(join(root, ".omp/playbooks/local.md"), "---\nextends: investigation\nwhen: Local work.\n---\n");
+      expect(checkPlaybooks(root)).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   test("a change anchored on a bundled step passes", () => {
     const problems = checkFixture('---\nextends: bug-fix\nwhen: Use it for any bug report.\n---\n- **In** "Binary-search the cause": compare with main.\n');
     expect(problems).toEqual([]);
@@ -101,20 +115,6 @@ describe("project playbooks", () => {
     });
   });
 
-  test("a root with no .agents/playbooks directory passes and the check says so", () => {
-    expect(run(null)).toEqual({
-      code: 0,
-      out: "No project playbooks to check: <root>/.agents/playbooks does not exist.\n",
-    });
-  });
-
-  test("from a subdirectory the check names the directory it looked for and does not report a match", () => {
-    const result = run({ "ship.md": "---\nextends: shipping-v2\nwhen: Use it to ship.\n---\n" }, { cwd: "src", args: [] });
-    expect(result).toEqual({
-      code: 0,
-      out: "No project playbooks to check: <root>/src/.agents/playbooks does not exist.\n",
-    });
-  });
 
   test("a root that does not exist is an error", () => {
     expect(run(null, { args: ["nope"] })).toEqual({ code: 1, out: "<root>/nope is not a directory\n" });
