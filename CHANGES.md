@@ -12,6 +12,7 @@ pstack now targets Oh My Pi exclusively:
 - A real-OMP smoke runner checks installed skill/extension discovery, local readiness, investigation, planning boundaries, exported implementation behavior, and native delegated model identities. Unavailable models and fallback/error execution cannot qualify.
 - Removed foreign-runtime manifests, hooks, model sheets, wrapper agents, generation/sync machinery, and obsolete tests. Retained useful orchestration, transcript/worktree auditing, formal verification, statechart tooling, licenses, and attribution.
 - Package validation reads real YAML and native `hide` metadata. CI validates the root package and retained tooling.
+- Rewrote README for OMP installation, workflows, and model roles. Documented marketplace refresh/upgrade and the separate named upgrade required for a GitHub-installed package.
 
 ## 0.9.78 - sync upstream skills and keep omp native
 
