@@ -2,6 +2,10 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## 0.10.1 - restore OMP marketplace updates
+
+Restored `.omp-plugin/marketplace.json` with the existing `pstack@pstack` identity and the repository root as its source. Existing marketplace registrations can update without reinstalling. Simplified README to installation, updates, and usage, removing model configuration and defensive prose.
+
 ## 0.10.0 - OMP-native workflows and model qualification
 
 pstack now targets Oh My Pi exclusively:
