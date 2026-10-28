@@ -1,0 +1,18 @@
+# Example native OMP overlay. Both families must be available and exercised.
+modelRoles:
+  default: openai-codex/gpt-6.1-sol:xhigh
+  smol: deepseek/deepseek-flash:high
+  slow: openai-codex/gpt-6.1-sol:max
+  plan: openai-codex/gpt-6.1-sol:xhigh
+  task: "@slow"
+  review: deepseek/deepseek-v4-pro:high
+
+task:
+  agentModelOverrides:
+    task: "@task"
+    sonic: "@smol"
+    scout: "@smol"
+    reviewer: "@review"
+
+retry:
+  modelFallback: false

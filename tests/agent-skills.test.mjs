@@ -9,116 +9,35 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
   agentSkills,
-  PORTABLE_ASSETS,
-  plan,
-  problems,
+  parseFrontmatter,
   publicSkills,
-} from "../tools/generate.mjs";
-import { validateProsePaths, validateSkillsTree, walk } from "../tools/validate-skills.mjs";
+  validateProsePaths,
+  validateSkillsTree,
+} from "../tools/validate-package.mjs";
 
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
-const skillsDir = join(repoRoot, "plugins/pstack/skills");
-const requiredPortableFiles = [
-  "poteto-mode/references/agents/comment-sicko.md",
-  "poteto-mode/references/licenses/LICENSE",
-  "poteto-mode/references/licenses/LICENSE-cursor-team-kit",
-  "poteto-mode/references/licenses/NOTICE.md",
-];
+const skillsDir = join(repoRoot, "skills");
 
 describe("shared Agent Skills tree", () => {
   test("public skills include poteto-mode and exclude every principle leaf", () => {
-    const names = publicSkills(skillsDir);
-    expect(names).toContain("poteto-mode");
-    expect(names.some((n) => n.startsWith("principle-"))).toBe(false);
-  });
-
-  test("the working tree breaks no cross-file contract", () => {
-    expect(problems(repoRoot)).toEqual([]);
-  });
-
-  test("prose naming a real plugin file outside the skills tree fails the boundary check", () => {
-    const plugin = mkdtempSync(join(tmpdir(), "pstack-prose-paths-"));
-    const root = join(plugin, "skills");
-    try {
-      mkdirSync(join(plugin, "agents"), { recursive: true });
-      writeFileSync(join(plugin, "agents/comment-sicko.md"), "# agent\n");
-      const skill = join(root, "example");
-      mkdirSync(skill, { recursive: true });
-      for (const prose of [
-        "Read `agents/comment-sicko.md` in full first.",
-        "Read `./agents/comment-sicko.md` in full first.",
-        "The `agents/comment-sicko.md` file ships only with the plugin.",
-        "Open `../../agents/comment-sicko.md`.",
-      ]) {
-        writeFileSync(join(skill, "SKILL.md"), `# Example\n\n${prose}\n`);
-        expect(() => validateProsePaths(root)).toThrow("agents/comment-sicko.md is not installed with the skills tree");
-      }
-    } finally {
-      rmSync(plugin, { recursive: true, force: true });
+    const skills = agentSkills(skillsDir);
+    const pub = publicSkills(skillsDir);
+    expect(pub).toContain("poteto-mode");
+    for (const name of pub) {
+      expect(name.startsWith("principle-")).toBe(false);
+    }
+    const principles = skills.filter((s) => s.name.startsWith("principle-"));
+    expect(principles.length).toBeGreaterThan(0);
+    for (const p of principles) {
+      expect(p.hidden).toBe(true);
     }
   });
 
-  test("prose paths that resolve inside the tree or to nothing are left alone", () => {
-    const plugin = mkdtempSync(join(tmpdir(), "pstack-prose-allowed-"));
-    const root = join(plugin, "skills");
-    try {
-      mkdirSync(join(plugin, "hooks"), { recursive: true });
-      mkdirSync(join(root, "mode/playbooks"), { recursive: true });
-      mkdirSync(join(root, "mode/references"), { recursive: true });
-      writeFileSync(join(root, "mode/playbooks/babysit.md"), "# playbook\n");
-      writeFileSync(
-        join(root, "mode/references/triage.md"),
-        [
-          "# Reference",
-          "",
-          "Read `../playbooks/babysit.md` first.",
-          "Write the log to `/tmp/<slug>-resume.md` and run `/setup-pstack`.",
-          "Edit `plugins/pstack/models.json`, then rerun `tools/generate.mjs`.",
-          "Cursor keeps rules in `.cursor/rules/`; Claude Code has no `hooks/nope.md`.",
-        ].join("\n"),
-      );
-      expect(() => validateProsePaths(root)).not.toThrow();
-    } finally {
-      rmSync(plugin, { recursive: true, force: true });
-    }
-  });
-
-  test("walk returns a sorted listing regardless of directory order", () => {
-    const root = mkdtempSync(join(tmpdir(), "pstack-walk-"));
-    try {
-      for (const name of ["zeta", "alpha", "mid"]) {
-        mkdirSync(join(root, name));
-        writeFileSync(join(root, name, "SKILL.md"), "# x\n");
-      }
-      expect(walk(root).map((p) => p.slice(root.length + 1))).toEqual([
-        "alpha/SKILL.md",
-        "mid/SKILL.md",
-        "zeta/SKILL.md",
-      ]);
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
-  });
-
-  test("an installed node_modules under a skill is not validated", () => {
-    const root = mkdtempSync(join(tmpdir(), "pstack-skills-links-"));
-    const vendored = join(root, "example/scripts/node_modules/dep");
-    mkdirSync(vendored, { recursive: true });
-    writeFileSync(join(root, "example/SKILL.md"), "# Example\n");
-    writeFileSync(join(vendored, "Readme.md"), "[docs](./docs/missing.md)\nRead `../../../../etc/passwd`.\n");
-
-    try {
-      expect(() => validateSkillsTree(root)).not.toThrow();
-      expect(() => validateProsePaths(root)).not.toThrow();
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
-  });
 
   test("a bare missing markdown target fails the boundary check", () => {
     const root = mkdtempSync(join(tmpdir(), "pstack-skills-links-"));
@@ -169,7 +88,7 @@ describe("shared Agent Skills tree", () => {
 
     try {
       expect(() => validateSkillsTree(root)).toThrow(
-        "example/SKILL.md -> ../../outside.md (escapes skills tree)",
+        "example/SKILL.md -> ../../outside.md (escapes package boundary)",
       );
     } finally {
       rmSync(root, { recursive: true, force: true });
@@ -188,57 +107,10 @@ describe("shared Agent Skills tree", () => {
 
     try {
       expect(() => validateSkillsTree(root)).toThrow(
-        "example/SKILL.md -> linked.md (escapes skills tree through symlink)",
+        "example/SKILL.md -> linked.md (escapes package boundary through symlink)",
       );
     } finally {
       rmSync(parent, { recursive: true, force: true });
-    }
-  });
-
-  test("every vendored subagent definition has a skill that tells Codex to read it", () => {
-    const prose = walk(skillsDir)
-      .filter((file) => file.endsWith(".md"))
-      .map((file) => readFileSync(file, "utf8"))
-      .join("\n");
-    const vendored = PORTABLE_ASSETS.map(({ target }) => target).filter((target) => target.includes("/agents/"));
-    expect(vendored.length).toBeGreaterThan(0);
-    expect(vendored.filter((target) => !prose.includes(target))).toEqual([]);
-  });
-
-  test("every required portable asset lives inside the skills tree", () => {
-    for (const file of requiredPortableFiles) {
-      expect(existsSync(join(skillsDir, file))).toBe(true);
-    }
-  });
-
-  test("the plan copies each portable asset from its source into a directory it owns", () => {
-    const { files, ownedDirs } = plan(repoRoot);
-    for (const { source, target } of PORTABLE_ASSETS) {
-      expect(files[`plugins/pstack/skills/${target}`]).toBe(readFileSync(join(repoRoot, source), "utf8"));
-      expect(ownedDirs).toContain(`plugins/pstack/skills/${dirname(target)}`);
-    }
-  });
-
-  test("linked skills keep their own resources and sibling principle leaves", () => {
-    const root = mkdtempSync(join(tmpdir(), "pstack-agent-skills-"));
-    const installed = join(root, "unrelated-home", ".agents", "skills");
-    mkdirSync(installed, { recursive: true });
-
-    try {
-      for (const { name } of agentSkills(skillsDir)) {
-        symlinkSync(join(skillsDir, name), join(installed, name), "dir");
-      }
-
-      const poteto = join(installed, "poteto-mode");
-      for (const file of [
-        join(poteto, "SKILL.md"),
-        join(poteto, "references", "codex-tools.md"),
-        join(poteto, "..", "principle-model-the-domain", "SKILL.md"),
-      ]) {
-        expect(readFileSync(file, "utf8").length).toBeGreaterThan(0);
-      }
-    } finally {
-      rmSync(root, { recursive: true, force: true });
     }
   });
 });
@@ -260,23 +132,20 @@ describe("agentSkills reads frontmatter as YAML", () => {
     expect(skill.description).toBe("Use when folding.");
   });
 
-  test("the 1024 limit measures the parsed description, not its YAML source", () => {
-    const value = "a".repeat(990) + '"'.repeat(30);
-    const quoted = readSkill("quoted", `---\nname: quoted\ndescription: ${JSON.stringify(value)}\n---\n`);
-    expect(quoted.description).toBe(value);
-    expect(() => readSkill("long", `---\nname: long\ndescription: >-\n  ${"a".repeat(1025)}\n---\n`)).toThrow(
-      "description exceeds the portable Agent Skills limit of 1024 characters",
-    );
+  test("malformed YAML is not accepted through a permissive fallback parser", () => {
+    expect(() => readSkill("broken", "---\nname: broken\ndescription: [not closed\n---\n")).toThrow();
+  });
+
+  test("string visibility is rejected instead of exposing a supposedly hidden skill", () => {
+    expect(() => readSkill("hidden", '---\nname: hidden\ndescription: d\nhide: "true"\n---\n')).toThrow(/YAML boolean/);
+  });
+
+  test("foreign visibility metadata cannot silently expose a skill", () => {
+    expect(() => readSkill("hidden", "---\nname: hidden\ndescription: d\nuser-invocable: false\n---\n")).toThrow(/legacy user-invocable/);
   });
 
   test("a CRLF file yields its name", () => {
     expect(readSkill("crlf", "---\r\nname: crlf\r\ndescription: d\r\n---\r\n\r\nbody\r\n").name).toBe("crlf");
   });
 
-  test("user-invocable: false with a trailing space reads as not user-invocable", () => {
-    expect(readSkill("spaced", "---\nname: spaced\ndescription: d\nuser-invocable: false \n---\n").userInvocable).toBe(
-      false,
-    );
-  });
 });
-

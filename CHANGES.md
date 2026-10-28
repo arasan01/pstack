@@ -1,6 +1,18 @@
 # CHANGES
 
-This file is the release changelog, with one `## <version> - <title>` entry per release, newest first. The Cursor-to-Claude rewrite rules live in [`tools/substitutions.json`](tools/substitutions.json), and the [sync boundary](CONTRIBUTING.md#the-sync-boundary) in `CONTRIBUTING.md` defines how a change to upstream's skill content is declared.
+This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
+
+## 0.10.0 - OMP-native workflows and model qualification
+
+pstack now targets Oh My Pi exclusively:
+
+- Install the repository root with `omp install github:arasan01/pstack` or load a local checkout with `omp -e .`. The former `plugins/pstack` and marketplace layouts are removed; existing installations must switch to the root package.
+- Skills and helpers use native tools, task results, session discovery, and workspace conventions. Investigation, planning, implementation, prototype, review, and PR workflows retain their own requested stopping boundaries.
+- Design is a skill-driven task, not a discovery-only scout assignment or a new wrapper agent. Native `modelRoles` and `task.agentModelOverrides` control execution. GPT, DeepSeek, and mixed examples are optional overlays, not automatic configuration changes or model-strength claims.
+- A real-OMP smoke runner checks installed skill/extension discovery, local readiness, investigation, planning boundaries, exported implementation behavior, and native delegated model identities. Unavailable models and fallback/error execution cannot qualify.
+- Removed foreign-runtime manifests, hooks, model sheets, wrapper agents, generation/sync machinery, and obsolete tests. Retained useful orchestration, transcript/worktree auditing, formal verification, statechart tooling, licenses, and attribution.
+- Package validation reads real YAML and native `hide` metadata. CI validates the root package and retained tooling.
+- Rewrote README for OMP installation, workflows, and model roles. Documented marketplace refresh/upgrade and the separate named upgrade required for a GitHub-installed package.
 
 ## 0.9.78 - sync upstream skills and keep omp native
 

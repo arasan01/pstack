@@ -1,0 +1,18 @@
+# Example native OMP overlay. Catalog support does not prove authenticated execution.
+modelRoles:
+  default: deepseek/deepseek-v4-pro:high
+  smol: deepseek/deepseek-flash:high
+  slow: deepseek/deepseek-v4-pro:max
+  plan: deepseek/deepseek-v4-pro:high
+  task: "@slow"
+  review: deepseek/deepseek-v4-pro:max
+
+task:
+  agentModelOverrides:
+    task: "@task"
+    sonic: "@smol"
+    scout: "@smol"
+    reviewer: "@review"
+
+retry:
+  modelFallback: false
