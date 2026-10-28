@@ -301,6 +301,13 @@ export function validateOmpPackage(repoRoot) {
 export function validateAll(repoRoot) {
   const root = resolve(repoRoot);
   validateOmpPackage(root);
+  const catalogPath = join(root, ".omp-plugin", "marketplace.json");
+  if (!existsSync(catalogPath)) throw new Error(`missing ${catalogPath}: restore the OMP marketplace catalog`);
+  const catalog = JSON.parse(readFileSync(catalogPath, "utf8"));
+  const plugin = catalog.plugins?.find(entry => entry.name === "pstack");
+  if (catalog.name !== "pstack" || plugin?.source !== "./" || plugin.version !== readFileSync(join(root, "VERSION"), "utf8").trim()) {
+    throw new Error(`${catalogPath}: preserve pstack@pstack, source ./, and the VERSION release number`);
+  }
   const skillsDir = join(root, "skills");
   const skills = agentSkills(skillsDir);
   validateSkillsTree(skillsDir, root);

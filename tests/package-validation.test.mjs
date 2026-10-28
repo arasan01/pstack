@@ -45,6 +45,11 @@ function createPackageFixture(mutate = () => {}) {
     ),
   );
   writeFileSync(join(root, "VERSION"), "0.10.0\n");
+  mkdirSync(join(root, ".omp-plugin"));
+  writeFileSync(join(root, ".omp-plugin", "marketplace.json"), JSON.stringify({
+    name: "pstack", owner: { name: "arasan01" },
+    plugins: [{ name: "pstack", source: "./", version: "0.10.0" }],
+  }));
 
   mkdirSync(join(root, "omp"), { recursive: true });
   writeFileSync(join(root, "omp", "index.ts"), "export default function() {}\n");
@@ -85,6 +90,11 @@ describe("OMP package validation and boundary checks", () => {
     expect(result.skillsCount).toBe(2);
     expect(result.publicSkillsCount).toBe(1);
     expect(result.agentsCount).toBe(1);
+  });
+
+  test("deleting the marketplace catalog blocks release validation", () => {
+    const root = createPackageFixture(r => rmSync(join(r, ".omp-plugin"), { recursive: true }));
+    expect(() => validateAll(root)).toThrow(/restore the OMP marketplace catalog/);
   });
 
   test("missing package.json fails with clear error", () => {
