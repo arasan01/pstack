@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, mkdtempSync, readFileSync, readdirSync, readlinkSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { Process } from "@oh-my-pi/pi-natives";
 
 export class InterruptedError extends Error {
@@ -131,7 +131,7 @@ export function snapshot(root) {
     for (const entry of readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
       const path = join(dir, entry.name);
       if (entry.isDirectory()) visit(path);
-      else files[relative(root, path)] = entry.isSymbolicLink() ? `symlink:${readlinkSync(path)}` : createHash("sha256").update(readFileSync(path)).digest("hex");
+      else files[relative(root, path).replaceAll(sep, "/")] = entry.isSymbolicLink() ? `symlink:${readlinkSync(path)}` : createHash("sha256").update(readFileSync(path)).digest("hex");
     }
   };
   visit(root);

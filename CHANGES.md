@@ -11,6 +11,7 @@ Adapted the useful changes from Cursor pstack `519d36a` through `c742dd6` (0.15.
 - `ketchup-video` adds a subtitle strip and checks readability against fully visible holds in the encoded video, excluding fades. Explain the Number now starts before measurement with the result that would change a decision and a noise floor.
 - Task replies and delegation briefs state the goal. Autopilot publishes authorized finished units before advancing, reconciles overlapping changes through the topology owner, and separates proven blockers from follow-ups. Opening a PR no longer adds an unconditional `interrogate` run to the selected workflow's review requirements.
 - Orchestrate adopts explicit PR content ownership, artifact-based acceptance, live PR-state checks, and cause-specific retry guidance. Its local `orch` record helper, persistent formats, locks, and forge-chain checks remain. Cursor's Project store is not an OMP replacement for them.
+- Smoke snapshots use forward-slash relative file keys on every OS so Windows consumers observe the same edited files. The transcript-root override test uses a native absolute path instead of a POSIX-only literal.
 
 Native model roles, permissions, fallback, isolation, session lifecycle, operator landing, the single-chain Autopilot-stack topology, and independent correctness-review gates remain authoritative. Wording-only changes do not waive a required reviewer. No helper command signatures or stored program-record formats change.
 
