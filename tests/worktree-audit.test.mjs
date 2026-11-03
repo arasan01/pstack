@@ -558,10 +558,11 @@ describe("default transcripts roots", () => {
     defaultTranscriptRoots({ ...options, home, exists: (path) => exists(gitPath(path)) }).map(gitPath);
 
   test("OMP's default root is included without leaking it through an explicit agent override", () => {
+    const override = join(tmpdir(), "pstack-agent-override");
     const present = new Set(["/home/u/.omp/agent/sessions"]);
     const exists = (path) => present.has(path);
     expect(roots({ env: {}, exists })).toEqual(["/home/u/.omp/agent/sessions"]);
-    expect(roots({ env: { PI_CODING_AGENT_DIR: "/pi" }, exists })).toEqual(["/pi/sessions"]);
+    expect(roots({ env: { PI_CODING_AGENT_DIR: override }, exists })).toEqual([gitPath(join(override, "sessions"))]);
   });
 
   test.each([

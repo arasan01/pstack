@@ -20,6 +20,8 @@ Three rules carry the rest.
 - **Sub-coordinator.** Use one per track only when one coordinator cannot manage its results. It owns briefs and aggregate reports, not raw transcript forwarding. Nest only to the runtime's supported depth. If nesting is unavailable, it implements its assigned scope and the parent arranges independent review. Keep a rolling window within native concurrency limits, sized to what one drain can process.
 - **Worker / verifier.** Use native delegation and isolation. Give each writer its own worktree or disjoint output paths. A branch name alone does not isolate filesystem writes. Include the full brief and the project's driver path or exact commands for app, native-device, CLI, service, or library execution. Correctness review comes from an agent that did not author the code. Model diversity is useful when native policy supplies it, but never override that policy or count a repeated model as diversity.
 
+Give each PR one content owner and record it in the brief. That owner carries fixes and evidence to handoff. Stack rewrites remain the topology owner's job, with branch writes paused and ownership reconciled before the operation. Neither role grants merge authority.
+
 Use at most the coordinator, track, and worker layers, and fewer when native nesting rules require it. Choose tracks from the project rather than a fixed swarm tree.
 
 #### Store layout
@@ -45,7 +47,8 @@ SCOPE        paths this unit may write; paths it may not; its exclusive worktree
 CONTEXT      pointers to files and PRs; upstream reports pasted in full when this unit
              depends on them, because workers cannot see siblings
 ACCEPTANCE   checkable criteria, one per line
-VERIFY       exact commands or the resolved driver skill path, plus known gotchas
+VERIFY       exact commands or the resolved driver skill path, expected results and evidence,
+             plus known gotchas
 TIMEBOX      rough cap on runtime; on expiry, return partial findings and stop rather than run on
 FORBIDDEN    no PR retargets or merges, no rebase, no force-push, no fixes outside scope,
              plus unit-specific bans
@@ -73,7 +76,7 @@ A dependency is a context relay, not just ordering. Undeclared upstream context 
 #### Queue and drain
 
 - On a completion notification, run `orch inbox push <agent> <unit> <status> [--report PATH]` and return to what you were doing. Never deep-review inline. A completion that needs review becomes a verifier unit. Never review a diff inside a drain.
-- Drain at the end of a critical section, a track rollup, a delivered frontier-watch event, and before a human report. Run watchers through native background tools or an exposed scheduler. Never assume `/loop` provides agent wakeups. Begin with `orch inbox drain`; arrivals during the drain wait for the next one.
+- Drain at the end of a critical section, a track rollup, a delivered frontier-watch event, and before a human report. Use PR and CI event subscriptions when the runtime exposes them, otherwise native background watchers. Never assume `/loop` provides agent wakeups. Begin with `orch inbox drain`; arrivals during the drain wait for the next one.
 - Critical sections you finish first: authoring a brief, a stack operation, a conflict decision, writing a gate, updating ledger or frontier.
 - Each drain classifies every pointer (landed, needs-verify, failed, zombie, noise), writes the resulting rows through `orch unit add`, `orch unit set`, and `orch ledger record`, runs `orch status`, then spawns the next wave in one message.
 - Account for every spawned child at its track's rollup: arrived, respawned, or its scope explicitly absorbed. Silently redoing a missing child's work hides both the wasted spend and the coverage gap its result existed to close.
@@ -91,6 +94,8 @@ A dependency is a context relay, not just ordering. Undeclared upstream context 
 
 Scale execution checks to the unit, but never skip independent correctness review for code changes. For a cheap VERIFY command, the worker may run it and return receipts while an independent reviewer checks the diff and required effects without needlessly repeating the command. Expensive, judgment-laden, or high-risk verification gets dedicated independent lanes. The author, green CI, and review bots do not satisfy review separation. If no independent reviewer can run, the unit remains unapproved.
 
+Before accepting a unit, read its diff or artifact and the verifier's execution evidence, not just their summaries. Return work that drifts from the brief to its owner. A green check list alone is not a verdict.
+
 Write verdicts with `orch ledger record` and check the PR and head with `orch ledger check`. The supported ledger levels are `live-ui-verified | unit-test-verified | type-check-only | verifier-blocked | verifier-failed`. Record the matching UI or nonvisual execution evidence alongside the level rather than inventing an unsupported enum or claiming UI coverage for a CLI. Behavioral changes need consumer execution beyond typechecking. A blocked verdict is not a pass; a failed verdict needs a fix. An author's report remains self-proof until independently reviewed. A new head needs a new record, preserving lane results only when the shipping patch-id and context rule allows it.
 
 A unit is not done until its authorized branch or artifact and verdict are durable. Publish receipts to the store as units complete rather than batching them at the end. If an execution environment disappears, its unpreserved work cannot count as delivered.
@@ -99,7 +104,7 @@ A unit is not done until its authorized branch or artifact and verdict are durab
 
 - Use native result delivery and supported read-only status tools. Do not resume an agent merely to check liveness, and do not poll its status while independent work remains. When investigating a stall, inspect the ledger, unit records, forge, pushed branches, and native task state. Transcript mtime alone is not liveness.
 - A silent death gets a synthetic postmortem row in the inbox (unit, failure mode, last evidence, options). Replan on evidence as it arrives. Never wait for full quiescence.
-- Diagnose failures before replacement. A resource failure may need smaller scope; a transient transport failure may allow retry. Leave model fallback to native policy, not a manual family switch. Reconcile a failed writer's ownership before a replacement uses its worktree or branch. After two failed attempts, record the blocker and replan rather than retrying blindly.
+- Diagnose failures before replacement. A context or resource limit may need smaller scope; a dropped connection may allow retry with the same consolidated brief. For a tool error, inspect permissions, inputs, and environment before retrying. Leave model fallback to native policy, not a manual family switch. Reconcile a failed writer's ownership before a replacement uses its worktree or branch. After two failed attempts, record the blocker and replan rather than retrying blindly.
 - A zombie that returns hours late reconciles against the current frontier and ledger before anything is accepted. Salvage unique findings through a fresh unit, never a blind merge.
 - When continued spawning would produce garbage tree-wide (bad upstream output, broken acceptance, dead infra), write a stop line at the top of the standing orders, let in-flight work finish, fix the cause, clear it.
 - Bound your own infra retries the same way you bound a child's. After a few consecutive tool aborts, stop retrying. Write a terminal handoff to durable state (what is done, where it lives, the exact command to resume) and end the run.
@@ -113,4 +118,4 @@ Never reaches the human: frontier nudges, rebase mechanics, retries, CI flake tr
 
 Mid-run discoveries fix only what blocks the frontier. Everything else parks in follow-ups. At this fan-out a small scope leak multiplies into PRs nobody asked for.
 
-**Reply:** at checkpoints and close: the predicate and the count against it from `units.tsv` and `ledger.tsv`, tracks and what each landed, the frontier (PR list plus SHAs), verdicts summary, what was abandoned and why, gates awaiting the human (the only asks), the store path, and the trail path. Numbers from the tables, not narrative. Include PR links.
+**Reply:** at checkpoints and close: the predicate and the count against it from `units.tsv` and `ledger.tsv`, tracks and what each landed, the frontier (PR list plus SHAs), verdicts summary, what was abandoned or parked and why, gates awaiting the human (the only asks), the store path, and the trail path. Before reporting a PR's current state, query the forge for its live head, state, and checks (`gh pr view` and `gh pr checks`, or the resolved forge's equivalents). Reconcile those facts with the ledger; if unavailable, label the state unconfirmed instead of repeating an old report as current. Numbers come from the records, not narrative. Include PR links.

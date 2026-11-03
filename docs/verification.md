@@ -39,6 +39,19 @@ Model scenarios use current native credentials, a temporary workspace, and a tem
 
 Use `--scenario <name>` to run one scenario. Model scenarios require `--model`; `deepseek` selects an exact model from the current available roster. There is no dry-run path that reports passing evidence.
 
+## Check changed skill behavior
+
+Use disposable fixtures for skill changes and retain the OMP traces and artifacts outside the repository. Load the source checkout with `-e <checkout>` and a temporary native model overlay, as above. These manual acceptance cases are not additional `--scenario` values.
+
+| Workflow | Exercise | Required evidence |
+| --- | --- | --- |
+| `interrogate` | Review a small module with a boundary mismatch against a real consumer and an explicit contract. Run two independent adversaries without editing the source. | Exact commands, observed and expected outputs, root verification, deduplicated Findings, Dropped counts and reasons, Unverified risks or none, and unchanged project files. |
+| `arena` | Run two candidates with every allowed role on the parent's model family. | Actual child model identities, two candidate artifacts, a synthesized result, and an explicit cross-judge skip without changing native settings or waiving another workflow's required review. |
+| Eval playbook | Compare two instruction variants with sanitized paths and organic requests while all allowed roles use the parent's model family. | Actual outputs, transcript coverage or an explicit gap, a judge-skip reason, and coordinator-only scores that are not presented as a blinded independent verdict. |
+| `ketchup-video` | Render a recap from actual command results into a silent subtitled video outside the fixture. | A decoded frame from each slide showing a readable separate subtitle strip, no audio stream, and fully visible holds measured from the encoded frames. Count subtitle words and exclude fades. |
+
+Reject fallback execution as proof for the requested model. Inspect outputs as well as process exit codes; a successful render command does not establish subtitle readability or sufficient hold time.
+
 ## Read the evidence
 
 `evidence.json` records the versions, actual results, checks, requested and observed model identities, final answers, failures and unavailable targets. Raw JSONL event streams and stderr are retained beside it. Modified fixture artifacts are copied into a scenario subdirectory before temporary workspaces are removed.

@@ -14,12 +14,12 @@
 
 **Steps:**
 
-1. **Frame.** State what variant is under test and what behavior counts as success. Write the rubric (3-6 concrete criteria) for the judge only. Hold it back from candidates.
+1. **Frame.** State what variant is under test and what behavior counts as success. Write the rubric (3-6 concrete criteria) for judging only. Hold it back from candidates.
 2. **Set up sanitized environments.** Per-candidate working dir with the variant in place. Plant any context an organic task would have: a project skeleton, the skills the candidate would naturally read.
 3. **Author one organic prompt.** What a user would type. No leakage of what's being measured.
 4. **Dispatch independent candidates** per **arena** within native concurrency and delegation limits. Give each its own sanitized directory and the same prompt. Preserve independent candidate perspectives and disclose when native policy supplies no model diversity.
-5. **Dispatch a blinded independent judge** per **arena**. Use a different family when the operator's native policy makes one available; otherwise disclose that limitation rather than silently changing models. The judge sees sanitized labels and the rubric, not candidate model names.
+5. **Choose a blinded independent judge** per arena Phase C. Use only a confirmed different-family judge allowed by native policy. The judge sees sanitized labels and the rubric, not candidate model names. If no eligible judge can run or either family cannot be confirmed, skip the judge and report why. Coordinator-only scoring is not blinded independent judging and does not satisfy another workflow's required correctness review.
 6. **Check actual transcript evidence.** Use native OMP session records for the authorized evaluation workspaces. Do not scan unrelated workspaces. Grade tool use and files actually read, together with the output, not candidate self-reports. Report a coverage gap when those records are unavailable.
-7. **Read every candidate output yourself** end to end. Compare to the judge's verdict. Disagreement means a model is biased or the rubric is ambiguous. Synthesize.
+7. **Read every candidate output yourself** end to end and score it against the rubric. When a judge ran, compare verdicts and resolve disagreement before synthesizing. When the judge was skipped, synthesize from your scores and disclose the missing independent verdict.
 
-**Reply:** variant under test, rubric, per-candidate notes, judge's verdict, your synthesis, and a recommendation for whether to promote the variant.
+**Reply:** variant under test, rubric, per-candidate notes, judge's verdict or why judging was skipped, your synthesis, and a recommendation for whether to promote the variant with any resulting verification limits.

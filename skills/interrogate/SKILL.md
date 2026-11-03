@@ -5,60 +5,41 @@ description: "Use for \"interrogate\", \"adversarial review\", \"multi-model rev
 
 # Interrogate
 
-Spawn independent reviewers to adversarially review code changes. The adversarial signal comes from independent evaluation angles. The deliverable is a synthesized verdict. Do NOT auto-apply changes.
+Independent adversaries try to break a change or design. Keep proven findings, report blocked risks separately, and do not apply fixes.
 
-## Step 1, Scope
+## Frame
 
-Identify what to review from context:
+Review what the user names. Otherwise, review the branch diff from its merge base with the base branch through the working tree, including relevant untracked files.
 
-- If the user points at specific files or a diff, use that.
-- If on a feature branch, run `git diff main...HEAD` (or the appropriate base branch) for the full changeset.
-- If the user's message references recent work, gather the relevant files.
+State the intent in one paragraph from the user's message, commits, and PR description. Resolve uncertainty from available context before asking the user. Preserve the requested scope and stopping boundary. A review does not authorize fixes or a PR.
 
-Package the diff or file contents with any surrounding context files the reviewers need to understand the code.
+## Fan out
 
-## Step 2, Intent
+Use arena Phase A steps 3 and 4 and Phase B to choose native runners and isolated output locations. Copy the scoped uncommitted changes into each worktree so every adversary reviews the same state. Keep the source tree read-only. If worktrees are unavailable, use isolated temporary outputs without modifying the source tree.
 
-Before spawning reviewers, state the intent in one clear paragraph from the user's message, commit messages, the PR description if one exists, and the code. If you're unsure about the intent, ask the user before proceeding.
+Launch independent adversaries in one `task` call with entries in `tasks[]`, using `agent: "reviewer"` or user-configured review agents. Preserve native modelRoles, agent settings, permissions, and fallback policy. Use model overrides only after resolving available selectors. Disclose when distinct model families cannot be confirmed.
 
-## Step 3, Spawn Reviewers
+Give every adversary the scope, intent, relevant context paths, its isolated output path, and this brief:
 
-Launch independent reviewers in a single `task` call containing entries in `tasks[]`, using `agent: "reviewer"` (or user-configured review agents), labeled Reviewer A, Reviewer B, and so on. Default to native role and agent configuration. For a requested cross-model comparison, use a native-supported override only after resolving the exact available selectors. Disclose when distinct model families cannot be confirmed.
+> Break this change. Prove each finding against the real code with a failing test, repro, or command output. For a design or plan, run an isolated prototype or probe the current tree. Keep source files read-only and repros in your assigned worktree or temporary output. Do not apply fixes. Respect execution restrictions and do not touch unsafe or production environments.
+>
+> Report each finding with a title, code location, exact command and relevant setup, observed output, expected output required by the intent, and why the difference matters. Do not rerun an operator-reported failure just to confirm it. Cite the operator's execution evidence instead. Exclude preferences, speculative future failures, and claims without execution evidence. No findings is valid.
+>
+> If a concrete, serious risk cannot be tested safely or execution is prohibited, report it separately as Unverified. Include its code path, impact, missing evidence, and blocker. Do not present it as a proven finding.
 
-Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`. Each reviewer receives an explicit read-only, no-edits brief.
+## Verify
 
-## Step 4, Synthesize
+The root reviewer checks every finding's evidence and traces the failure to the intent. Do not accept a subagent's verdict or reviewer agreement as proof.
 
-As results come back, build a unified picture. Parse every reviewer's findings. Merge findings that describe the same issue differently, and note which reviewers raised each one. Findings two or more reviewers raised independently are the highest signal. Read a lone reviewer's finding, but weight it accordingly. Note disagreements. If one reviewer flags something and another explicitly says the opposite, that is context for the verdict.
+When safe and permitted, reproduce the failure in isolation with the reported command or an equivalent check that exercises the same behavior. Record the command actually run, observed output, and expected output. Treat operator-reported failures as ground truth. Inspect their evidence and code path without rerunning merely for confirmation.
 
-## Step 5, Lead Judgment
+Keep only findings whose execution evidence proves a failure that breaks the intent. Merge findings with the same root cause, preserving their evidence and adversary attribution. Drop incorrect, irrelevant, or unsupported claims with a reason. Keep concrete serious risks blocked by safety, permissions, or unavailable prerequisites under Unverified, never Findings.
 
-You are the lead reviewer, a pragmatic senior engineer, not a neutral aggregator. Read `references/lead-judgment.md` for the full framework. Put every finding in one of four buckets, with the reviewer(s) that raised it and a one-line rationale.
+Skip arena Phases C, D, and E. Keep every proven root cause rather than selecting one adversary's list. Stop after the report. Do not apply fixes.
 
-- **Act on**. Real issues affecting correctness, security, or maintainability given the actual goals. They would block a real PR.
-- **Consider**. Legitimate, but you're not sure they outweigh the cost of addressing them now. Worth the user's attention.
-- **Noted**. Technically valid but not actionable. Context-dependent, premature optimization, or low-impact at this stage.
-- **Dismissed**. Wrong, nitpicky, or missing context, with a brief reason.
+## Output
 
-## Output Format
-
-### Intent
-> [The stated intent paragraph from Step 2]
-
-### Reviewers
-- Reviewer [label]: [N findings] (one bullet per reviewer)
-
-### Act On
-[Each: description, which reviewers raised it, why it matters.]
-
-### Consider
-[Each: description, which reviewers raised it, the tradeoff.]
-
-### Noted
-[Brief list.]
-
-### Dismissed
-[Each with a brief rationale.]
-
-### Agreement Map
-[Where reviewers agreed and diverged, and what that pattern tells us.]
+- **Intent**: the stated goal and review scope.
+- **Findings**: each proven root cause, code location, exact command and setup, observed and expected output, impact on the intent, evidence source, and adversaries that found it. Say "no verified findings" when none survive.
+- **Dropped**: each adversary's count of dropped claims and the reasons.
+- **Unverified**: concrete serious risks without execution proof, their evidence gaps, and why execution was blocked. Say "none" when there are no blocked risks.

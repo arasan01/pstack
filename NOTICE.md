@@ -23,6 +23,7 @@ This distribution is maintained as the private [arasan01/pstack](https://github.
 | `skills/benchmark-checklist/`, `skills/principle-explain-the-number/` (v0.15.6 additions) | [cursor/plugins/pstack @ 23e4138](https://github.com/cursor/plugins/tree/23e4138/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
 | `skills/correct/` (v0.15.9 addition) | [cursor/plugins/pstack @ e43c7ee](https://github.com/cursor/plugins/tree/e43c7ee/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
 | `skills/poteto-help/` (v0.15.13 addition) | [cursor/plugins/pstack @ 2cbf585](https://github.com/cursor/plugins/tree/2cbf585/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
+| `skills/{arena,interrogate,ketchup-video,poteto-help,poteto-mode,principle-explain-the-number}/` (v0.15.35 and v0.15.36 adaptations for OMP) | [cursor/plugins/pstack @ c742dd6](https://github.com/cursor/plugins/tree/c742dd61706fbacc1b95f1a20b7b988cf096ce6c/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
 | `skills/deslop/references/japanese-prose.md` | [iKora128/stop-ai-slop-jp](https://github.com/iKora128/stop-ai-slop-jp), imported from the local skill and adapted for technical prose | (c) 2026 Daichi Nagashima | MIT | [LICENSE-stop-ai-slop-jp](LICENSE-stop-ai-slop-jp) |
 
 ## What changed in the port

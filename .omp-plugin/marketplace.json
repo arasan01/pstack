@@ -6,7 +6,7 @@
       "name": "pstack",
       "source": "./",
       "description": "Oh My Pi 用のスキルとワークフロー",
-      "version": "0.10.1"
+      "version": "0.10.2"
     }
   ]
 }

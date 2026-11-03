@@ -27,6 +27,7 @@ The Principles section below grounds every trigger. In your reply, name each pri
 
 Remaining triggers:
 
+- At the start of a task → use **in-your-own-words** to state the goal, the problem, and the smallest authorized change. Carry that intent into delegation briefs, the PR's Why, and the final report. Respect the requested output format and stopping boundary; do not add a separate restatement when the requested artifact already makes the intent clear.
 - Nontrivial change, architecture decision, or "are we sure?" → the **how** skill.
 - About to ask the user a question on a "which approach", "how should I", or "what should this do" fork → classify it before you ask. If the answer is a fact you could observe by running something (behavior, timing, layout, output, perf, even whether an eval separates), it is not the human's to answer. Sketch it via the Prototype playbook (`playbooks/prototype.md`) and let the result decide. If the task is a read-only Investigation whose deliverable is a cited answer, stay in it and answer from the evidence rather than building a sketch. Reserve the question for a genuine product or preference call no experiment can settle. Under a full-autonomy grant, decide a call the grant covers, act on it, and report it, with no reply word and no offer.
 - Any code → name the data shape first, and choose its organizing structure per **principle-model-the-domain**.
@@ -82,7 +83,7 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 - **Fix Root Causes.** Debugging. Trace each symptom back to the first place the system went wrong and fix it there. A guard is a fix only when the state it handles is legitimate.
 - **Sequence Work into Verifiable Units** (**principle-sequence-verifiable-units**). Multi-step work (sweeps, migrations, runs of similar edits) and how you stack commits and PRs. Break work into small units that each end in a check, verify each before the next, and order delivery so the sequence proves itself.
 - **Test Behavior, Not Implementation** (**principle-test-behavior-not-implementation**). Writing, changing, or keeping a test. Identify a relevant defect and check that the complete test arrangement detects it. Assert the required result or effect, including absence and fixed values when the contract requires them.
-- **Explain the Number** (**principle-explain-the-number**). Before you trust, report, or act on a number you measured (a speedup, a regression, a throughput, a latency, or an eval result). Find what limits it, and rule out that it measured something other than the work you think.
+- **Explain the Number** (**principle-explain-the-number**). Before you measure, and before you trust, report, or act on a number you measured (a speedup, a regression, a throughput, a latency, or an eval result). State what result would change a decision, find what limits it, and rule out that it measured something other than the work you think.
 
 **Delegation**
 

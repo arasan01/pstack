@@ -33,7 +33,7 @@ Swap in the real paths, skills, and done checks. Informal wording works.
 
 ## Review and ship
 
-- `/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` Read the dismissals too.
+- `/interrogate the whole branch, but skeptically. don't change anything yet. no nitpicks unless it's a real bug or regression.` Read Intent, the execution-backed Findings, and the Dropped list. Treat Unverified risks as unproven, not as verified bugs. Any reproduction that writes files belongs in an isolated worktree or temporary output, not the reviewed repo.
 - `/create-formal-verification-skill prove <property> holds in <module>, even when <steps> interleave or retry.` After merges or refactors in that code: `/maintain-formal-verification-skill`.
 - `/swarm check every package under <dir> against its check script. one worker per package. one report.`
 - `/poteto-mode open the pr. small ordered commits, evidence in the description.`
@@ -45,6 +45,7 @@ Swap in the real paths, skills, and done checks. Informal wording works.
 - `/poteto-mode im going to bed. <goal> in a fresh worktree off <base>. done means <checks>. keep a decision log. don't ask me before committing. keep going until done. if you're truly stuck after a few hours, stop and write up why.`
 - `/show-me-your-work catch me up on what you did last night.` Read its Attention section first.
 - `/ketchup` catches you up on this chat since your last message and lists every call that waits on you.
+- `/ketchup-video` catches you up in a silent video with a short subtitle below each slide. The waiting calls stay as text under the video.
 - `/poteto-mode full autopilot on this queue. each item is independent.`
 - `/poteto-mode autopilot these changes but stack them, don't ship. i'll land the stack.`
 - `/reflect capture what we learned so the next run doesn't repeat it.` Approve only edits that change a future decision.
