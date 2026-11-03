@@ -63,13 +63,13 @@ Tests alone are not sufficient verification. A PR is verified only when its unit
 - [ ] Run the repo's lint and typecheck once before the PR-facing push. Push with hooks on.
 - [ ] Run `/deslop` before each commit and `/no-comments` before review.
 - [ ] Triage every review-bot and security-reviewer comment per `../references/bugbot-triage.md`.
-- [ ] Before the code-ready report and babysit, and again after merge prep, record the base and head SHAs prepared by the topology owner under the execution playbook.
+- [ ] Before the code-ready report and babysit, and again after merge prep, record the base and head SHAs prepared by the topology owner under the execution playbook. During fix rounds, reconcile a known concurrent change to the same files through that owner, using the parent branch for a stack child.
 
 ### Verdict and merge, for every PR
 
 - [ ] Run a full independent swarm once at the code-ready head and again for new behavior, a redesign, or a large new diff, per `skills/swarm/SKILL.md`. Include a gates lane, the ten live lanes, the applicable perf lane, and at least two focused correctness-audit lanes. The root audits the receipts, not the PR body's claims.
 - [ ] A rebase, conflict resolution, or minor fix gets an independent verifier at the new head, current gates, relevant behavioral probes, and review of the changed diff. Preserve older lane results only under the shipping patch-id and context rule. No author, bot, or green CI substitutes for independent correctness review.
-- [ ] Clean means every required lane passes. Send every proven PR-caused finding to the owner, even if labeled a note. Report missing reviewers or evidence as an unmet gate, not a pass.
+- [ ] Judge findings by the execution playbook's blocking rule. Send proven PR-caused defects to the owner, even if labeled a note, and park other improvements as follow-ups. A failure already present on the PR's base is recorded separately unless the PR copies or newly exposes it. Report missing reviewers, failed required gates, or missing evidence as unmet gates, not a pass.
 - [ ] <The merge or append rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>
 
 ### Boot recipe, for every live lane

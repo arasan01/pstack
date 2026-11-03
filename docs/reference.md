@@ -14,12 +14,12 @@ Find each skill's instructions in the [skills tree](../skills/).
 | `/in-your-own-words` | restate the user's goal and the problem before starting |
 | `/sharpen` | rewrite a prompt with deeper source material, methods, and checks without expanding its scope |
 | `/ketchup` | catch up on this chat's changes and every decision waiting on the user |
-| `/ketchup-video` | explain this chat's changes in a short silent video with decisions in text |
+| `/ketchup-video` | explain this chat's changes in a short silent subtitled video with decisions in text |
 | `/how` | walk through how a subsystem works |
 | `/why` | investigate why something was built this way (parallel multi-MCP evidence) |
 | `/architect` | settle types and module shape before writing code that crosses a function boundary |
-| `/arena` | run N parallel attempts at the same task and pick the best parts |
-| `/interrogate` | have three different models try to break a diff |
+| `/arena` | run independent candidates, synthesize the best parts, and use a cross-judge only when a different model family is confirmed |
+| `/interrogate` | challenge a change with execution-backed findings and report blocked serious risks separately |
 | `/automate-me` | draft your own personal -mode skill from recent transcripts |
 | `/reflect` | capture a long task's lessons as a skill edit |
 | `/correct` | find the mistakes agents keep repeating in a repo and make each one impossible, enforced at the highest level that works |

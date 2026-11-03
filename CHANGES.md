@@ -2,6 +2,18 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## 0.10.2 - adapt Cursor pstack 0.15.36 for OMP
+
+Adapted the useful changes from Cursor pstack `519d36a` through `c742dd6` (0.15.35 and 0.15.36) without restoring Cursor runtime dependencies.
+
+- `interrogate` reports execution-backed Findings, Dropped claims, and serious Unverified risks blocked by safety or missing prerequisites. Review remains read-only, operator-reported failures remain ground truth, and fixes are not automatic. Removed the obsolete four-bucket review references.
+- `arena` handles rejected runners within native policy and uses a cross-judge only when a different model family is confirmed. Otherwise it records why judging was skipped. Eval also handles the missing judge and labels coordinator-only scoring. Required independent correctness review remains a separate gate.
+- `ketchup-video` adds a subtitle strip and checks readability against fully visible holds in the encoded video, excluding fades. Explain the Number now starts before measurement with the result that would change a decision and a noise floor.
+- Task replies and delegation briefs state the goal. Autopilot publishes authorized finished units before advancing, reconciles overlapping changes through the topology owner, and separates proven blockers from follow-ups. Opening a PR no longer adds an unconditional `interrogate` run to the selected workflow's review requirements.
+- Orchestrate adopts explicit PR content ownership, artifact-based acceptance, live PR-state checks, and cause-specific retry guidance. Its local `orch` record helper, persistent formats, locks, and forge-chain checks remain. Cursor's Project store is not an OMP replacement for them.
+
+Native model roles, permissions, fallback, isolation, session lifecycle, operator landing, the single-chain Autopilot-stack topology, and independent correctness-review gates remain authoritative. Wording-only changes do not waive a required reviewer. No helper command signatures or stored program-record formats change.
+
 ## 0.10.1 - restore OMP marketplace updates
 
 Restored `.omp-plugin/marketplace.json` with the existing `pstack@pstack` identity and the repository root as its source. Existing marketplace registrations can update without reinstalling. Simplified README to installation, updates, and usage, removing model configuration and defensive prose.
