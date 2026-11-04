@@ -41,9 +41,44 @@ omp plugin marketplace update && omp plugin upgrade
 
 設計をサブエージェントへ任せる場合は、同梱の `architect` agent を使えます。`skill:architect` を使い、依頼時の範囲と停止条件に従います。agentの選択とスキルの参照は別です。
 
-スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](docs/models.md#scope-and-completion-advisor) も同梱しています。Advisor は明示的に導入する方式で、インストールだけでは有効になりません。
-
 詳しい手順は [playbook 一覧](skills/poteto-mode/SKILL.md#playbooks)と[スキルのリファレンス](docs/reference.md)を参照してください。
+
+## Advisorのセットアップ
+
+スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](advisors/scope-completion/WATCHDOG.yml) を同梱しています。パッケージのインストールだけでは有効になりません。
+
+ユーザーレベルのカスタムAdvisorとして配置します。標準の設定先 `~/.omp/agent` に `WATCHDOG.yml`・`WATCHDOG.yaml` がない場合に実行してください。
+
+```sh
+mkdir -p "$HOME/.omp/agent" && \
+	test ! -e "$HOME/.omp/agent/WATCHDOG.yml" && \
+	test ! -e "$HOME/.omp/agent/WATCHDOG.yaml" && \
+	curl --fail --location --remove-on-error \
+		https://raw.githubusercontent.com/arasan01/pstack/main/advisors/scope-completion/WATCHDOG.yml \
+		--output "$HOME/.omp/agent/WATCHDOG.yml"
+```
+
+既存のユーザー設定がある場合や、名前付きプロファイル・`PI_CODING_AGENT_DIR` で設定先を変えている場合は、OMP内で次を実行し、`User` スコープを選んでください。同梱ファイルのエントリを既存の `advisors` リストへ追加し、既存設定を上書きしたり `advisors` キーを重複させたりしないでください。
+
+```text
+/advisor configure
+```
+
+OMPを起動し直します。
+
+```sh
+omp
+```
+
+OMP内で順に実行します。
+
+```text
+/advisor on
+/advisor status
+/advisor dump raw
+```
+
+`status` で実行モデルを、`dump raw` でGuardianの指示が読み込まれていることを確認します。`scope: main` は維持してください。Advisorの利用には追加のモデル呼び出しが発生します。既存Advisorとのマージ規則やレビューとの役割の違いは[リファレンス](docs/reference.md#scope-and-completion-advisor)を参照してください。
 
 ## 開発
 

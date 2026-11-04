@@ -9,7 +9,7 @@ bun test tests/
 bun tools/omp-smoke.mjs --discovery-only
 ```
 
-Discovery installs this checkout into a temporary OMP agent directory, reads the installed `poteto-mode` skill, checks native extension command registration over RPC, and runs `/pstack` to completion. RPC session initialization selects the bundled GPT profile's model metadata without authenticating or requesting inference. The readiness command must complete locally without invoking an agent turn. Discovery does not change the active user's plugin registration and does not qualify GPT inference.
+Discovery installs this checkout into a temporary OMP agent directory, reads the installed `poteto-mode` skill, checks native extension command registration over RPC, and runs `/pstack` to completion. RPC session initialization selects the bundled profile's model metadata without authenticating or requesting inference. The readiness command must complete locally without invoking an agent turn. Discovery does not change the active user's plugin registration and does not qualify GPT inference.
 
 The smoke runner requires Bun 1.3.14 or newer and the installed development dependencies. It uses OMP's native stable-process API for graceful termination and descendant cleanup, including detached verification commands. A deadline starts cancellation; teardown may take up to 16 additional seconds. Interrupting the suite stops subsequent scenarios. The implementation scenario also requires Node on `PATH` for its exported-API consumer.
 

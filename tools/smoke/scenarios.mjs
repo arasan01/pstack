@@ -25,7 +25,7 @@ export async function packageDiscovery({ repoRoot, ompBin, outputDir, timeoutMs 
     requireSuccess(discovered, "Installed poteto-mode discovery");
     const skillPath = discovered.stdout.match(/^\[Skill file: (.+)\]/)?.[1];
     requireCondition(skillPath && realpathSync(skillPath) === realpathSync(join(repoRoot, "skills/poteto-mode/SKILL.md")), "Native reader did not resolve the installed checkout's skill");
-    const profile = parseYaml(readFileSync(join(repoRoot, "profiles/gpt.yml"), "utf8"));
+    const profile = parseYaml(readFileSync(join(repoRoot, "profiles/arasan01.yml"), "utf8"));
     const bootstrapModel = profile.modelRoles.default;
     const commands = await run(ompBin, ["--model", bootstrapModel, "--no-session", "--no-title", "--no-ui", "--mode", "rpc"], {
       cwd: fixture.workspace, env, timeoutMs,
