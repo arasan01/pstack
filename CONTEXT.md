@@ -14,11 +14,9 @@ Domain glossary for pstack as an Oh My Pi (OMP) native package.
 
 ## Native boundaries and verification
 
-OMP capabilities come from the current native tool schema, `omp://` documentation and effective settings, not from pstack's terminology. `skill:poteto-mode` owns shared workflow instructions; there is no additional contract skill or OMP contract engine.
+OMP capabilities come from the current native tool schema, `omp://` documentation and effective settings, not from pstack's terminology. `skill:poteto-mode` owns shared workflow instructions.
 
 | Boundary | Verification |
 | --- | --- |
 | Native skill identity and discovery remain authoritative. | Real OMP skill reads and a same-name project override, following `omp://skills.md`. |
 | Model and agent selection remain native. | `ctx.models.resolve`, native effective settings, and task result model metadata, following `omp://tools/task.md` and `omp://task-agent-discovery.md`. |
-| Legacy workflow binding metadata cannot return. | `agentSkills` rejects `workflow-contract:` with the native replacement; package-validation regression covers the rejected input. |
-| Scope/evidence checking does not become runtime enforcement. | The optional checker only reads supplied plans and artifacts; its limits are documented in `docs/verification.md`. |

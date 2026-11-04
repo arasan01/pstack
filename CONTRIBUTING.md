@@ -30,10 +30,7 @@ This verifies:
 3. Local Markdown links resolve within the installed package boundary, including its bundled model guides and profiles.
 4. No obsolete multi-runtime paths or foreign execution instructions (`subagent_type: "pstack:...`, `run_in_background: true`) are present.
 5. Specialist agent definitions in `agents/` are valid.
-6. Skill frontmatter rejects retired path-based `workflow-contract` bindings and points to the native skill reference.
-7. Retired upstream orchestration scripts cannot re-enter the package.
-
-For an existing accepted plan, `tools/check-contract.mjs` also checks retained scope and supplied evidence. See [scope and evidence checks](docs/verification.md#check-an-accepted-workflow-scope) for the fingerprint and consumer-evidence procedure.
+6. Retired upstream orchestration scripts cannot re-enter the package.
 
 ### Running tests
 

@@ -64,9 +64,6 @@ export function agentSkills(skillsDir) {
     for (const key of ["disable-model-invocation", "user-invocable"]) {
       if (key in front) throw new Error(`${skillPath}: contains legacy ${key} key`);
     }
-    if ("workflow-contract" in front) {
-      throw new Error(`${skillPath}: remove workflow-contract metadata and use the shared guidance in skill:poteto-mode`);
-    }
     if ("hide" in front && typeof front.hide !== "boolean") {
       throw new Error(`${skillPath}: hide must be a YAML boolean`);
     }

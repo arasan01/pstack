@@ -4,11 +4,9 @@
   "workspaces": {
     "": {
       "name": "pstack",
-      "dependencies": {
-        "yaml": "^2.7.0",
-      },
       "devDependencies": {
         "@oh-my-pi/pi-natives": "18.13.2",
+        "yaml": "^2.7.0",
       },
     },
   },
