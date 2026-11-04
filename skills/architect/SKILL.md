@@ -23,7 +23,9 @@ Apply the phases within the accepted task brief and native policy. Use the exist
 
 ## Phase A: Ground the problem
 
-Build a real mental model of every system the assigned design touches. Reuse the parent's source-grounded **how** explanation when it remains valid. Investigate only missing evidence or parts invalidated by changed source or constraints. Naming a file isn't grounding. Use **how** to produce the missing architectural explanation. If the design redefines ownership or layering, use the existing **why** rationale or investigate the missing rationale so it becomes a constraint, not a guess. Greenfield work has no surrounding system to investigate.
+Ground the assigned design with the current-system sketch and constraints from `skill:how` before proposing types or module structure. Keep that observed view separate from the future design. Reuse the parent's sketch and source-grounded explanation when valid; investigate only missing evidence or relationships invalidated by changed source or constraints. Naming a file isn't grounding.
+
+If the design redefines ownership or layering, reuse the existing `skill:why` rationale or investigate the missing rationale so it becomes a constraint, not a guess. For greenfield work, use `skill:how`'s bounded view of confirmed requirements and external boundaries rather than inventing an existing implementation.
 
 ## Phase B: Sketch
 

@@ -2,6 +2,11 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## Unreleased
+
+- `how` produces a source-grounded current-system sketch before planning behavioral or structural changes, showing feature context, state ownership, other consumers and the change boundary. It separates observed relationships from proposals and unknowns.
+- `poteto-mode` routes work through the sketch and system-fit assessment before choosing an approach. `architect` and implementation playbooks reuse that grounding rather than starting a second investigation. Strict output formats, scoped assignments and planning-only boundaries remain authoritative.
+
 ## 0.10.3 - preserve native roles and check workflow evidence
 
 - Added the locally used `architect` task agent with its original `@slow` selection and architecture-skill instructions. Native model overrides and project/user agent precedence remain authoritative. Updated the optional overlays and agent-selection guidance.

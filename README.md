@@ -19,19 +19,25 @@ omp plugin marketplace update && omp plugin upgrade
 
 スキルコマンドが有効なOMPセッションでは `/skill:poteto-mode` を使います。無効にしている場合は、通常の依頼文で `skill:poteto-mode` を指定します。
 
+動作や構造を変える前に、`skill:how`で機能全体と変更領域の現状をラフスケッチにし、責務や共有状態との整合を確認してから方針を立てます。`skill:architect`は、その現状図を再利用して変更後の構造を設計します。小さな変更では短い境界の整理に留め、毎回全体調査をやり直しません。
+
 ```text
 /skill:poteto-mode この設定がどこで上書きされるか調べて。
 ```
 
 ```text
-/skill:poteto-mode 入力検証を追加する方針を立てて。今回は計画だけお願い。
+/skill:poteto-mode まず機能全体と変更領域をラフスケッチで示し、入力検証を追加する方針を立てて。今回は計画だけお願い。
 ```
 
 ```text
 /skill:poteto-mode ページを切り替えると検索条件が消える不具合を直して。
 ```
 
-個別のスキルもnative IDで指定できます。設計には `skill:architect`、仕組みの調査には `skill:how`、変更のレビューには `skill:interrogate` を使います。
+個別のスキルもnative IDで指定できます。現状の俯瞰・変更前のラフスケッチには `skill:how`、変更後の設計には `skill:architect`、変更のレビューには `skill:interrogate` を使います。
+
+```text
+/skill:how この機能の入口、状態の所有者、他の利用箇所をラフスケッチで説明して。今回は現状図と制約の整理まで。
+```
 
 設計をサブエージェントへ任せる場合は、同梱の `architect` agent を使えます。`skill:architect` を使い、依頼時の範囲と停止条件に従います。agentの選択とスキルの参照は別です。
 

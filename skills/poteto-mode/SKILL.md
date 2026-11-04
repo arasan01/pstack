@@ -27,6 +27,17 @@ These workflows develop the user's project, not Cursor or any other editor. Befo
 
 Runtime mappings describe the agent's tools, not the product being developed. Use browser/CDP tools only for a browser or a compatible process; use native automation and platform profilers for native apps, requests for services, and a real consumer for libraries. Choose the matching project driver and available runtime tools. Report an unavailable capability instead of inventing a substitute or treating an unrelated check as proof.
 
+## Before choosing a change
+
+For behavioral or structural work, ground the approach before committing to a local patch:
+
+1. Frame the requested outcome and stopping point, not just the file named in the request.
+2. Use `skill:how` for its pre-change system sketch. Place the region under consideration within the feature's real flow and ownership boundaries. Present the sketch during grounding, before announcing a proposed fix or plan, rather than appending a diagram to justify an already chosen solution. Reuse a valid sketch already supplied by the parent; update only missing or invalidated parts.
+3. Read the sketch before choosing the approach. Check whether a local solution duplicates an existing mechanism, bypasses the state owner, or breaks another consumer or invariant. State the constraints and unknowns that affect the choice. Broader context is not permission to expand scope or redesign unrelated systems.
+4. Form the plan from those constraints. Use `skill:architect` when a proposed design is needed, passing the same grounding rather than restarting discovery. Keep current-state facts separate from the future design, then follow the chosen playbook within the authorized scope.
+
+Keep the sketch proportional to the decision; a trivial change may need only a short boundary sketch, not a repository-wide diagram. Respect the requested format, including strict single-response formats, and reuse an already authorized artifact rather than creating another plan or diagram file. Once the sketch is available, continue within the accepted scope without waiting for approval or repeating it in the final reply. Sketch-only work stops at the map and constraints; planning-only work stops at the plan. This step does not add an approval gate or change native agent/model selection.
+
 ## Non-negotiables
 
 The Principles section below grounds every trigger. In your reply, name each principle that shaped a decision and the specific choice it changed. Cite only principles whose leaf SKILL.md you read this session.
@@ -34,7 +45,7 @@ The Principles section below grounds every trigger. In your reply, name each pri
 Remaining triggers:
 
 - At the start of a task → use **in-your-own-words** to state the goal, the problem, and the smallest authorized change. Carry that intent into delegation briefs, the PR's Why, and the final report. Respect the requested output format and stopping boundary; do not add a separate restatement when the requested artifact already makes the intent clear.
-- Nontrivial change, architecture decision, or "are we sure?" → the **how** skill.
+- Nontrivial change, architecture decision, or "are we sure?" → `skill:how`; for change planning, follow [Before choosing a change](#before-choosing-a-change) before selecting the approach.
 - About to ask the user a question on a "which approach", "how should I", or "what should this do" fork → classify it before you ask. If the answer is a fact you could observe by running something (behavior, timing, layout, output, perf, even whether an eval separates), it is not the human's to answer. Sketch it via the Prototype playbook (`playbooks/prototype.md`) and let the result decide. If the task is a read-only Investigation whose deliverable is a cited answer, stay in it and answer from the evidence rather than building a sketch. Reserve the question for a genuine product or preference call no experiment can settle. Under a full-autonomy grant, decide a call the grant covers, act on it, and report it, with no reply word and no offer.
 - Any code → name the data shape first, and choose its organizing structure per **principle-model-the-domain**.
 - Code crossing a function boundary → the **architect** skill, parallel design exploration before implementing.

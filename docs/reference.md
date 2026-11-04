@@ -4,53 +4,53 @@ Start with the [README](../README.md) for installation and your first task.
 
 ## Slash commands
 
-The package includes 65 skill directories: 41 public skills and 24 `principle-*` references. In Oh My Pi (OMP), request the skill you need by name; native agent and model configuration remains in control.
+The package includes 65 skill directories: 41 public skills and 24 `principle-*` references. Refer to a skill by its native `skill:name` ID. When skill commands are enabled, invoke it with `/skill:name`; native agent and model configuration remains in control.
 
 Find each skill's instructions in the [skills tree](../skills/).
 
 | command | use it when |
 | --- | --- |
-| `/poteto-mode` | default entry point for any non-trivial task |
-| `/in-your-own-words` | restate the user's goal and the problem before starting |
-| `/sharpen` | rewrite a prompt with deeper source material, methods, and checks without expanding its scope |
-| `/ketchup` | catch up on this chat's changes and every decision waiting on the user |
-| `/ketchup-video` | explain this chat's changes in a short silent subtitled video with decisions in text |
-| `/how` | walk through how a subsystem works |
-| `/why` | investigate why something was built this way (parallel multi-MCP evidence) |
-| `/architect` | settle types and module shape before writing code that crosses a function boundary |
-| `/arena` | run independent candidates, synthesize the best parts, and use a cross-judge only when a different model family is confirmed |
-| `/interrogate` | challenge a change with execution-backed findings and report blocked serious risks separately |
-| `/automate-me` | draft your own personal -mode skill from recent transcripts |
-| `/reflect` | capture a long task's lessons as a skill edit |
-| `/correct` | find the mistakes agents keep repeating in a repo and make each one impossible, enforced at the highest level that works |
-| `/tdd` | fix a bug by writing the failing test first, then the fix |
-| `/benchmark-checklist` | vet a measured speedup or regression (limiter, tuning, errors, repeat runs, end-to-end relevance) before you report or act on it |
-| `/typescript-best-practices` | ground type-system discipline in TypeScript syntax |
-| `/teach` | explain a subsystem plainly by composing how + why |
-| `/swarm` | fan out N parallel workers across slices or races, then return one aggregated report |
-| `/technical-writing` | write docs, RFCs, readmes, PR descriptions, and commit messages to one layered standard |
-| `/bro` | restate the last message in plain human language, no jargon |
-| `/figure-it-out` | design a rigorous, auditable playbook for a task no bundled playbook fits |
-| `/show-me-your-work` | log decisions to a reviewable tsv decision trail |
-| `/blast-radius` | find what a change could break beyond the diff and prove safety by running code |
-| `/recall` | catch up on recent working context from chat history, live state, and the shared record |
-| `/setup-pstack` | diagnose and explain native model roles and verification readiness |
-| `/poteto-help` | answer a question about pstack with the prompt to send and the file the answer came from |
-| `/unslop` | clean up writing by removing AI tells |
-| `/no-comments` | strip comments before review, fix the accepted findings, encode claimed constraints |
-| `/create-verification-skill` | generate a project-local verification skill and feature map |
-| `/maintain-verification-skill` | re-sync a drifted verification skill and its feature map |
-| `/create-formal-verification-skill` | generate a project-local check for a high-risk property beyond the cases tests reach |
-| `/maintain-formal-verification-skill` | re-sync formal verification with changed code and distinguish drift from bugs |
-| `/statechart` | check a TLA+ model and show state transitions and shortest invariant-violation paths |
-| `/deslop` | clean a code diff or edit Japanese prose, PR text, and reports without changing facts |
-| `/babysit` | monitor an open PR, fix CI/comments, keep it merge-ready |
-| `/nuclear-code-quality-review` | extremely strict maintainability audit |
-| `/make-pr-easy-to-review` | clean noisy history and improve PR description before review |
-| `/fix-ci` | find failing PR checks, inspect logs, apply focused fixes |
-| `/fix-merge-conflicts` | non-interactively resolve merge conflicts, validate, finalize |
-| `/get-pr-comments` | fetch and summarize review comments from the active PR |
-| `/what-did-i-get-done` | summarize authored commits over a user-chosen period |
+| `/skill:poteto-mode` | default entry point; map the current system and check the change boundary before choosing an approach |
+| `/skill:in-your-own-words` | restate the user's goal and the problem before starting |
+| `/skill:sharpen` | rewrite a prompt with deeper source material, methods, and checks without expanding its scope |
+| `/skill:ketchup` | catch up on this chat's changes and every decision waiting on the user |
+| `/skill:ketchup-video` | explain this chat's changes in a short silent subtitled video with decisions in text |
+| `/skill:how` | explain the current system or draw a source-grounded pre-change sketch of the feature, state owners and target region |
+| `/skill:why` | investigate why something was built this way (parallel multi-MCP evidence) |
+| `/skill:architect` | use the current-system grounding to design proposed types and module structure before implementation |
+| `/skill:arena` | run independent candidates, synthesize the best parts, and use a cross-judge only when a different model family is confirmed |
+| `/skill:interrogate` | challenge a change with execution-backed findings and report blocked serious risks separately |
+| `/skill:automate-me` | draft your own personal -mode skill from recent transcripts |
+| `/skill:reflect` | capture a long task's lessons as a skill edit |
+| `/skill:correct` | find the mistakes agents keep repeating in a repo and make each one impossible, enforced at the highest level that works |
+| `/skill:tdd` | fix a bug by writing the failing test first, then the fix |
+| `/skill:benchmark-checklist` | vet a measured speedup or regression (limiter, tuning, errors, repeat runs, end-to-end relevance) before you report or act on it |
+| `/skill:typescript-best-practices` | ground type-system discipline in TypeScript syntax |
+| `/skill:teach` | explain a subsystem plainly by composing how + why |
+| `/skill:swarm` | fan out N parallel workers across slices or races, then return one aggregated report |
+| `/skill:technical-writing` | write docs, RFCs, readmes, PR descriptions, and commit messages to one layered standard |
+| `/skill:bro` | restate the last message in plain human language, no jargon |
+| `/skill:figure-it-out` | design a rigorous, auditable playbook for a task no bundled playbook fits |
+| `/skill:show-me-your-work` | log decisions to a reviewable tsv decision trail |
+| `/skill:blast-radius` | find what a change could break beyond the diff and prove safety by running code |
+| `/skill:recall` | catch up on recent working context from chat history, live state, and the shared record |
+| `/skill:setup-pstack` | diagnose and explain native model roles and verification readiness |
+| `/skill:poteto-help` | answer a question about pstack with the prompt to send and the file the answer came from |
+| `/skill:unslop` | clean up writing by removing AI tells |
+| `/skill:no-comments` | strip comments before review, fix the accepted findings, encode claimed constraints |
+| `/skill:create-verification-skill` | generate a project-local verification skill and feature map |
+| `/skill:maintain-verification-skill` | re-sync a drifted verification skill and its feature map |
+| `/skill:create-formal-verification-skill` | generate a project-local check for a high-risk property beyond the cases tests reach |
+| `/skill:maintain-formal-verification-skill` | re-sync formal verification with changed code and distinguish drift from bugs |
+| `/skill:statechart` | check a TLA+ model and show state transitions and shortest invariant-violation paths |
+| `/skill:deslop` | clean a code diff or edit Japanese prose, PR text, and reports without changing facts |
+| `/skill:babysit` | monitor an open PR, fix CI/comments, keep it merge-ready |
+| `/skill:nuclear-code-quality-review` | extremely strict maintainability audit |
+| `/skill:make-pr-easy-to-review` | clean noisy history and improve PR description before review |
+| `/skill:fix-ci` | find failing PR checks, inspect logs, apply focused fixes |
+| `/skill:fix-merge-conflicts` | non-interactively resolve merge conflicts, validate, finalize |
+| `/skill:get-pr-comments` | fetch and summarize review comments from the active PR |
+| `/skill:what-did-i-get-done` | summarize authored commits over a user-chosen period |
 
 ## Native Oh My Pi (OMP) architecture
 
