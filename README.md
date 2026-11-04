@@ -15,6 +15,21 @@ omp plugin install pstack@pstack
 omp plugin marketplace update && omp plugin upgrade
 ```
 
+## Awesome other plugins
+
+pstackとあわせて使う外部プラグインです。pstackには同梱していないため、別途インストールします。
+
+### yomiyasu
+
+[yomiyasu（よみやす）](https://github.com/nanaism/yomiyasu)は、AIが生成した日本語を、意味や条件を保ちながら読みやすく推敲するスキルです。
+
+```sh
+omp plugin marketplace add nanaism/yomiyasu
+omp plugin install yomiyasu@yomiyasu
+```
+
+marketplaceを登録済みの場合は、`marketplace add`を省略してください。インストール後は、OMPで `skill:yomiyasu` を指定して推敲を依頼できます。
+
 ## 使い方
 
 スキルコマンドが有効なOMPセッションでは `/skill:poteto-mode` を使います。無効にしている場合は、通常の依頼文で `skill:poteto-mode` を指定します。
