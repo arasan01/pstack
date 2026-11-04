@@ -41,9 +41,23 @@ omp plugin marketplace update && omp plugin upgrade
 
 設計をサブエージェントへ任せる場合は、同梱の `architect` agent を使えます。`skill:architect` を使い、依頼時の範囲と停止条件に従います。agentの選択とスキルの参照は別です。
 
-スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](docs/reference.md#scope-and-completion-advisor) も同梱しています。Advisor は明示的に導入する方式で、インストールだけでは有効になりません。
-
 詳しい手順は [playbook 一覧](skills/poteto-mode/SKILL.md#playbooks)と[スキルのリファレンス](docs/reference.md)を参照してください。
+
+## Advisorのセットアップ
+
+スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](advisors/scope-completion/WATCHDOG.yml) を同梱しています。パッケージのインストールだけでは有効になりません。
+
+1. 同梱の `advisors/scope-completion/WATCHDOG.yml` を開きます。
+2. 対象プロジェクトの `WATCHDOG.yml` の既存 `advisors` リストへ、そのエントリを追加します。ファイルがない場合は同梱ファイルをプロジェクトの `WATCHDOG.yml` として配置します。既存の設定は上書きせず、`advisors` キーを重複させないでください。
+3. OMPセッションを再起動し、次のコマンドを順に実行します。
+
+```text
+/advisor on
+/advisor status
+/advisor dump raw
+```
+
+`status` で実行モデルを、`dump raw` でGuardianの指示が読み込まれていることを確認します。`scope: main` は維持してください。Advisorの利用には追加のモデル呼び出しが発生します。既存Advisorとのマージ規則やレビューとの役割の違いは[リファレンス](docs/reference.md#scope-and-completion-advisor)を参照してください。
 
 ## 開発
 

@@ -65,11 +65,7 @@ pstack installs as a canonical OMP package at the repository root:
 
 The [Scope & Completion Guardian roster](../advisors/scope-completion/WATCHDOG.yml) challenges unapproved scope growth, redundant investigation and delegation, and premature completion without functional evidence. Its name is `pstack-scope-completion` to avoid replacing an existing default advisor.
 
-OMP does not discover `WATCHDOG.yml` inside installed packages. Installing pstack does not register or enable this advisor. To use it:
-
-1. Open `advisors/scope-completion/WATCHDOG.yml` in the pstack checkout or installed package.
-2. Add its entry to the existing `advisors` list in your project's `WATCHDOG.yml`, or use `/advisor configure` for the intended project or user scope. If no roster exists, use the bundled file as that scope's `WATCHDOG.yml`. Do not overwrite an existing roster or create a second `advisors` key.
-3. Restart the project session after editing the file externally, then run `/advisor on` and `/advisor status` to check the active model. Use `/advisor dump raw` to confirm the Scope & Completion Guardian instructions. A single-advisor status may omit its name.
+OMP does not discover `WATCHDOG.yml` inside installed packages. Installing pstack does not register or enable this advisor. Follow the [README setup steps](../README.md#advisorのセットアップ) to add it to a project and check the active model and prompt.
 
 Check all discovered user and project rosters before adding it. Advisors merge by slug, not by field; a more-specific entry replaces an entry with the same slug. A new roster replaces the implicit default advisor. Explicitly named advisors with other slugs remain and can increase review usage and cost.
 
