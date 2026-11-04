@@ -5,11 +5,13 @@ description: "Design an auditable playbook when no narrower one fits: a large mi
 
 # Figure it out
 
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
+
 When the task matches no playbook, design one. The deliverable before any code is the workflow itself: a sequence of phases that scales rigor to the task, runs the scientific method, and leaves a decision trail a human can audit after stepping away.
 
 ## Start
 
-Open a todolist whose first item is to read the Principles section of the **poteto-mode** skill. Then add the phases below as todos.
+Read the Principles section of **poteto-mode**. The accepted brief and native policy determine which work you coordinate or perform. Reflect that work in the existing plan. For an assigned subtask, reuse the parent plan and grounding, and design or execute only the assigned part without duplicating whole-task todos. Invocation type grants no additional authority or permissions.
 
 ## Phase A: Frame
 
@@ -30,7 +32,7 @@ Decompose into atomic, independently-landable units. Sequence riskiest-unknown-f
 - Decide what fans out. Parallelize only across seams, and give each worker its own worktree or branch (the **separate-before-serializing-shared-state** principle skill). Don't over-fan. Subagent delegation follows native agent policy.
 - Write the designed phase list down. That list is what the human reviews.
 
-Then execute the design. Add its steps to the todolist as concrete items between the Phase C and Phase D entries. Run each under the Phase C loop discipline, and weave the Phase D log through them, a row as each step lands, rather than saving the whole trail for the end.
+When execution is authorized, add the designed steps to the existing plan. Run the assigned units under the Phase C loop discipline, and weave the Phase D log through them, a row as each step lands. A workflow-design-only request returns the designed playbook and stops.
 
 ## Phase C: Run the loop
 

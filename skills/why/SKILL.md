@@ -5,9 +5,13 @@ description: "Use for 'why does X work this way', 'why we picked Y', design rati
 
 # Why
 
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
+
 Investigate the motivation and intent behind code. The companion `how` skill answers what the code does and how it works. `why` answers what forces led to its shape.
 
 This is a read-only investigation workflow. It produces cited rationale, decision history, and constraints; it does not implement changes or impose an implementation review gate.
+
+The accepted brief and native policy determine responsibility, not whether the request is direct or delegated. For a scoped subtask, reuse the parent's plan and valid grounding, investigate only the missing rationale, and return the assigned answer. Do not duplicate whole-task todos. A narrower brief does not grant permissions.
 
 ## Operating Posture
 

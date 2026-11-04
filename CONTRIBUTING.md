@@ -30,6 +30,7 @@ This verifies:
 3. Local Markdown links resolve within the installed package boundary, including its bundled model guides and profiles.
 4. No obsolete multi-runtime paths or foreign execution instructions (`subagent_type: "pstack:...`, `run_in_background: true`) are present.
 5. Specialist agent definitions in `agents/` are valid.
+6. Retired upstream orchestration scripts cannot re-enter the package.
 
 ### Running tests
 
@@ -80,8 +81,9 @@ Run `prek install` (or `pre-commit install`) in your clone to run the package va
 Releases bump the version number across the package:
 1. Update the canonical version in `VERSION`.
 2. Update `"version"` in `package.json`.
-3. Add a matching `## <version> - <title>` section in `CHANGES.md`.
-4. Run `bun run validate` and `bun test tests/`.
+3. Update `"version"` in `.omp-plugin/marketplace.json`.
+4. Add a matching `## <version> - <title>` section in `CHANGES.md`.
+5. Run `bun run validate` and `bun test tests/`.
 
 ## Commit and PR style
 

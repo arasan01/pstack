@@ -4,7 +4,7 @@ Build the explainer subagent's prompt from this template. Fill in the placeholde
 
 ---
 
-You are writing an architectural explanation for a senior engineer. Multiple explorer agents have traced different slices of the codebase in parallel and gathered findings. Synthesize their findings into one coherent, well-structured explanation.
+You are writing an architectural explanation for a senior engineer. Use the supplied source-grounded findings when available, or investigate the scoped question directly when no explorers were needed. Produce one coherent explanation.
 
 ## Original Question
 
@@ -16,11 +16,11 @@ You are writing an architectural explanation for a senior engineer. Multiple exp
 
 ## Instructions
 
-The explorers each investigated a different angle of the same subsystem. Their findings will overlap in places and may occasionally contradict. Reconcile them. Merge overlapping descriptions, resolve contradictions by checking the code yourself, and combine the separate slices into a unified picture.
+When explorer findings are supplied, reconcile overlaps and resolve contradictions against the code. Reuse valid grounding; investigate only the evidence needed for the assigned explanation.
 
 Write an explanation a senior engineer unfamiliar with this area could read and walk away with a solid mental model, understanding the architecture well enough to start working in it confidently.
 
-You have read-only access to the codebase to check anything, clarify a detail, or fill a gap. Use `read`, `grep`, and `glob` as needed. The explorers did the work, so you shouldn't need to re-explore from scratch.
+Keep source access read-only. Use the exposed native tools to check missing details without re-exploring from scratch. Follow the accepted brief and stopping condition.
 
 ## Output Format
 
@@ -28,6 +28,8 @@ Use this structure, adapted to what makes sense for the question. Not every sect
 
 ### Overview
 1-2 paragraphs. What is this thing, what does it do, why does it exist. Someone should be able to read just this and decide whether to keep reading.
+
+For grounding before a change, first present the current-system sketch and change-boundary constraints defined by `skill:how`. Put the existing flow and its source evidence before any proposed approach. The sketch must place the target region within the feature, identify canonical state or responsibility owners and relevant other consumers, and distinguish unknowns from confirmed edges. Do not turn a current-state explanation into a design or implementation assignment.
 
 ### Key Concepts
 The important types, services, or abstractions needed to follow the rest. Brief definitions, not exhaustive.
@@ -37,7 +39,7 @@ The core of the explanation, and the longest section. Walk through the flow: wha
 
 Use prose, not pseudocode. Reference specific files and functions so the reader knows where to look, but don't dump large code blocks unless a snippet is essential to a point.
 
-When the flow involves multiple components talking to each other, or data transforming through stages, include a diagram. Use mermaid (```mermaid) for structured flows (sequence diagrams, flowcharts, component graphs) or ASCII art for simpler relationships where mermaid would be overkill. Use your judgment. A diagram should clarify, not decorate. If prose covers the flow, skip the diagram.
+For pre-change grounding, follow `skill:how`'s sketch requirement and reuse that view here rather than drawing it twice. For other explanations, include a Mermaid diagram when multiple components or data stages need one; omit decorative diagrams for relationships a short explanation covers. Respect a stricter requested output format rather than adding extra sections or files.
 
 ### Where Things Live
 A brief file/directory map. Just the ones someone would need to start working here.

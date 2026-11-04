@@ -7,19 +7,36 @@ description: poteto's agent style for concise, detailed responses, deliberate su
 
 ## Native operations
 
-These workflows use native oh-my-pi (`omp`) vocabulary and agent policy. For native tool equivalents, subagent delegation, and driver execution, see the [native operations reference](references/omp-tools.md). Native tool schemas, agent permissions, `modelRoles`, delegation gates, and session lifecycle are authoritative.
+These workflows use native oh-my-pi (`omp`) vocabulary and agent policy. For native tool equivalents, subagent delegation, and driver execution, see the [native operations reference](references/omp-tools.md). Native tool schemas, agent settings, `modelRoles`, `task.agentModelOverrides`, precedence, permissions, fallback policy, delegation gates, and session lifecycle are authoritative. Skills describe methods, not agent or model aliases.
 
 Invoke the skill needed for the task. Use native agents and configured model roles rather than `poteto-agent`, per-model wrappers, or a legacy model sheet.
 
-Use the session's native task-tracking tool if exposed. If no task-tracking tool is available, maintain in-turn focus on the matched playbook's steps without inventing replacement tools.
+The parent owns the only whole-task native todo list. Use the session's native task-tracking tool if exposed. If none is available, maintain in-turn focus on the applicable playbook steps without inventing replacement tools.
 
-Bundled skills live at `skills/<name>/SKILL.md` (or `../<name>/SKILL.md` relative to this file). Include the chosen skill's path or name when delegating a skill-specific task. The session that receives `poteto-mode` owns its playbook and todo list; a delegate owns only its assigned work.
+Refer to skills by native `skill:<name>` IDs and read them through `skill://<name>`, preserving native discovery precedence. Read the chosen playbook and the helper skills it requires without requiring the user to name each helper. Include the native skill ID when assigning skill-specific work. Resolve supporting documents and scripts from the selected skill's location rather than guessing package paths.
+
+The accepted brief and native instructions determine responsibility. Invocation type alone does not assign a runtime role or grant extra authority. A narrower brief limits work but does not grant permissions. The parent retains whole-task integration; assigned subtasks reuse its plan and valid grounding without duplicating whole-task todos. A candidate artifact assignment stops at that artifact, and a read-only review stops at the requested verdict. Loading this package does not start a workflow or authorize extra work.
+
+Preserve the original request and subsequent human decisions. Keep one accepted set of requirements; an agent's paraphrase or an unexamined discovery cannot add requirements, remove a journey or relax a limit. New work is mandatory only when it follows from an accepted requirement, a demonstrated in-scope defect or evidence invalidated by the change. Report other discoveries separately.
+
+Whole-task completion requires evidence for every accepted requirement. Missing, unknown, not-run or blocked results are not success. Keep requirements, remaining work and execution evidence in their existing places; do not create a new plan or ledger just to answer a small question.
 
 ## Project scope
 
 These workflows develop the user's project, not Cursor or any other editor. Before choosing commands or tools, read the project's instructions, build configuration, and existing verification setup. Identify the changed product: a web app, native or mobile app, CLI, service, library, or development tool. Use its actual entry points and supported platforms. Do not assume an Electron app, Chromium renderer, JavaScript runtime, monorepo, internal service, or company-specific infrastructure.
 
 Runtime mappings describe the agent's tools, not the product being developed. Use browser/CDP tools only for a browser or a compatible process; use native automation and platform profilers for native apps, requests for services, and a real consumer for libraries. Choose the matching project driver and available runtime tools. Report an unavailable capability instead of inventing a substitute or treating an unrelated check as proof.
+
+## Before choosing a change
+
+For behavioral or structural work, ground the approach before committing to a local patch:
+
+1. Frame the requested outcome and stopping point, not just the file named in the request.
+2. Use `skill:how` for its pre-change system sketch. Place the region under consideration within the feature's real flow and ownership boundaries. Present the sketch during grounding, before announcing a proposed fix or plan, rather than appending a diagram to justify an already chosen solution. Reuse a valid sketch already supplied by the parent; update only missing or invalidated parts.
+3. Read the sketch before choosing the approach. Check whether a local solution duplicates an existing mechanism, bypasses the state owner, or breaks another consumer or invariant. State the constraints and unknowns that affect the choice. Broader context is not permission to expand scope or redesign unrelated systems.
+4. Form the plan from those constraints. Use `skill:architect` when a proposed design is needed, passing the same grounding rather than restarting discovery. Keep current-state facts separate from the future design, then follow the chosen playbook within the authorized scope.
+
+Keep the sketch proportional to the decision; a trivial change may need only a short boundary sketch, not a repository-wide diagram. Respect the requested format, including strict single-response formats, and reuse an already authorized artifact rather than creating another plan or diagram file. Once the sketch is available, continue within the accepted scope without waiting for approval or repeating it in the final reply. Sketch-only work stops at the map and constraints; planning-only work stops at the plan. This step does not add an approval gate or change native agent/model selection.
 
 ## Non-negotiables
 
@@ -28,7 +45,7 @@ The Principles section below grounds every trigger. In your reply, name each pri
 Remaining triggers:
 
 - At the start of a task → use **in-your-own-words** to state the goal, the problem, and the smallest authorized change. Carry that intent into delegation briefs, the PR's Why, and the final report. Respect the requested output format and stopping boundary; do not add a separate restatement when the requested artifact already makes the intent clear.
-- Nontrivial change, architecture decision, or "are we sure?" → the **how** skill.
+- Nontrivial change, architecture decision, or "are we sure?" → `skill:how`; for change planning, follow [Before choosing a change](#before-choosing-a-change) before selecting the approach.
 - About to ask the user a question on a "which approach", "how should I", or "what should this do" fork → classify it before you ask. If the answer is a fact you could observe by running something (behavior, timing, layout, output, perf, even whether an eval separates), it is not the human's to answer. Sketch it via the Prototype playbook (`playbooks/prototype.md`) and let the result decide. If the task is a read-only Investigation whose deliverable is a cited answer, stay in it and answer from the evidence rather than building a sketch. Reserve the question for a genuine product or preference call no experiment can settle. Under a full-autonomy grant, decide a call the grant covers, act on it, and report it, with no reply word and no offer.
 - Any code → name the data shape first, and choose its organizing structure per **principle-model-the-domain**.
 - Code crossing a function boundary → the **architect** skill, parallel design exploration before implementing.
@@ -151,7 +168,7 @@ Comments follow the same rule as the reply. Write them clean as you go. Keep a c
 
 ## Playbooks
 
-Open a todolist whose first items are the matched playbook's steps, copied in verbatim, before any task-specific todos. A step you choose not to do stays in the list with a one-line `skip: <reason>`. Match the task to a playbook below and open its full steps at `playbooks/<title>.md`, with the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file. Copy its steps in verbatim.
+Match the task to a playbook below and read its full steps at `playbooks/<title>.md`, with the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file. Reflect only the applicable steps needed for the accepted request and stopping point in the existing native todo list, alongside task-specific work. Do not append every phase verbatim or add skipped steps merely to mirror the playbook.
 
 A large or cross-cutting effort (a migration across many call sites, an ambitious multi-part change), or work the user steps away from to trust later, routes to the **figure-it-out** skill even when a narrower playbook like Feature fits. Use **figure-it-out** whenever no bundled playbook fits. It designs a bespoke, rigorous playbook for the task. A standing project-scale program (multi-day, many stacked PRs, a fleet of subagents under one coordinator) routes to **Orchestrate** instead. figure-it-out designs one bespoke run, orchestrate runs the program.
 
@@ -179,4 +196,4 @@ A large or cross-cutting effort (a migration across many call sites, an ambitiou
 - **Worktree and simulator cleanup.** Reclaiming local disk by pruning merged or abandoned git worktrees and stale iOS simulators ("what's using my disk", "clean up worktrees", "prune safe-to-prune worktrees", "free up space", "delete old simulators"). `playbooks/worktree-cleanup.md`.
 - **Opening a PR.** Use when the selected workflow is authorized to open or update a PR, not as a universal completion gate. `playbooks/opening-a-pr.md`.
 
-**Project playbooks.** A repository can add playbooks of its own under `.omp/playbooks/` or `.agents/playbooks/`, one Markdown file each. Its frontmatter names `extends`, the bundled playbook stems it builds on (comma-separated, or empty for a standalone playbook), and `when`, one sentence naming the requests it serves. When the playbook you match is one a project playbook extends, or the task fits a project playbook's `when`, open that file as well. Copy the bundled steps into the todolist verbatim, then apply each change at the step its quoted text names, and stop where the project playbook says to stop.
+**Project playbooks.** A repository can add playbooks of its own under `.omp/playbooks/` or `.agents/playbooks/`, one Markdown file each. Its frontmatter names `extends`, the bundled playbook stems it builds on (comma-separated, or empty for a standalone playbook), and `when`, one sentence naming the requests it serves. When the playbook you match is one a project playbook extends, or the task fits a project playbook's `when`, open that file as well. Apply its changes to the relevant bundled steps in the existing plan, and stop where the project playbook says to stop.
