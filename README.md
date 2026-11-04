@@ -33,6 +33,10 @@ poteto-mode で、ページを切り替えると検索条件が消える不具�
 
 個別のスキルも指定できます。設計には `architect`、仕組みの調査には `how`、変更のレビューには `interrogate` を使います。
 
+設計をサブエージェントへ任せる場合は、同梱の `architect` agent を使えます。`architect` スキルを読み、依頼時の範囲と停止条件に従います。
+
+スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](docs/models.md#scope-and-completion-advisor) も同梱しています。Advisor は明示的に導入する方式で、インストールだけでは有効になりません。
+
 詳しい手順は [playbook 一覧](skills/poteto-mode/SKILL.md#playbooks)と[スキルのリファレンス](docs/reference.md)を参照してください。
 
 ## 開発

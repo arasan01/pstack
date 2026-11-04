@@ -111,11 +111,13 @@ Dispatch subagents using the native `task` tool, with each child specified as an
 **Agent selection:**
 - Omit `agent` to use the default task worker for general implementation and multi-step tasks.
 - Use `agent: "scout"` for read-only codebase discovery of genuine unmapped files or subsystems.
+- Use `agent: "architect"` for source-grounded architecture design and structural redesign. The `architect` skill describes the method; selecting the agent dispatches the work.
 - Use `agent: "reviewer"` with an explicit read-only, no-edits brief for code review and adversarial checks.
 - Use `agent: "sonic"` for strictly mechanical edits when justified.
-- Use user-configured specialist agents when appropriate.
-- Never require or invent `poteto-agent`, `architect`, or effort-wrapper agents (`pstack:effort-*`, `pstack:poteto-agent-*`).
+- Use project- or user-configured specialist agents when appropriate. Respect their native precedence over bundled agents.
+- Never require or invent `poteto-agent` or effort-wrapper agents (`pstack:effort-*`, `pstack:poteto-agent-*`).
 - Do not pass foreign fields such as `subagent_type`, `run_in_background`, or `readonly`. Native optional fields, including `model` when exposed, are governed by the current tool schema and operator policy, not an old runtime mapping.
+- The bundled `architect` agent defaults to `@slow`. Native `task.agentModelOverrides` and supported per-dispatch model overrides remain authoritative.
 
 **Delegation discipline:**
 - Scope work inline first. Never open a task with a scout subagent; delegate only when 2+ independent slices each cost more than a handful of your own calls, or when reading would flood context.

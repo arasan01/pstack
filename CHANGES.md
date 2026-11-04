@@ -2,6 +2,12 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## Unreleased
+
+- Added the locally used `architect` task agent with its original `@slow` selection and architecture-skill instructions. Native model overrides and project/user agent precedence remain authoritative. Updated the optional overlays and agent-selection guidance.
+- Bundled `advisors/scope-completion/WATCHDOG.yml` from the `meta-soenan-apps` Scope & Completion Guardian. Its instructions and `scope: main` are preserved; the name is `pstack-scope-completion` to avoid replacing an explicit `default` entry.
+- Documented explicit Advisor opt-in, native roster merging, implicit-default replacement, model usage and prompt inspection. Installing pstack does not register an Advisor or modify user settings. Advisor notes do not replace required independent correctness review.
+
 ## 0.10.2 - adapt Cursor pstack 0.15.36 for OMP
 
 Adapted the useful changes from Cursor pstack `519d36a` through `c742dd6` (0.15.35 and 0.15.36) without restoring Cursor runtime dependencies.

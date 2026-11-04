@@ -57,9 +57,10 @@ Find each skill's instructions in the [skills tree](../skills/).
 pstack installs as a canonical OMP package at the repository root:
 - **Skills (`skills/`)**: Discovered natively by OMP. Skills contain procedural guidance and playbooks.
 - **Extension (`omp/index.ts`)**: Declared via `package.json#omp.extensions`. Integrates with OMP extension loading to provide context and readiness guidance.
-- **Specialist agents (`agents/`)**: Provides targeted specialist prompts, such as `agents/comment-sicko.md` for comment elimination in `/no-comments`.
+- **Specialist agents (`agents/`)**: `architect.md` delegates source-grounded design through the architecture skill with native `@slow` selection; `comment-sicko.md` supplies the comment-audit specialist. Project and user agent definitions take native precedence.
 - **Model roles and execution**: Native `modelRoles`, `agentModelOverrides`, permissions, delegation, reasoning, fallback, and session lifecycle remain authoritative. pstack does not maintain a second runtime or parallel model sheet.
 - **Readonly root setup**: `setup-pstack` explains and diagnoses native configuration without mutating global or user settings unless explicitly requested.
+- **Advisor example (`advisors/scope-completion/WATCHDOG.yml`)**: The opt-in Scope & Completion Guardian roster watches accepted scope and completion evidence. OMP discovers rosters from user and project locations, not installed packages. See [advisor setup](models.md#scope-and-completion-advisor).
 
 ## Configuration and dependencies
 
@@ -83,6 +84,7 @@ VERSION                      Canonical version file
 omp/index.ts                 Native OMP extension entry point
 skills/                      Shared skills, principles, playbooks, and scripts
 agents/                      Semantic specialist agent definitions
+advisors/                    Opt-in native WATCHDOG roster examples
 tools/                       Package validator and verification smoke runners
 tests/                       Unit, invariant, and validation test suites
 docs/                        Documentation and model guidance

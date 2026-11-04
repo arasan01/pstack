@@ -23,10 +23,11 @@ This reference outlines native tool usage, subagent delegation, model policy, an
 2. **Agent selection:**
    - Omit `agent` to use the default task worker for general tasks.
    - Use `scout` for read-only codebase discovery of genuine unmapped files.
+   - Use `architect` for source-grounded architecture design and structural redesign. The skill describes the method; agent selection dispatches the work.
    - Use `reviewer` with an explicit read-only, no-edits brief for code review and adversarial evaluation.
    - Use `sonic` for strictly mechanical, repetitive edits when justified.
-   - Use user-configured specialist agents when appropriate.
-   - Never require or invent `poteto-agent`, `architect`, or effort-wrapper agents (`pstack:effort-*`, `pstack:poteto-agent-*`).
+   - Use project- or user-configured specialist agents when appropriate. Respect their native precedence over bundled agents.
+   - Never require or invent `poteto-agent` or effort-wrapper agents (`pstack:effort-*`, `pstack:poteto-agent-*`).
 3. **Dispatch parameters:** Ordinary entries use `task`, `solutionSpace`, and an optional `agent`. Native optional fields such as `model` remain available when the current schema and operator policy permit them; use them for an explicit named-model request or model comparison, not as a replacement role table. Foreign fields such as `run_in_background`, `subagent_type`, and `readonly` are not native dispatch parameters.
 4. **Batching:** When parallel work is permitted, dispatch up to 32 independent workers in a single `task` call containing multiple entries in `tasks[]`.
 5. **Filesystem isolation:** Concurrent writers require disjoint output paths or separate git worktrees created via `bash`. Never pass unsupported isolation flags to tools.
@@ -37,6 +38,7 @@ This reference outlines native tool usage, subagent delegation, model policy, an
 Model selection, reasoning effort, fallback chains, and service tiers are governed by native `modelRoles` and agent configuration.
 - Do not read, write, or require override model sheets.
 - Default to configured roles. An explicit named-model request or model comparison may use the current native schema's supported override fields; resolve selectors first and do not maintain a second routing table.
+- The bundled `architect` agent defaults to `@slow`. Native `task.agentModelOverrides` and supported per-dispatch model overrides remain authoritative.
 - For multi-candidate panels (`arena`, `architect`, `interrogate`), preserve independent candidates, reviews, and synthesis through available native or configured agents within delegation limits. Disclose when distinct model families cannot be confirmed.
 
 ## Installed paths
