@@ -47,9 +47,24 @@ omp plugin marketplace update && omp plugin upgrade
 
 スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](advisors/scope-completion/WATCHDOG.yml) を同梱しています。パッケージのインストールだけでは有効になりません。
 
-1. 同梱の `advisors/scope-completion/WATCHDOG.yml` を開きます。
-2. 対象プロジェクトの `WATCHDOG.yml` の既存 `advisors` リストへ、そのエントリを追加します。ファイルがない場合は同梱ファイルをプロジェクトの `WATCHDOG.yml` として配置します。既存の設定は上書きせず、`advisors` キーを重複させないでください。
-3. OMPセッションを再起動し、次のコマンドを順に実行します。
+対象プロジェクトのルートで、`WATCHDOG.yml` がない場合に実行します。
+
+```sh
+test ! -e WATCHDOG.yml && \
+	curl --fail --location --remove-on-error \
+		https://raw.githubusercontent.com/arasan01/pstack/main/advisors/scope-completion/WATCHDOG.yml \
+		--output WATCHDOG.yml
+```
+
+既存の `WATCHDOG.yml` がある場合は上書きせず、同梱ファイルのエントリを既存の `advisors` リストに追加してください。`advisors` キーは重複させません。
+
+OMPを起動し直します。
+
+```sh
+omp
+```
+
+OMP内で順に実行します。
 
 ```text
 /advisor on
