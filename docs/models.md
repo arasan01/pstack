@@ -4,19 +4,20 @@
 
 ## Roles
 
-同梱の `arasan01.yml` は、HOMEの現行設定から次のモデルロールを反映しています。
+この文書はロールの用途を説明します。具体的なモデル割当とeffortは [`profiles/arasan01.yml`](../profiles/arasan01.yml) の `modelRoles` を参照してください。
 
-| ロール | セレクター |
+| ロール | 用途 |
 | --- | --- |
-| `default` | `openai-codex/gpt-6.1-sol:high` |
-| `task` | `openai-codex/gpt-6.1-sol:medium` |
-| `slow`, `plan`, `cyber` | `openai-codex/gpt-6.1-sol:max` |
-| `designer` | `openai-codex/gpt-6.1-sol:xhigh` |
-| `smol`, `advisor` | `openai-codex/gpt-6.1-terra:medium` |
-| `tiny`, `vision`, `commit` | `openai-codex/gpt-6-luna:high` |
-| `memory` | `openai-codex/gpt-6-luna:xhigh` |
+| `default` | メインセッション。 |
+| `task` | 通常の委譲ワーカー。 |
+| `slow` | 深い推論を必要とする作業。 |
+| `plan` | ネイティブの計画モード。ロールの指定だけでは計画モードに入りません。 |
+| `smol` | 軽量な作業。調査や機械的作業への委譲は、作業内容から判断します。 |
+| `advisor` | 実行中の作業に対する助言・監視。 |
+| `tiny`, `vision`, `commit`, `memory` | 小規模処理、画像理解、コミット作成、メモリ処理の用途別選択。 |
+| `designer`, `cyber` | 用途別のカスタムロール。定義だけでは専用エージェントやワークフローを起動しません。 |
 
-`task.agentModelOverrides` は `architect` を `openai-codex/gpt-6-astra:xhigh`、`security-reviewer` を `ollama-cloud/deepseek-v4.1-flash:1017:max` に指定します。他のエージェントへの上書きや独自の `review` ロールは追加しません。スキルは作業方法であり、エージェントやモデルではありません。ロールの指定だけでは作業を実行しないため、実際に起動したエージェントと解決されたモデルを確認してください。
+エージェント別の割当は、同じプロファイルの `task.agentModelOverrides` を参照してください。スキルは作業方法であり、エージェントやモデルではありません。ロールの指定だけでは作業を実行しないため、実際に起動したエージェントと解決されたモデルを確認してください。
 
 The packaged `architect` agent reads `skill://architect` and follows the scope, constraints, deliverable and stopping condition in its task brief. Project and user agents with the same name take native precedence over package agents. Native per-agent and per-dispatch model overrides remain authoritative.
 
@@ -63,6 +64,6 @@ Advisor notes do not replace a workflow's required independent correctness revie
 
 ## Fallback and verification
 
-同梱設定はHOMEと同じ `retry.modelFallback: true`、`fallbackOn: any` を保持し、Web検索のフォールバックチェーンも含みます。要求したモデルの実行を保証する設定ではありません。検証時は正確なセレクターを解決し、実行されたモデルを確認してください。設定オブジェクトはマージされるため、空の `fallbackChains` でも下位設定のマッピングが消えるとは限りません。
+フォールバック方針の設定値は、同じ[プロファイル](../profiles/arasan01.yml)の `retry` を参照してください。`retry.modelFallback` は再試行時のモデル代替、`fallbackOn` は代替の対象となるエラー、`fallbackChains` は代替先の順序を指定します。設定だけでは要求したモデルの実行を保証しません。検証時は正確なセレクターを解決し、実行されたモデルを確認してください。設定オブジェクトはマージされるため、空の `fallbackChains` でも下位設定のマッピングが消えるとは限りません。
 
 The smoke harness requires an exact available model, disables retry substitution, checks completed assistant messages and child task results, and rejects observed fallbacks or identity changes. Missing DeepSeek produces `UNAVAILABLE`, never simulated success. No GPT-versus-DeepSeek quality, speed or cost advantage is claimed without measurements on the same tasks.
