@@ -97,6 +97,13 @@ describe("OMP package validation and boundary checks", () => {
     expect(() => validateAll(root)).toThrow(/restore the OMP marketplace catalog/);
   });
 
+  test("path-based workflow metadata must use the native skill reference", () => {
+    const root = createPackageFixture(r => {
+      writeFileSync(join(r, "skills", "good-skill", "SKILL.md"), "---\nname: good-skill\ndescription: A valid skill for testing.\nworkflow-contract: ../poteto-mode/references/workflow-contract.md#good-skill\n---\n");
+    });
+    expect(() => agentSkills(join(root, "skills"))).toThrow(/skill:poteto-mode/);
+  });
+
   test("retired upstream orchestration scripts cannot be packaged again", () => {
     const root = createPackageFixture(r => {
       const retired = join(r, "skills", "poteto-mode", "scripts", "orch");

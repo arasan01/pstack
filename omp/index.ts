@@ -6,7 +6,7 @@ export default function pstackOmp(omp: ExtensionAPI): void {
   omp.registerCommand("pstack", {
     description: "Inspect native pstack model-role availability without changing settings",
     handler: async (_args, ctx) => {
-      const roles = ["default", "smol", "slow", "plan", "task", "review"].map(role => ({ role, model: ctx.models.resolve(`@${role}`) }));
+      const roles = Object.keys(omp.pi.settings.getModelRoles()).map(role => ({ role, model: ctx.models.resolve(`@${role}`) }));
       ctx.ui.notify(formatPstackReadiness({ currentModel: ctx.models.current(), roles }), "info");
     },
   });

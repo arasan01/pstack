@@ -1,18 +1,17 @@
 ---
 name: figure-it-out
 description: "Design an auditable playbook when no narrower one fits: a large migration, an ambitious multi-part change, or work a human reviews after stepping away. Scales rigor to the task, runs a hypothesis loop, and logs decisions. Use for /figure-it-out or 'figure it out'."
-workflow-contract: ../poteto-mode/references/workflow-contract.md#figure-it-out
 ---
 
 # Figure it out
 
-Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
 When the task matches no playbook, design one. The deliverable before any code is the workflow itself: a sequence of phases that scales rigor to the task, runs the scientific method, and leaves a decision trail a human can audit after stepping away.
 
 ## Start
 
-Read the Principles section of **poteto-mode**. For a direct request, reflect the applicable phases below in the existing owner todo list. As a delegated contributor, design or execute only the assigned part of the parent plan.
+Read the Principles section of **poteto-mode**. The accepted brief and native policy determine which work you coordinate or perform. Reflect that work in the existing plan. For an assigned subtask, reuse the parent plan and grounding, and design or execute only the assigned part without duplicating whole-task todos. Invocation type grants no additional authority or permissions.
 
 ## Phase A: Frame
 

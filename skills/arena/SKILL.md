@@ -1,14 +1,13 @@
 ---
 name: arena
 description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
-workflow-contract: ../poteto-mode/references/workflow-contract.md#arena
 ---
 
 # Arena
 
-Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
-For a direct request, reflect the applicable phases (Frame, Fan out, Cross-judge, Pick, Graft, Verify) in the existing owner todo list. As a delegated contributor, apply them within the assigned part of the parent plan.
+Apply the phases (Frame, Fan out, Cross-judge, Pick, Graft, Verify) within the accepted task brief and native policy. Use the existing plan for work you coordinate. For an assigned subtask, reuse the parent plan and grounding without duplicating whole-task todos. A candidate assignment ends at the requested artifact, not a new arena. Invocation type grants no additional authority or permissions.
 
 ## Phase A: Frame
 
@@ -16,7 +15,7 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners from native `task`, modelRoles, and agent settings. Preserve permissions and fallback policy. Use overrides only after resolving available selectors. Preserve independent candidate perspectives and disclose when native policy supplies no model diversity. Spawn more runners when the arena covers multiple design directions.
+3. Pick runners through native `task`, `modelRoles`, and agent settings. Preserve native precedence, `task.agentModelOverrides`, permissions, and fallback policy. Default to configured selection. Use a supported model override only for an explicit model comparison or named-model request after resolving available selectors. Preserve independent candidate perspectives and disclose when native policy supplies no model diversity. Spawn more runners when the arena covers multiple design directions.
 4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
 
 If a runner is refused, inspect the cause and who controls the restriction before replacing it. Use only an available replacement allowed by native policy. Do not bypass a permission denial or silently switch models. Replace unavailable runners to keep at least two candidates, unless the user requested one. If policy or availability prevents replacement, continue with fewer candidates and disclose the count and reason. If no runner can execute, report the blocker rather than claim an arena result. Independent candidates may use the same model.

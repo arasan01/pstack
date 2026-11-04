@@ -6,10 +6,9 @@ import { dirname, join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { stringify } from "yaml";
-import { checkPlan, fingerprintPlan, validateWorkflowReferences } from "../tools/check-contract.mjs";
+import { checkPlan, fingerprintPlan } from "../tools/check-contract.mjs";
 
 const cli = fileURLToPath(new URL("../tools/check-contract.mjs", import.meta.url));
-const contractRelative = "skills/poteto-mode/references/workflow-contract.md";
 const roots = [];
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const document = (front, body = "A consumer's retained plan.\n") => `---\n${stringify(front)}---\n${body}`;
@@ -66,20 +65,6 @@ function runCli(...args) {
   const process = spawnSync("node", [cli, ...args], { encoding: "utf8" });
   if (process.error) throw process.error;
   return { exit: process.status, report: JSON.parse(process.stdout), stderr: process.stderr };
-}
-
-function packageFixture() {
-  const root = temporaryRoot();
-  const contractPath = join(root, contractRelative);
-  const file = "skills/example/SKILL.md";
-  mkdirSync(dirname(contractPath), { recursive: true });
-  mkdirSync(dirname(join(root, file)), { recursive: true });
-  const contract = { version: 1, roles: { owner: "Own integration", contributor: "Return assigned output" }, bindings: { example: { file, modes: { direct: "owner", delegated: "contributor" } } } };
-  const save = () => writeFileSync(contractPath, document(contract, "Shared responsibilities.\n"));
-  const reference = (value = "../poteto-mode/references/workflow-contract.md#example", path = join(root, file)) => writeFileSync(path, document({ "workflow-contract": value }));
-  save();
-  reference();
-  return { root, contractPath, contract, file, save, reference, check: () => validateWorkflowReferences({ repoRoot: root }) };
 }
 
 describe("retained scope and actual artifact evidence", () => {
@@ -251,104 +236,6 @@ describe("retained scope and actual artifact evidence", () => {
   });
 });
 
-describe("bidirectional package bindings", () => {
-  test("registered references agree and unregistered third-party Markdown needs no metadata", () => {
-    const f = packageFixture();
-    writeFileSync(join(f.root, "third-party.md"), "# Unregistered vendor instructions\n");
-    expect(f.check()).toEqual([]);
-  });
-
-  test("quoted YAML contract keys cannot hide an unregistered binding", () => {
-    const f = packageFixture();
-    const extra = join(f.root, "extra.md");
-    writeFileSync(extra, '---\n"workflow-contract": missing.md#absent\n---\n');
-    expect(f.check()).toContainEqual(expect.objectContaining({ code: "INVALID_REFERENCE", file: extra }));
-  });
-
-  test("aliased YAML contract keys cannot hide an unregistered binding", () => {
-    const f = packageFixture();
-    const extra = join(f.root, "extra.md");
-    writeFileSync(extra, "---\ndeclaration-key: &key workflow-contract\n*key : missing.md#absent\n---\n");
-    expect(f.check()).toContainEqual(expect.objectContaining({ code: "INVALID_REFERENCE", file: extra }));
-  });
-
-  test("YAML merged contract metadata cannot hide an unregistered binding", () => {
-    const f = packageFixture();
-    const extra = join(f.root, "extra.md");
-    writeFileSync(extra, "---\n!!merge <<: {workflow-contract: missing.md#absent}\n---\n");
-    expect(f.check()).toContainEqual(expect.objectContaining({ code: "INVALID_REFERENCE", file: extra }));
-  });
-
-  test("unrelated YAML aliases remain outside contract validation", () => {
-    const f = packageFixture();
-    writeFileSync(join(f.root, "vendor.md"), "---\nfirst: &first vendor\n*first : kept\n---\nVendor notes.\n");
-    expect(f.check()).toEqual([]);
-  });
-
-  test("unknown roles and invalid mode names are rejected", () => {
-    const f = packageFixture();
-    f.contract.bindings.example.modes.delegated = "not-defined";
-    f.contract.bindings.example.modes.automatic = "owner";
-    f.save();
-    expect(f.check().filter(({ code }) => code === "INVALID_ROLE")).toHaveLength(2);
-  });
-
-  test("missing metadata and unknown bindings fail", () => {
-    const f = packageFixture();
-    writeFileSync(join(f.root, f.file), document({ name: "example" }));
-    expect(f.check().map(({ code }) => code)).toContain("INVALID_REFERENCE");
-    f.reference("../poteto-mode/references/workflow-contract.md#absent");
-    expect(f.check().map(({ code }) => code)).toContain("INVALID_REFERENCE");
-  });
-
-  test("metadata cannot claim a binding assigned to another file", () => {
-    const f = packageFixture();
-    const other = join(f.root, "skills/example/other.md");
-    f.reference(undefined, other);
-    expect(f.check().filter(({ code }) => code === "INVALID_REFERENCE").map(({ file }) => file)).toContain(other);
-  });
-
-  test("a different contract document is not accepted", () => {
-    const f = packageFixture();
-    writeFileSync(join(f.root, "skills/example/other.md"), document(f.contract));
-    f.reference("other.md#example");
-    expect(f.check().map(({ code }) => code)).toContain("INVALID_REFERENCE");
-  });
-
-  test("duplicate binding files, including symlink aliases, fail", () => {
-    const f = packageFixture();
-    const alias = "skills/example/alias.md";
-    symlinkSync(join(f.root, f.file), join(f.root, alias));
-    f.contract.bindings.second = { file: alias, modes: { delegated: "contributor" } };
-    f.save();
-    expect(f.check().map(({ code }) => code)).toContain("DUPLICATE_FILE");
-  });
-
-  test("binding and metadata paths cannot escape the package", () => {
-    const f = packageFixture();
-    const outside = temporaryRoot();
-    const external = join(outside, "external.md");
-    writeFileSync(external, "# External\n");
-    symlinkSync(external, join(f.root, "escape.md"));
-    for (const file of [external, "../escape.md", "escape.md"]) {
-      f.contract.bindings.example.file = file;
-      f.save();
-      expect(f.check().map(({ code }) => code)).toContain("INVALID_BINDING_PATH");
-    }
-    f.contract.bindings.example.file = f.file;
-    f.save();
-    f.reference(`${external}#example`);
-    expect(f.check().map(({ code }) => code)).toContain("INVALID_REFERENCE");
-  });
-
-  test("unsupported contract versions are invalid", () => {
-    const f = packageFixture();
-    f.contract.version = 99;
-    f.save();
-    expect(f.check().map(({ code }) => code)).toContain("INVALID_SCHEMA");
-  });
-});
-
 describe("real CLI consumers", () => {
   test("fingerprint then check succeeds with retained actual artifacts", () => {
     const f = fixture();
@@ -376,28 +263,19 @@ describe("real CLI consumers", () => {
     expect(codes(evidence.report)).toContain("EVIDENCE_CHANGED");
   });
 
-  test("package command validates real references", () => {
-    const f = packageFixture();
-    expect(runCli("package", f.root).exit).toBe(0);
-    f.reference("../poteto-mode/references/workflow-contract.md#missing");
-    const result = runCli("package", f.root);
-    expect(result.exit).toBe(1);
-    expect(result.report.status).toBe("invalid");
-  });
-
   test("symlinked file and directory entrypoints return contract JSON", () => {
-    const f = packageFixture();
+    const f = fixture();
     const aliases = temporaryRoot();
     const fileAlias = join(aliases, "check-contract.mjs");
     const directoryAlias = join(aliases, "tools");
     symlinkSync(cli, fileAlias);
     symlinkSync(dirname(cli), directoryAlias, "dir");
     for (const entry of [fileAlias, join(directoryAlias, "check-contract.mjs")]) {
-      const result = spawnSync("node", [entry, "package", f.root], { encoding: "utf8" });
+      const result = spawnSync("node", [entry, "fingerprint", f.planPath], { encoding: "utf8" });
       if (result.error) throw result.error;
       expect(result.status).toBe(0);
       const report = result.stdout.trim() ? JSON.parse(result.stdout) : null;
-      expect(report).toEqual({ status: "consistent", diagnostics: [] });
+      expect(report).toEqual({ scope: f.expectedScope });
     }
   });
 

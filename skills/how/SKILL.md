@@ -1,16 +1,17 @@
 ---
 name: how
 description: "Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use why for motivation."
-workflow-contract: ../poteto-mode/references/workflow-contract.md#how
 ---
 
 # How
 
-Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
 This is a read-only investigation workflow. It produces a clear mental model and cited explanation; it does not implement changes or impose an implementation review gate.
+
+The accepted brief and native policy determine responsibility, not whether the request is direct or delegated. For a scoped subtask, reuse the parent's plan and valid grounding, investigate only the missing evidence, and return the assigned explanation. Do not duplicate whole-task todos. A narrower brief does not grant permissions.
 
 ## 1. Assess complexity
 

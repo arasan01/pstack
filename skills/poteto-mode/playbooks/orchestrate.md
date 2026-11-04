@@ -2,7 +2,7 @@
 
 **Run the program through scoped owners and inspect what they produce.** Use this playbook for a standing project spanning sessions, PRs and independent workstreams. One task driven to a predicate belongs to Autonomous run; one ambitious run needing a bespoke workflow belongs to figure-it-out. Do not create a program for work one session can finish.
 
-Apply the [workflow invocation contract](../references/workflow-contract.md) and [native operations reference](../references/omp-tools.md). OMP owns task execution, models, permissions, concurrency and lifecycle. The coordinator owns the accepted scope, whole-program todo list, assignments and integration. Use native `task` and result delivery rather than a separate orchestration CLI, queue or scheduler.
+Use the shared guidance in `skill:poteto-mode` and the [native operations reference](../references/omp-tools.md) within this program's scope. OMP owns task execution, models, permissions, concurrency and lifecycle. The coordinator owns the accepted scope, whole-program todo list, assignments and integration. Use native `task` and result delivery rather than a separate orchestration CLI, queue or scheduler.
 
 #### Ownership
 
@@ -19,7 +19,7 @@ Use the existing project plan, PRs and associated artifacts as the record of acc
 
 Record each unit's branch or artifact, PR, base and head SHAs, verification actually run, evidence locations, independent reviewer and verdict. Distinguish observed consumer results, typechecking, failed checks and blocked or unrun verification. Keep original human rulings attributable per [Claims about human decisions](../../why/references/epistemics.md#claims-about-human-decisions). An agent's interpretation is not a new ruling.
 
-For an existing plan with checked acceptance criteria, use the common contract's checker to detect changed scope and mismatched evidence. Its `consistent` result is not a product-verification verdict. Use **show-me-your-work** for material decisions rather than copying its trail into every record. Publish authorized artifacts as units complete so that losing a worker does not lose delivered work.
+Use `skill:show-me-your-work` for material decisions rather than copying its trail into every record. Publish authorized artifacts as units complete so that losing a worker does not lose delivered work.
 
 Before pausing or resuming, use the existing [Resume storage](../references/resume-storage.md) locator. On restart, inspect native task state, the durable artifacts and the forge. Do not assume old workers stopped, or reuse a worktree while a prior writer may still own it.
 

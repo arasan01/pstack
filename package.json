@@ -1,7 +1,7 @@
 {
   "name": "pstack",
   "private": true,
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "Rigorous agent workflows, skills, and principles for Oh My Pi (OMP).",
   "author": {
     "name": "arasan01",
@@ -28,7 +28,7 @@
     ]
   },
   "scripts": {
-    "validate": "node tools/validate-package.mjs && node tools/check-contract.mjs package",
+    "validate": "node tools/validate-package.mjs",
     "test": "bun test tests/",
     "test:unit": "bun test tests/",
     "test:smoke": "bun tools/omp-smoke.mjs"

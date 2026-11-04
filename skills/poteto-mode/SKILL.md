@@ -1,22 +1,25 @@
 ---
 name: poteto-mode
 description: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /poteto-mode, or requests to work in this style.
-workflow-contract: references/workflow-contract.md#poteto-mode
 ---
 
 # Poteto mode
 
-Follow the shared [workflow contract](references/workflow-contract.md).
-
 ## Native operations
 
-These workflows use native oh-my-pi (`omp`) vocabulary and agent policy. For native tool equivalents, subagent delegation, and driver execution, see the [native operations reference](references/omp-tools.md). Native tool schemas, agent permissions, `modelRoles`, delegation gates, and session lifecycle are authoritative.
+These workflows use native oh-my-pi (`omp`) vocabulary and agent policy. For native tool equivalents, subagent delegation, and driver execution, see the [native operations reference](references/omp-tools.md). Native tool schemas, agent settings, `modelRoles`, `task.agentModelOverrides`, precedence, permissions, fallback policy, delegation gates, and session lifecycle are authoritative. Skills describe methods, not agent or model aliases.
 
 Invoke the skill needed for the task. Use native agents and configured model roles rather than `poteto-agent`, per-model wrappers, or a legacy model sheet.
 
 The parent owns the only whole-task native todo list. Use the session's native task-tracking tool if exposed. If none is available, maintain in-turn focus on the applicable playbook steps without inventing replacement tools.
 
-Bundled skills live at `skills/<name>/SKILL.md` (or `../<name>/SKILL.md` relative to this file). Include the chosen skill's path or name when delegating a skill-specific task. The parent retains the playbook, whole-task scope, and integration; a delegate applies the needed method only to its assigned work.
+Refer to skills by native `skill:<name>` IDs and read them through `skill://<name>`, preserving native discovery precedence. Read the chosen playbook and the helper skills it requires without requiring the user to name each helper. Include the native skill ID when assigning skill-specific work. Resolve supporting documents and scripts from the selected skill's location rather than guessing package paths.
+
+The accepted brief and native instructions determine responsibility. Invocation type alone does not assign a runtime role or grant extra authority. A narrower brief limits work but does not grant permissions. The parent retains whole-task integration; assigned subtasks reuse its plan and valid grounding without duplicating whole-task todos. A candidate artifact assignment stops at that artifact, and a read-only review stops at the requested verdict. Loading this package does not start a workflow or authorize extra work.
+
+Preserve the original request and subsequent human decisions. Keep one accepted set of requirements; an agent's paraphrase or an unexamined discovery cannot add requirements, remove a journey or relax a limit. New work is mandatory only when it follows from an accepted requirement, a demonstrated in-scope defect or evidence invalidated by the change. Report other discoveries separately.
+
+Whole-task completion requires evidence for every accepted requirement. Missing, unknown, not-run or blocked results are not success. Keep requirements, remaining work and execution evidence in their existing places; do not create a new plan or ledger just to answer a small question.
 
 ## Project scope
 

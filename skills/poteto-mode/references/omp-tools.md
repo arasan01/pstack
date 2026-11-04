@@ -2,6 +2,10 @@
 
 This reference outlines native tool usage, subagent delegation, model policy, and driver execution on oh-my-pi (`omp`). Native instructions, tool schemas, agent selection, `modelRoles`, permissions, delegation gates, and session lifecycle are authoritative.
 
+Before changing an OMP integration, read its native specification through `omp://skills.md`, `omp://tools/task.md`, `omp://task-agent-discovery.md`, `omp://models.md` or `omp://extensions.md` as applicable. The current tool schema and effective settings are authoritative. Do not infer a native feature from a pstack instruction or introduce a second role, skill or configuration registry. Inspect `cfg://` only when the operator asks about settings, and do not write settings without authorization.
+
+Use native `skill:<name>` IDs for skill references, `/skill:<name>` for enabled interactive commands, and `skill://<name>` for reads. OMP owns discovery, namespaced collisions, filters and overrides. Relative paths remain appropriate for documents and scripts inside the selected skill, not for selecting another skill.
+
 ## Native tools
 
 | Capability | Tool & usage |

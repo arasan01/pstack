@@ -11,3 +11,14 @@ Domain glossary for pstack as an Oh My Pi (OMP) native package.
 - **Advisor Roster Example** — `advisors/scope-completion/WATCHDOG.yml`, an opt-in native configuration derived from `meta-soenan-apps`. It watches main-session scope and completion. Installing the package does not add it to OMP's user or project roster discovery.
 - **Package Validator** — `tools/validate-package.mjs`, a lightweight script validating root manifest declarations, skill frontmatter, link integrity, and absence of deprecated foreign runtime constructs.
 - **VERSION** — The root file recording the canonical package release version (e.g., `0.10.0`).
+
+## Native boundaries and verification
+
+OMP capabilities come from the current native tool schema, `omp://` documentation and effective settings, not from pstack's terminology. `skill:poteto-mode` owns shared workflow instructions; there is no additional contract skill or OMP contract engine.
+
+| Boundary | Verification |
+| --- | --- |
+| Native skill identity and discovery remain authoritative. | Real OMP skill reads and a same-name project override, following `omp://skills.md`. |
+| Model and agent selection remain native. | `ctx.models.resolve`, native effective settings, and task result model metadata, following `omp://tools/task.md` and `omp://task-agent-discovery.md`. |
+| Legacy workflow binding metadata cannot return. | `agentSkills` rejects `workflow-contract:` with the native replacement; package-validation regression covers the rejected input. |
+| Scope/evidence checking does not become runtime enforcement. | The optional checker only reads supplied plans and artifacts; its limits are documented in `docs/verification.md`. |

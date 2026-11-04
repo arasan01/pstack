@@ -2,12 +2,12 @@
 
 import { createHash } from "node:crypto";
 import { readFileSync, realpathSync, statSync } from "node:fs";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseDocument, visit } from "yaml";
-import { markdownFiles, pathIsInside } from "./validate-package.mjs";
+import { pathIsInside } from "./validate-package.mjs";
 
-const CONTRACT = "skills/poteto-mode/references/workflow-contract.md";
+const CONTRACT = "skills/poteto-mode/SKILL.md";
 const PACKAGE_ROOT = fileURLToPath(new URL("..", import.meta.url));
 const HASH = /^[a-f0-9]{64}$/;
 const SCOPE_HASH = /^sha256:[a-f0-9]{64}$/;
@@ -33,24 +33,15 @@ function keys(value, allowed, file, label) {
   requireValue(Object.keys(value).every((key) => allowed.includes(key)), file, `${label} contains an unknown key`);
 }
 
-function frontmatter(bytes, file, onlyContractReferences = false) {
+function frontmatter(bytes, file) {
   const block = bytes.toString("utf8").match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   if (!block) return null;
   const doc = parseDocument(block[1], { uniqueKeys: true });
-  let front;
-  if (onlyContractReferences) {
-    try {
-      front = doc.toJS();
-    } catch (error) {
-      throw new InvalidContract("INVALID_YAML", file, error.message);
-    }
-    if (!mapping(front) || !own(front, "workflow-contract")) return null;
-  }
   if (doc.errors.length) throw new InvalidContract("INVALID_YAML", file, doc.errors.map((error) => error.message).join("; "));
   let alias = false;
   visit(doc, { Alias() { alias = true; } });
   requireValue(!alias, file, "YAML aliases are not supported");
-  return onlyContractReferences ? front : doc.toJS();
+  return doc.toJS();
 }
 
 function pointerTokens(pointer, file) {
@@ -199,74 +190,10 @@ export function checkPlan({ planPath, expectedScope, evidenceRoot, contractPath 
 }
 
 
-export function validateWorkflowReferences({ repoRoot }) {
-  const root = resolve(repoRoot);
-  const realRoot = realpathSync(root);
-  const contractPath = boundedFile(root, realRoot, CONTRACT);
-  const diagnostics = [];
-  const add = (code, file, message) => diagnostics.push(diagnostic(code, file, message));
-  try {
-    const contract = frontmatter(readFileSync(contractPath), contractPath);
-    keys(contract, ["version", "roles", "bindings"], contractPath, "contract");
-    requireValue(contract.version === 1, contractPath, "contract.version must be 1");
-    requireValue(mapping(contract.roles) && Object.keys(contract.roles).length > 0 && Object.entries(contract.roles).every(([role, description]) => text(role) && text(description)), contractPath, "roles must map names to descriptions");
-    requireValue(mapping(contract.bindings) && Object.keys(contract.bindings).length > 0, contractPath, "bindings must be a nonempty mapping");
-    const registered = new Map();
-    for (const [id, binding] of Object.entries(contract.bindings)) {
-      keys(binding, ["file", "modes"], contractPath, `binding ${id}`);
-      requireValue(text(id), contractPath, "binding name must be nonempty");
-      requireValue(mapping(binding.modes) && Object.keys(binding.modes).length > 0, contractPath, `binding ${id} modes must be nonempty`);
-      for (const [mode, role] of Object.entries(binding.modes)) {
-        if (!["direct", "delegated"].includes(mode) || typeof role !== "string" || !own(contract.roles, role)) add("INVALID_ROLE", contractPath, `binding ${id} has invalid mode or role: ${mode}: ${role}`);
-      }
-      try {
-        const path = boundedFile(root, realRoot, binding.file);
-        requireValue(path.endsWith(".md"), contractPath, `binding ${id} must reference Markdown`);
-        const realPath = realpathSync(path);
-        if (registered.has(realPath)) add("DUPLICATE_FILE", contractPath, `bindings ${registered.get(realPath).id} and ${id} share a file`);
-        registered.set(realPath, { id, path });
-      } catch (error) {
-        add("INVALID_BINDING_PATH", contractPath, `${id}: ${error.message}`);
-      }
-    }
-    const inspect = (file, requiredId) => {
-      let front;
-      try {
-        boundedFile(root, realRoot, relative(root, file));
-        const bytes = readFileSync(file);
-        front = frontmatter(bytes, file, requiredId === undefined);
-        if (requiredId === undefined && (!mapping(front) || !own(front, "workflow-contract"))) return;
-        const reference = front?.["workflow-contract"];
-        requireValue(text(reference), file, "registered document requires workflow-contract metadata");
-        const match = reference.match(/^([^#]+)#([^#]+)$/);
-        requireValue(Boolean(match), file, "workflow-contract must be a local contract path#binding");
-        const [, name, id] = match;
-        const target = boundedFile(root, realRoot, isAbsolute(name) ? name : relative(root, resolve(dirname(file), name)));
-        requireValue(realpathSync(target) === realpathSync(contractPath), file, "workflow-contract points to a different document");
-        requireValue(own(contract.bindings, id), file, `unknown workflow binding ${id}`);
-        const registration = registered.get(realpathSync(file));
-        requireValue(registration?.id === id && (requiredId === undefined || requiredId === id), file, `binding ${id} belongs to a different file`);
-      } catch (error) {
-        add("INVALID_REFERENCE", file, error.message);
-      }
-    };
-    for (const { id, path } of registered.values()) inspect(path, id);
-    const known = new Set([...registered.values()].map(({ path }) => path));
-    for (const file of markdownFiles(root)) if (!known.has(file) && file !== contractPath) inspect(file);
-  } catch (error) {
-    if (!(error instanceof InvalidContract)) throw error;
-    diagnostics.push(...error.diagnostics);
-  }
-  return diagnostics;
-}
 
 function cli(args) {
   const [command, ...rest] = args;
   if (command === "fingerprint" && rest.length === 1 && !rest[0].startsWith("-")) return fingerprintPlan({ planPath: rest[0] });
-  if (command === "package" && rest.length <= 1 && !rest[0]?.startsWith("-")) {
-    const diagnostics = validateWorkflowReferences({ repoRoot: rest[0] ?? PACKAGE_ROOT });
-    return { status: diagnostics.length ? "invalid" : "consistent", diagnostics };
-  }
   if (command === "check" && rest.length === 5 && !rest[0].startsWith("-")) {
     const options = new Map();
     for (let index = 1; index < rest.length; index += 2) {
@@ -276,7 +203,7 @@ function cli(args) {
     if (!SCOPE_HASH.test(options.get("--expected-scope") ?? "")) throw new Error("--expected-scope must be sha256:<64 lowercase hex digits>");
     return checkPlan({ planPath: rest[0], expectedScope: options.get("--expected-scope"), evidenceRoot: options.get("--evidence-root") });
   }
-  throw new Error("usage: check-contract.mjs fingerprint PLAN.md | check PLAN.md --expected-scope sha256:... --evidence-root DIR | package [ROOT]");
+  throw new Error("usage: check-contract.mjs fingerprint PLAN.md | check PLAN.md --expected-scope sha256:... --evidence-root DIR");
 }
 
 function invokedDirectly() {

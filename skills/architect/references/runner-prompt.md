@@ -1,16 +1,12 @@
----
-workflow-contract: ../../poteto-mode/references/workflow-contract.md#architect-candidate
----
-
 # Architect runner prompt
 
-Follow the shared [workflow contract](../../poteto-mode/references/workflow-contract.md).
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
 The orchestrator passes this file through to every parallel candidate runner during Phase B and fills in the variable inputs around it: the task, the Phase A grounding artifacts, the isolated working directory, and the path to write outputs. The working directory is a git worktree when available, otherwise a per-runner subdirectory under the sketch dir. What matters is independence between candidates.
 
-Produce one candidate design within the parent's assignment, using its grounding artifacts. Write the assigned design package: type sketch, function signatures, module map, and prose rationale shaped per [`rationale-template.md`](rationale-template.md). Return its paths and stop. Do not start the architect workflow, arena, a separate todo list, or additional candidates.
+Produce only the artifact requested in the accepted brief, using the parent's grounding. For a candidate design assignment, write the design package: type sketch, function signatures, module map, and prose rationale shaped per [`rationale-template.md`](rationale-template.md). Return its paths and stop. If the assignment requests only an explanation, return that answer without creating a design package. Do not start the architect workflow, arena, a separate todo list, or additional candidates. Native instructions and permissions still apply.
 
-Apply the following discipline. The orchestrator compares candidates on these axes to pick a base.
+For a candidate design assignment, apply the following discipline. The orchestrator compares candidates on these axes to pick a base.
 
 - Caller's usage first. Write the README-style usage and two or three real call sites before the types, then derive the type sketch from them. The usage is the spec. The two must agree, so reconcile the sketch to the usage, not the reverse.
 - Data structures first. Get the core types right and the code becomes obvious. Trace each dominant access pattern through the proposed structure. If the answer is "we'll add a map / index / cache later," the structure is wrong.
@@ -23,4 +19,4 @@ Apply the following discipline. The orchestrator compares candidates on these ax
 - Idempotent state transitions where applicable, per the **make-operations-idempotent** principle skill. Ask what happens if the operation runs twice or crashes halfway.
 - Short call chains. If tracing the flow needs more than three files, flatten the hierarchy, per the **laziness-protocol** and **minimize-reader-load** principle skills.
 
-You are one of the parallel candidate runners. Produce the best design you can make from your distinct perspective. Don't hedge against the others. Differences between candidates are the signal used to pick a base and graft. Converging on a safe-looking middle defeats the exploration.
+When assigned a candidate design, produce the best design you can make from your distinct perspective. Don't hedge against the others. Differences between candidates are the signal used to pick a base and graft. Converging on a safe-looking middle defeats the exploration.

@@ -2,13 +2,15 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
-## Unreleased
+## 0.10.3 - preserve native roles and check workflow evidence
 
 - Added the locally used `architect` task agent with its original `@slow` selection and architecture-skill instructions. Native model overrides and project/user agent precedence remain authoritative. Updated the optional overlays and agent-selection guidance.
 - Bundled `advisors/scope-completion/WATCHDOG.yml` from the `meta-soenan-apps` Scope & Completion Guardian. Its instructions and `scope: main` are preserved; the name is `pstack-scope-completion` to avoid replacing an explicit `default` entry.
 - Documented explicit Advisor opt-in, native roster merging, implicit-default replacement, model usage and prompt inspection. Installing pstack does not register an Advisor or modify user settings. Advisor notes do not replace required independent correctness review.
-- Centralized workflow responsibilities in one Markdown contract with bidirectional package bindings. Supporting skills reuse the parent's plan and valid grounding; design candidates return their assigned output without restarting the whole workflow.
+- Consolidated shared scope, stopping and evidence guidance in the existing `skill:poteto-mode`. Other skills reuse its guidance and the parent's valid grounding without starting another whole workflow. No separate contract skill is added.
+- Removed the package-defined role/mode registry and file-binding table. Skills use native names and discovery precedence; OMP settings and the accepted task brief remain authoritative. Package validation rejects the retired `workflow-contract` metadata; OMP owns skill-name resolution.
 - Added `tools/check-contract.mjs` to compare a retained acceptance-scope fingerprint with existing-plan results and hashed JSON evidence. Missing or changed scope, unexecuted observations and mismatched evidence cannot become completion. The checker is not an execution engine or a product-verification verdict.
+- `/pstack` enumerates effective roles through the native settings API and resolves them through `ctx.models.resolve`. It no longer maintains a role-name list or fabricates an unconfigured `review` role.
 - Followed upstream `c742dd6` by removing the retired orchestration CLI, store and dedicated tests, its test entry, formatter exclusions and active playbook instructions. Orchestrate now uses native task delivery, existing plans, PRs and execution artifacts without recreating the old queue or fixed ledger layout. Package validation rejects the removed script directory.
 - Removed old statechart command references from retained model-fixture comments. The current TypeScript compiler, model bodies, watch-pr tooling, historical release notes and license attribution remain.
 

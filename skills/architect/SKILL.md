@@ -1,12 +1,11 @@
 ---
 name: architect
 description: "Sketch types, signatures, and module structure before code, then stay in the loop while implementation fills in. Use for /architect, 'architect this', 'design this', or non-trivial work where jumping to code would lock in the wrong shape."
-workflow-contract: ../poteto-mode/references/workflow-contract.md#architect
 ---
 
 # Architect
 
-Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
 Sketch types, function signatures, class shapes, and module boundaries with `not implemented` bodies and pseudocode. Synthesize across multiple design perspectives, then fill in code against the chosen sketch.
 
@@ -14,7 +13,7 @@ Respect the caller's stopping boundary. A design-only or planning-only request r
 
 ## Start
 
-For a direct request, reflect the applicable phases below in the existing owner todo list. As a delegated contributor, apply them within the assigned part of the parent plan.
+Apply the phases within the accepted task brief and native policy. Use the existing plan for work you are responsible for coordinating. For an assigned subtask, reuse the parent plan and grounding without duplicating whole-task todos. Invocation type does not change runtime responsibility or permissions.
 
 1. Ground
 2. Sketch

@@ -1,6 +1,6 @@
 # pstack for Oh My Pi
 
-Oh My Pi（OMP）で調査、設計、実装、レビューを進めるためのスキル集です。`poteto-mode` に目的を伝えると、依頼に合う手順と補助スキルを使って作業を進めます。
+Oh My Pi（OMP）で調査、設計、実装、レビューを進めるためのスキル集です。`skill:poteto-mode` に目的を伝えると、依頼に合う手順と補助スキルを使って作業を進めます。
 
 ## インストール
 
@@ -17,23 +17,23 @@ omp plugin marketplace update && omp plugin upgrade
 
 ## 使い方
 
-OMP のセッションで `poteto-mode` に依頼します。
+スキルコマンドが有効なOMPセッションでは `/skill:poteto-mode` を使います。無効にしている場合は、通常の依頼文で `skill:poteto-mode` を指定します。
 
 ```text
-poteto-mode で、この設定がどこで上書きされるか調べて。
+/skill:poteto-mode この設定がどこで上書きされるか調べて。
 ```
 
 ```text
-poteto-mode で、入力検証を追加する方針を立てて。今回は計画だけお願い。
+/skill:poteto-mode 入力検証を追加する方針を立てて。今回は計画だけお願い。
 ```
 
 ```text
-poteto-mode で、ページを切り替えると検索条件が消える不具合を直して。
+/skill:poteto-mode ページを切り替えると検索条件が消える不具合を直して。
 ```
 
-個別のスキルも指定できます。設計には `architect`、仕組みの調査には `how`、変更のレビューには `interrogate` を使います。
+個別のスキルもnative IDで指定できます。設計には `skill:architect`、仕組みの調査には `skill:how`、変更のレビューには `skill:interrogate` を使います。
 
-設計をサブエージェントへ任せる場合は、同梱の `architect` agent を使えます。`architect` スキルを読み、依頼時の範囲と停止条件に従います。
+設計をサブエージェントへ任せる場合は、同梱の `architect` agent を使えます。`skill:architect` を使い、依頼時の範囲と停止条件に従います。agentの選択とスキルの参照は別です。
 
 スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](docs/models.md#scope-and-completion-advisor) も同梱しています。Advisor は明示的に導入する方式で、インストールだけでは有効になりません。
 

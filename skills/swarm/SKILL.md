@@ -1,16 +1,15 @@
 ---
 name: swarm
 description: "Fan out N parallel workers, drain them, and return one report. Use for /swarm, 'swarm this', or parallel coverage, races, gauntlets, and exploration."
-workflow-contract: ../poteto-mode/references/workflow-contract.md#swarm
 ---
 
 # Swarm
 
-Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
 ## Start
 
-For a direct request, reflect the applicable phases below in the existing owner todo list. As a delegated contributor, apply them within the assigned part of the parent plan.
+Apply the phases within the accepted task brief and native policy. Use the existing plan for work you coordinate. For an assigned subtask, reuse the parent plan and grounding without duplicating whole-task todos. A worker assigned one artifact returns that artifact and stops, rather than launching a new swarm. Invocation type grants no additional authority or permissions.
 
 1. Frame
 2. Fan out

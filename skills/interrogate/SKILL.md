@@ -1,12 +1,11 @@
 ---
 name: interrogate
 description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Multiple LLM reviewers challenge changes from independent angles."
-workflow-contract: ../poteto-mode/references/workflow-contract.md#interrogate
 ---
 
 # Interrogate
 
-Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
 Independent adversaries try to break a change or design. Keep proven findings, report blocked risks separately, and do not apply fixes.
 
@@ -16,11 +15,13 @@ Review what the user names. Otherwise, review the branch diff from its merge bas
 
 State the intent in one paragraph from the user's message, commits, and PR description. Resolve uncertainty from available context before asking the user. Preserve the requested scope and stopping boundary. A review does not authorize fixes or a PR.
 
+The accepted brief and native policy determine responsibility, not invocation type. For an assigned review, reuse the parent's plan and valid grounding, review only the requested scope, and return the verdict without duplicating whole-task todos. A narrower brief does not grant permissions.
+
 ## Fan out
 
 Use arena Phase A steps 3 and 4 and Phase B to choose native runners and isolated output locations. Copy the scoped uncommitted changes into each worktree so every adversary reviews the same state. Keep the source tree read-only. If worktrees are unavailable, use isolated temporary outputs without modifying the source tree.
 
-Launch independent adversaries in one `task` call with entries in `tasks[]`, using `agent: "reviewer"` or user-configured review agents. Preserve native modelRoles, agent settings, permissions, and fallback policy. Use model overrides only after resolving available selectors. Disclose when distinct model families cannot be confirmed.
+Launch independent adversaries in one `task` call with entries in `tasks[]`, using `agent: "reviewer"` or user-configured review agents. Preserve native `modelRoles`, agent settings, `task.agentModelOverrides`, precedence, permissions, and fallback policy. Default to configured selection. Use a supported model override only for an explicit model comparison or named-model request after resolving available selectors. Disclose when distinct model families cannot be confirmed.
 
 Give every adversary the scope, intent, relevant context paths, its isolated output path, and this brief:
 
