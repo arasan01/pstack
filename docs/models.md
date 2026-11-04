@@ -1,19 +1,22 @@
 # Model roles and qualification
 
-OMP owns model selection, credentials, reasoning effort, context limits, service tiers and fallback. pstack supplies workflow guidance and example native overlays; it does not keep a second role sheet or implement provider protocols.
+モデル選択、認証情報、推論effort、コンテキスト上限、サービスティア、フォールバックはOMPが管理します。pstackはワークフローと単一のネイティブ設定オーバーレイを提供し、独自のロール設定やプロバイダー実装は持ちません。
 
 ## Roles
 
-| Role | Use in the example overlays |
-| --- | --- |
-| `default` | Main session. |
-| `smol` | Discovery and mechanical work when that delegation is appropriate. |
-| `slow` | Strong reasoning selection. |
-| `plan` | Native plan-mode model. Assigning this role does not enter plan mode. |
-| `task` | Default worker, referring to `@slow` in these examples. |
-| `review` | Custom role for independent reviewers. |
+同梱の `arasan01.yml` は、HOMEの現行設定から次のモデルロールを反映しています。
 
-`task.agentModelOverrides` connects agents to these roles. The default task worker uses `@task`; the packaged `architect` uses `@slow`; scout and sonic use `@smol`; reviewer uses `@review`. A skill is a method, not an agent or a model. Read-only design and synthesis are not discovery-only scout work. Role assignment alone does not cause a skill or task to execute on that role: inspect the actual dispatched agent and its resolved model.
+| ロール | セレクター |
+| --- | --- |
+| `default` | `openai-codex/gpt-6.1-sol:high` |
+| `task` | `openai-codex/gpt-6.1-sol:medium` |
+| `slow`, `plan`, `cyber` | `openai-codex/gpt-6.1-sol:max` |
+| `designer` | `openai-codex/gpt-6.1-sol:xhigh` |
+| `smol`, `advisor` | `openai-codex/gpt-6.1-terra:medium` |
+| `tiny`, `vision`, `commit` | `openai-codex/gpt-6-luna:high` |
+| `memory` | `openai-codex/gpt-6-luna:xhigh` |
+
+`task.agentModelOverrides` は `architect` を `openai-codex/gpt-6-astra:xhigh`、`security-reviewer` を `ollama-cloud/deepseek-v4.1-flash:1017:max` に指定します。他のエージェントへの上書きや独自の `review` ロールは追加しません。スキルは作業方法であり、エージェントやモデルではありません。ロールの指定だけでは作業を実行しないため、実際に起動したエージェントと解決されたモデルを確認してください。
 
 The packaged `architect` agent reads `skill://architect` and follows the scope, constraints, deliverable and stopping condition in its task brief. Project and user agents with the same name take native precedence over package agents. Native per-agent and per-dispatch model overrides remain authoritative.
 
@@ -22,12 +25,10 @@ The packaged `architect` agent reads `skill://architect` and follows the scope, 
 From the checkout root:
 
 ```sh
-omp --config profiles/gpt.yml
-omp --config profiles/deepseek.yml
-omp --config profiles/mixed.yml
+omp --config profiles/arasan01.yml
 ```
 
-The [profiles](../profiles/README.md) are examples, not availability promises. Adapt selectors to the provider and models available to you. `--config` applies to that invocation without persisting the overlay. `/modelpreset switch` has different persistence semantics and is not used by the smoke harness.
+[arasan01の設定](../profiles/README.md)は利用可能性の保証ではありません。`--config` はそのプロセスにだけ適用され、設定を永続化しません。保存済みの `modelPresets` は同梱しません。`/modelpreset switch` は永続化の扱いが異なり、スモーク検証では使用しません。
 
 Both GPT and DeepSeek are primary-workflow targets. Neither family has a fixed cheap-worker or exclusive-design assignment. An independent reviewer need not be a different family to be a different author, but a cross-family claim requires actual distinct resolved models. Agent names and effort levels alone do not establish model diversity.
 
@@ -62,6 +63,6 @@ Advisor notes do not replace a workflow's required independent correctness revie
 
 ## Fallback and verification
 
-The example overlays set `retry.modelFallback: false`, which disables error-recovery switching. This is not a blanket promise that every unresolved startup selection fails: resolve the exact selector first and inspect the actual executed model. Empty `fallbackChains` objects do not necessarily clear lower-layer mappings because settings objects merge.
+同梱設定はHOMEと同じ `retry.modelFallback: true`、`fallbackOn: any` を保持し、Web検索のフォールバックチェーンも含みます。要求したモデルの実行を保証する設定ではありません。検証時は正確なセレクターを解決し、実行されたモデルを確認してください。設定オブジェクトはマージされるため、空の `fallbackChains` でも下位設定のマッピングが消えるとは限りません。
 
 The smoke harness requires an exact available model, disables retry substitution, checks completed assistant messages and child task results, and rejects observed fallbacks or identity changes. Missing DeepSeek produces `UNAVAILABLE`, never simulated success. No GPT-versus-DeepSeek quality, speed or cost advantage is claimed without measurements on the same tasks.

@@ -1,0 +1,145 @@
+modelRoles:
+  task: openai-codex/gpt-6.1-sol:medium
+  slow: openai-codex/gpt-6.1-sol:max
+  designer: openai-codex/gpt-6.1-sol:xhigh
+  plan: openai-codex/gpt-6.1-sol:max
+  cyber: openai-codex/gpt-6.1-sol:max
+  smol: openai-codex/gpt-6.1-terra:medium
+  advisor: openai-codex/gpt-6.1-terra:medium
+  tiny: openai-codex/gpt-6-luna:high
+  vision: openai-codex/gpt-6-luna:high
+  commit: openai-codex/gpt-6-luna:high
+  memory: openai-codex/gpt-6-luna:xhigh
+  default: openai-codex/gpt-6.1-sol:high
+modelRoleStorage: global
+task:
+  eager: default
+  enableEffort: false
+  agentModelOverrides:
+    security-reviewer: ollama-cloud/deepseek-v4.1-flash:1017:max
+    architect: openai-codex/gpt-6-astra:xhigh
+  disabledAgents: []
+  maxConcurrency: 32
+  maxRecursionDepth: 2
+  showResolvedModelBadge: true
+  structured: true
+symbolPreset: nerd
+theme:
+  dark: light
+  light: light
+setupVersion: 2
+memory:
+  backend: sharpshooter
+autolearn:
+  enabled: false
+  autoContinue: true
+display:
+  showTokenUsage: true
+  shimmer: classic
+  showTurnTime: true
+  cacheMissMarker: true
+  smoothStreaming: false
+  hideToolActivity: false
+power:
+  sleepPrevention: idle
+features:
+  unexpectedStopDetection: smart
+compaction:
+  methodOrder:
+    - remote
+    - snapcompact
+    - soft
+    - shake
+    - handoff
+  idleEnabled: false
+github:
+  enabled: true
+security:
+  enabled: true
+hideThinkingBlock: true
+advisor:
+  enabled: true
+  reviewInterval: 1
+defaultThinkingLevel: auto
+autocompleteMaxVisible: 12
+loop:
+  mode: reset
+interruptMode: immediate
+statusLine:
+  transparent: false
+  compactThinkingLevel: false
+  separator: powerline
+  preset: default
+  contextLine: "off"
+  sessionAccent: true
+terminal:
+  showProgress: false
+tui:
+  codexResetFireworks: true
+  tight: false
+mnemopi:
+  llmMode: smol
+  embeddingVariant: multilingual
+commands:
+  enableOpencodeUser: false
+  enableOpencodeProject: false
+  enableClaudeProject: false
+  enableClaudeUser: false
+providers:
+  autoThinkingMaxEffort: xhigh
+  openai-codex:
+    codeMode: "off"
+cycleOrder:
+  - smol
+  - default
+  - slow
+disabledExtensions: []
+composer:
+  shape: band
+  tokenRate: true
+dev:
+  autoqaConsent: granted
+  autoqa: false
+  autoqaPush:
+    endpoint: ""
+colorBlindMode: false
+steeringMode: one-at-a-time
+doubleEscapeAction: tree
+treeFilterMode: default
+stt:
+  enabled: true
+  submitTrigger: never
+spelling:
+  typoDetection: false
+  autocomplete: "off"
+browser:
+  headless: true
+generate_image:
+  enabled: true
+astGrep:
+  enabled: false
+computer:
+  enabled: false
+retry:
+  modelFallback: true
+  fallbackOn: any
+  fallbackChains:
+    web:
+      - web/tavily
+      - web/duckduckgo
+      - web/public
+      - web/brave
+find:
+  enabled: "off"
+mcp:
+  notifications: true
+secrets:
+  enabled: true
+ida:
+  enabled: false
+magicKeywords:
+  jevify: true
+ttsr:
+  judge: auto
+bashInterceptor:
+  enabled: false

@@ -19,13 +19,13 @@ The native `/pstack` command resolves current roles without writing settings. It
 
 ## Explain the native choices
 
-Use the installed package's [model guide](../../docs/models.md) and [overlays](../../profiles/README.md). Resolve their paths from this skill directory, not the user's project directory. The overlays are editable examples for `omp --config <absolute-overlay-path>`; do not apply them automatically.
+同梱の[モデルガイド](../../docs/models.md)と[arasan01の設定](../../profiles/README.md)を参照する。パスはユーザーのプロジェクトではなく、このスキルのディレクトリを基準に解決する。単一の `arasan01.yml` は `omp --config <absolute-overlay-path>` 用の設定スナップショットであり、自動適用しない。
 
-The examples separate `default`, `smol`, `slow`, `plan`, `task` and custom `review` roles. Default workers use `@task`; the packaged `architect` uses `@slow`; discovery and mechanical agents may use `@smol`; reviewers use `@review`. The `architect` agent reads the architecture skill and follows its task brief. Respect project and user agent precedence. Do not route design or synthesis through scout merely because it is read-only. Do not create one agent per skill or per model.
+この設定はHOMEのモデルロールと `task.agentModelOverrides` を保持し、`architect` と `security-reviewer` にモデルを直接指定する。独自の `review` ロールや他のエージェントへの上書きは追加しない。パッケージの `architect` 自体は `@slow` を指定するが、ネイティブのモデル上書きとプロジェクト・ユーザーのエージェント優先順位に従う。設計や統合を読み取り専用という理由だけでscoutに割り当てず、スキル別・モデル別のエージェントを作らない。
 
 GPT and DeepSeek can both be primary workers. Preserve independent authorship and report actual model diversity separately. Do not assert model strengths or copy effort levels across models without evidence.
 
-`retry.modelFallback: false` disables retry substitution; it does not prove an unresolved startup selector will run as requested. Qualify exact models through the [real OMP harness](../../docs/verification.md) only when model execution is authorized.
+同梱設定は `retry.modelFallback: true` を保持する。検証用の `retry.modelFallback: false` は再試行時のモデル代替を無効にするが、未解決の起動セレクターが要求どおり実行される保証ではない。[実OMP検証](../../docs/verification.md)でのモデル実行は、許可された場合だけ行う。
 
 The model guide also describes the bundled Scope & Completion Guardian advisor. Its `WATCHDOG.yml` is an explicit opt-in example, not an automatically discovered package resource. Inspect existing project and user rosters before recommending a merge. Keep `scope: main`, explain native advisor-role resolution and additional model usage, and do not install or enable it as a setup side effect.
 

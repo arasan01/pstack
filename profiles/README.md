@@ -1,21 +1,15 @@
-# Native OMP overlays
+# arasan01 のOMP設定
 
-These are editable examples for `omp --config`, not a separate model configuration system. Run them from the checkout root, or pass an absolute path.
+[`arasan01.yml`](arasan01.yml) は `~/.omp/agent/config.yml` の現行設定を反映した、単一のネイティブOMPオーバーレイです。保存済みの切替候補 `modelPresets` は含めません。認証情報、履歴、キャッシュ、拡張やエージェントのファイルもコピーしません。
 
-| Overlay | Main and default worker | Reviewer |
-| --- | --- | --- |
-| [gpt.yml](gpt.yml) | GPT | GPT |
-| [deepseek.yml](deepseek.yml) | DeepSeek | DeepSeek |
-| [mixed.yml](mixed.yml) | GPT | DeepSeek |
-
-Confirm exact selectors with `omp models --json`. The GPT examples use the Codex provider; use your own provider-qualified selectors when appropriate. The DeepSeek examples require authorized DeepSeek access. Listing a selector in a file does not prove it is available or has been exercised.
+チェックアウトのルートから起動します。別のディレクトリからは絶対パスを指定してください。
 
 ```sh
-omp --config profiles/gpt.yml
+omp --config profiles/arasan01.yml
 ```
 
-OMP applies this overlay to the process without persisting it. The profiles explicitly connect agents to native roles and disable retry-model substitution. They do not override permissions or install a task runtime. Unresolved startup selectors still require a readiness check; `retry.modelFallback: false` is an error-recovery policy, not a universal availability guarantee.
+モデルロール、エージェント別モデル指定、並列数に加え、表示や各機能の設定も含みます。`retry.modelFallback: true` と `fallbackOn: any`、Web検索のフォールバックチェーンも元設定のままです。モデル実行の検証では、要求したモデルと実行されたモデルが一致するかを別途確認してください。
 
-Both families can act as primary workers. Change native role assignments to reverse a mixed setup; do not create per-model wrapper agents. Verify actual model identities before claiming cross-family review.
+`--config` はそのプロセスにだけ適用され、HOMEの設定を書き換えません。既存設定とのマージであり、ファイルの省略項目は下位設定を消しません。インストールだけではこのオーバーレイを適用しません。
 
-See [model roles](../docs/models.md) and [live qualification](../docs/verification.md). The harness uses temporary overlays and never switches a saved preset or writes your global configuration.
+利用可能なモデルは `omp models --json` で確認してください。セレクターの記載は、認証や推論の成功を保証しません。[モデルロール](../docs/models.md)と[実機検証](../docs/verification.md)を参照してください。

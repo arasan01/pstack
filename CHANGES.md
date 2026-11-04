@@ -4,6 +4,7 @@ This file is the release changelog, with one `## <version> - <title>` entry per 
 
 ## Unreleased
 
+- `profiles` を `arasan01.yml` に統合し、`~/.omp/agent/config.yml` の現行設定を反映。保存済みの `modelPresets` と旧GPT・DeepSeek・mixed例を除き、関連ガイドとdiscoveryの参照先を更新。
 - `how` produces a source-grounded current-system sketch before planning behavioral or structural changes, showing feature context, state ownership, other consumers and the change boundary. It separates observed relationships from proposals and unknowns.
 - `poteto-mode` routes work through the sketch and system-fit assessment before choosing an approach. `architect` and implementation playbooks reuse that grounding rather than starting a second investigation. Strict output formats, scoped assignments and planning-only boundaries remain authoritative.
 
