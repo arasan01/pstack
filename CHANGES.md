@@ -2,6 +2,10 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## 0.10.5 - document companion plugin setup
+
+- Added an "Awesome other plugins" section to the README with the OMP marketplace registration and installation commands for yomiyasu, plus usage through `skill:yomiyasu`.
+
 ## 0.10.4 - simplify native setup and profile configuration
 
 - Replaced the GPT, DeepSeek and mixed overlays with `profiles/arasan01.yml`, reflecting the current user configuration without saved model presets. Removed `docs/models.md` and `setup-pstack`; OMP owns setup and model configuration. Moved the advisor setup instructions into the existing reference.
