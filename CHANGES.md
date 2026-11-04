@@ -2,7 +2,7 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
-## Unreleased
+## 0.10.4 - simplify native setup and profile configuration
 
 - Replaced the GPT, DeepSeek and mixed overlays with `profiles/arasan01.yml`, reflecting the current user configuration without saved model presets. Removed `docs/models.md` and `setup-pstack`; OMP owns setup and model configuration. Moved the advisor setup instructions into the existing reference.
 - `how` produces a source-grounded current-system sketch before planning behavioral or structural changes, showing feature context, state ownership, other consumers and the change boundary. It separates observed relationships from proposals and unknowns.
