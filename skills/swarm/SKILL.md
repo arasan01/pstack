@@ -1,13 +1,16 @@
 ---
 name: swarm
 description: "Fan out N parallel workers, drain them, and return one report. Use for /swarm, 'swarm this', or parallel coverage, races, gauntlets, and exploration."
+workflow-contract: ../poteto-mode/references/workflow-contract.md#swarm
 ---
 
 # Swarm
 
+Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+
 ## Start
 
-Open a todolist with one entry per phase before launching anything.
+For a direct request, reflect the applicable phases below in the existing owner todo list. As a delegated contributor, apply them within the assigned part of the parent plan.
 
 1. Frame
 2. Fan out

@@ -30,6 +30,8 @@ This verifies:
 3. Local Markdown links resolve within the installed package boundary, including its bundled model guides and profiles.
 4. No obsolete multi-runtime paths or foreign execution instructions (`subagent_type: "pstack:...`, `run_in_background: true`) are present.
 5. Specialist agent definitions in `agents/` are valid.
+6. Registered workflow documents point to the shared contract's matching binding and declared roles.
+7. Retired upstream orchestration scripts cannot re-enter the package.
 
 ### Running tests
 

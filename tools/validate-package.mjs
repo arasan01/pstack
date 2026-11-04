@@ -158,6 +158,7 @@ const OBSOLETE_PATH_PATTERNS = [
   /pstack-models\.md/,
   /copilot-hooks/,
   /codex-hooks/,
+  /poteto-mode\/scripts\/orch(?:\/|$)/,
 ];
 
 export function validateProsePaths(skillsDir, repoRoot) {
@@ -288,7 +289,7 @@ export function validateOmpPackage(repoRoot) {
     throw new Error(`skills directory does not exist at ${skillsDir}`);
   }
 
-  const forbiddenDirs = ["plugins", ".claude-plugin", ".agents"];
+  const forbiddenDirs = ["plugins", ".claude-plugin", ".agents", "skills/poteto-mode/scripts/orch"];
   for (const forbidden of forbiddenDirs) {
     if (existsSync(join(root, forbidden))) {
       throw new Error(`legacy directory ${forbidden} must not exist in canonical OMP package`);

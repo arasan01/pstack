@@ -1,9 +1,12 @@
 ---
 name: architect
 description: "Sketch types, signatures, and module structure before code, then stay in the loop while implementation fills in. Use for /architect, 'architect this', 'design this', or non-trivial work where jumping to code would lock in the wrong shape."
+workflow-contract: ../poteto-mode/references/workflow-contract.md#architect
 ---
 
 # Architect
+
+Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
 
 Sketch types, function signatures, class shapes, and module boundaries with `not implemented` bodies and pseudocode. Synthesize across multiple design perspectives, then fill in code against the chosen sketch.
 
@@ -11,7 +14,7 @@ Respect the caller's stopping boundary. A design-only or planning-only request r
 
 ## Start
 
-Open a todolist with one entry per phase before starting.
+For a direct request, reflect the applicable phases below in the existing owner todo list. As a delegated contributor, apply them within the assigned part of the parent plan.
 
 1. Ground
 2. Sketch
@@ -21,9 +24,7 @@ Open a todolist with one entry per phase before starting.
 
 ## Phase A: Ground the problem
 
-Build a real mental model of every system the new code touches. Run the **how** skill over the relevant subsystems. Naming a file isn't grounding. Produce the architectural explanation `how` prescribes. If the design redefines ownership or layering, also run the **why** skill on the existing shape so the rationale becomes a constraint, not a guess.
-
-Skip Phase A only when the work is genuinely greenfield with no surrounding system to integrate.
+Build a real mental model of every system the assigned design touches. Reuse the parent's source-grounded **how** explanation when it remains valid. Investigate only missing evidence or parts invalidated by changed source or constraints. Naming a file isn't grounding. Use **how** to produce the missing architectural explanation. If the design redefines ownership or layering, use the existing **why** rationale or investigate the missing rationale so it becomes a constraint, not a guess. Greenfield work has no surrounding system to investigate.
 
 ## Phase B: Sketch
 
@@ -47,7 +48,7 @@ Opt in to a checkpoint when the invoker explicitly asks: "/architect with checkp
 
 The synthesis can ship as its own commit either way, as the "scaffold first" mode of the **foundational-thinking** principle skill. Planned and scoped breakage during fill-in is fine, per the **outcome-oriented-execution** principle skill. For adversarial pressure on the design before implementing, run the **interrogate** skill on the synthesized sketch.
 
-If the human pushes back on the shape (in a checkpoint or after the fact), treat that as Phase A evidence. Re-ground and re-run Phase B before writing more code.
+If the human pushes back on the shape, identify which constraints changed. Refresh only the affected grounding and re-run Phase B for the affected design before writing more code.
 
 ## Phase D: Implement against the sketch
 
@@ -74,7 +75,7 @@ Use judgment. A few edge cases don't condemn an architecture. Some problems are 
 
 When you scrap:
 
-1. Re-run the **how** skill over what's been built.
+1. Reuse valid grounding and run **how** only over missing or invalidated parts of what's been built.
 2. Redesign as if the new constraints had been day-one assumptions, per redesign-from-first-principles.
 3. Subtract before adding, per the **subtract-before-you-add** principle skill. The new sketch should be smaller than the old one before it grows.
 4. Return to Phase B and re-run arena.

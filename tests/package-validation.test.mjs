@@ -97,6 +97,15 @@ describe("OMP package validation and boundary checks", () => {
     expect(() => validateAll(root)).toThrow(/restore the OMP marketplace catalog/);
   });
 
+  test("retired upstream orchestration scripts cannot be packaged again", () => {
+    const root = createPackageFixture(r => {
+      const retired = join(r, "skills", "poteto-mode", "scripts", "orch");
+      mkdirSync(retired, { recursive: true });
+      writeFileSync(join(retired, "orch.ts"), "export {};\n");
+    });
+    expect(() => validateOmpPackage(root)).toThrow(/legacy directory skills\/poteto-mode\/scripts\/orch/);
+  });
+
   test("missing package.json fails with clear error", () => {
     const root = createPackageFixture((r) => rmSync(join(r, "package.json")));
     expect(() => validateOmpPackage(root)).toThrow(/missing package\.json/);

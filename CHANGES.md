@@ -7,6 +7,10 @@ This file is the release changelog, with one `## <version> - <title>` entry per 
 - Added the locally used `architect` task agent with its original `@slow` selection and architecture-skill instructions. Native model overrides and project/user agent precedence remain authoritative. Updated the optional overlays and agent-selection guidance.
 - Bundled `advisors/scope-completion/WATCHDOG.yml` from the `meta-soenan-apps` Scope & Completion Guardian. Its instructions and `scope: main` are preserved; the name is `pstack-scope-completion` to avoid replacing an explicit `default` entry.
 - Documented explicit Advisor opt-in, native roster merging, implicit-default replacement, model usage and prompt inspection. Installing pstack does not register an Advisor or modify user settings. Advisor notes do not replace required independent correctness review.
+- Centralized workflow responsibilities in one Markdown contract with bidirectional package bindings. Supporting skills reuse the parent's plan and valid grounding; design candidates return their assigned output without restarting the whole workflow.
+- Added `tools/check-contract.mjs` to compare a retained acceptance-scope fingerprint with existing-plan results and hashed JSON evidence. Missing or changed scope, unexecuted observations and mismatched evidence cannot become completion. The checker is not an execution engine or a product-verification verdict.
+- Followed upstream `c742dd6` by removing the retired orchestration CLI, store and dedicated tests, its test entry, formatter exclusions and active playbook instructions. Orchestrate now uses native task delivery, existing plans, PRs and execution artifacts without recreating the old queue or fixed ledger layout. Package validation rejects the removed script directory.
+- Removed old statechart command references from retained model-fixture comments. The current TypeScript compiler, model bodies, watch-pr tooling, historical release notes and license attribution remain.
 
 ## 0.10.2 - adapt Cursor pstack 0.15.36 for OMP
 

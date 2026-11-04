@@ -1,8 +1,14 @@
+---
+workflow-contract: ../../poteto-mode/references/workflow-contract.md#architect-candidate
+---
+
 # Architect runner prompt
+
+Follow the shared [workflow contract](../../poteto-mode/references/workflow-contract.md).
 
 The orchestrator passes this file through to every parallel candidate runner during Phase B and fills in the variable inputs around it: the task, the Phase A grounding artifacts, the isolated working directory, and the path to write outputs. The working directory is a git worktree when available, otherwise a per-runner subdirectory under the sketch dir. What matters is independence between candidates.
 
-You are producing one candidate design in architect's parallel exploration. Read the **architect** skill in full first. That's the workflow you're inside. Output a candidate design package: type sketch, function signatures, module map, and prose rationale shaped per [`rationale-template.md`](rationale-template.md).
+Produce one candidate design within the parent's assignment, using its grounding artifacts. Write the assigned design package: type sketch, function signatures, module map, and prose rationale shaped per [`rationale-template.md`](rationale-template.md). Return its paths and stop. Do not start the architect workflow, arena, a separate todo list, or additional candidates.
 
 Apply the following discipline. The orchestrator compares candidates on these axes to pick a base.
 

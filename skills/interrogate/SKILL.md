@@ -1,9 +1,12 @@
 ---
 name: interrogate
 description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Multiple LLM reviewers challenge changes from independent angles."
+workflow-contract: ../poteto-mode/references/workflow-contract.md#interrogate
 ---
 
 # Interrogate
+
+Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
 
 Independent adversaries try to break a change or design. Keep proven findings, report blocked risks separately, and do not apply fixes.
 

@@ -28,13 +28,15 @@
     ]
   },
   "scripts": {
-    "validate": "node tools/validate-package.mjs",
+    "validate": "node tools/validate-package.mjs && node tools/check-contract.mjs package",
     "test": "bun test tests/",
     "test:unit": "bun test tests/",
     "test:smoke": "bun tools/omp-smoke.mjs"
   },
-  "devDependencies": {
-    "@oh-my-pi/pi-natives": "18.13.2",
+  "dependencies": {
     "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@oh-my-pi/pi-natives": "18.13.2"
   }
 }

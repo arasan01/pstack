@@ -13,6 +13,25 @@ Discovery installs this checkout into a temporary OMP agent directory, reads the
 
 The smoke runner requires Bun 1.3.14 or newer and the installed development dependencies. It uses OMP's native stable-process API for graceful termination and descendant cleanup, including detached verification commands. A deadline starts cancellation; teardown may take up to 16 additional seconds. Interrupting the suite stops subsequent scenarios. The implementation scenario also requires Node on `PATH` for its exported-API consumer.
 
+## Check an accepted workflow scope
+
+The [workflow invocation contract](../skills/poteto-mode/references/workflow-contract.md) owns the roles, metadata bindings and plan-frontmatter schema. `bun run validate` checks package bindings as well as existing package invariants. It also rejects reintroduction of the retired upstream orchestration CLI.
+
+For an existing durable plan with acceptance evidence, retain its fingerprint before work begins:
+
+```sh
+node tools/check-contract.mjs fingerprint PLAN.md
+node tools/check-contract.mjs check PLAN.md \
+  --expected-scope <retained-fingerprint> \
+  --evidence-root <evidence-directory>
+```
+
+Keep the returned fingerprint in the owner's existing brief or accepted record, not in a field a worker can silently update. The checker compares the accepted scope, original-source reference, owner, stopping point and expected observations. It rejects unknown results, missing evidence, changed hashes, non-executed observations and mismatched scalar values. Unverified, blocked or missing results remain incomplete. Duplicate YAML keys, aliases, unknown workflow fields and unsupported versions are invalid input.
+
+CLI exit 0 with `consistent` establishes agreement between fixed declarations and supplied artifact bytes. Exit 1 reports invalid or incomplete correspondence; exit 2 reports argument or input/output failure. These are the contract checker's codes, separate from the model smoke runner's codes below. No checker result establishes that the original acceptance list is complete, that an artifact came from the current build, or that its consumer assertions are correct. Review actual execution evidence before accepting it. Do not create a plan file for a small question solely to satisfy this checker.
+
+Exercise changes with a real JSON-producing consumer and retain both its output and the plan. Confirm a positive case, then remove a required result, remove or relax a criterion, change a stopping condition, and provide a failed consumer's artifact as a pass. Only the unchanged complete case may exit 0.
+
 ## Qualify an available model
 
 Use an exact `provider/model-id` from `omp models --json`:
@@ -51,6 +70,7 @@ Use disposable fixtures for skill changes and retain the OMP traces and artifact
 | `ketchup-video` | Render a recap from actual command results into a silent subtitled video outside the fixture. | A decoded frame from each slide showing a readable separate subtitle strip, no audio stream, and fully visible holds measured from the encoded frames. Count subtitle words and exclude fades. |
 | Packaged `architect` agent | Load the checkout in an isolated agent directory and inspect the native task tool's available agents. Add a same-name project agent in the disposable fixture, then repeat. Delegate a bounded source explanation to `architect`. | The package agent is available without a user definition, the project definition takes precedence, and the delegated answer respects its scope and stopping boundary. Inspect actual model identity before making a model-specific qualification claim. |
 | Scope & Completion Guardian | Explicitly add the bundled roster to a disposable project's `WATCHDOG.yml`. Enable the native advisor for that process, then run `/advisor status` and `/advisor dump raw`. | The native prompt contains the Guardian instructions and the commands preserve project files. This proves loading, not advisor judgment quality. Package installation alone must not install a user or project roster. |
+| Workflow candidate contract | Give a fresh OMP session an existing parent's grounding and the architect candidate prompt, with a source-explanation-only assignment. | The candidate reads the shared contract, identifies the actual exported boundary, starts no task or todo workflow, creates no files, and stops at its assigned answer. Audit native tool calls and the workspace, not its self-report. |
 
 Reject fallback execution as proof for the requested model. Inspect outputs as well as process exit codes; a successful render command does not establish subtitle readability or sufficient hold time.
 

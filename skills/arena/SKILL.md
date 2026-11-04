@@ -1,11 +1,14 @@
 ---
 name: arena
 description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
+workflow-contract: ../poteto-mode/references/workflow-contract.md#arena
 ---
 
 # Arena
 
-Open a todolist with one entry per phase (Frame, Fan out, Cross-judge, Pick, Graft, Verify) before launching anything.
+Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
+
+For a direct request, reflect the applicable phases (Frame, Fan out, Cross-judge, Pick, Graft, Verify) in the existing owner todo list. As a delegated contributor, apply them within the assigned part of the parent plan.
 
 ## Phase A: Frame
 

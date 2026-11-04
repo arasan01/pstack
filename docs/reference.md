@@ -61,6 +61,7 @@ pstack installs as a canonical OMP package at the repository root:
 - **Model roles and execution**: Native `modelRoles`, `agentModelOverrides`, permissions, delegation, reasoning, fallback, and session lifecycle remain authoritative. pstack does not maintain a second runtime or parallel model sheet.
 - **Readonly root setup**: `setup-pstack` explains and diagnoses native configuration without mutating global or user settings unless explicitly requested.
 - **Advisor example (`advisors/scope-completion/WATCHDOG.yml`)**: The opt-in Scope & Completion Guardian roster watches accepted scope and completion evidence. OMP discovers rosters from user and project locations, not installed packages. See [advisor setup](models.md#scope-and-completion-advisor).
+- **Workflow contract**: [Shared invocation responsibilities](../skills/poteto-mode/references/workflow-contract.md) define the owner, contributor, candidate and reviewer roles. `tools/check-contract.mjs` checks package bindings and the correspondence between a retained acceptance scope and supplied JSON evidence. It does not execute workflows or certify product correctness.
 
 ## Configuration and dependencies
 
@@ -71,7 +72,8 @@ Install dependencies for the workflows you use:
 | Dependency | When you need it |
 | --- | --- |
 | GitHub CLI, `gh` | PR monitoring and shipping. Authenticate with `gh auth login`. |
-| Bun | Bundled `watch-pr` and `orch` scripts under `skills/poteto-mode/scripts`. |
+| Bun | Bundled `watch-pr` scripts under `skills/poteto-mode/scripts`. |
+| Node and `yaml` | `tools/check-contract.mjs` for package contract bindings and existing-plan evidence checks. |
 | TypeScript, Java and TLC | `statechart` model checking. TLC 1.7.4 is required for formal checking. |
 
 ## Maintenance

@@ -1,9 +1,12 @@
 ---
 name: poteto-mode
 description: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /poteto-mode, or requests to work in this style.
+workflow-contract: references/workflow-contract.md#poteto-mode
 ---
 
 # Poteto mode
+
+Follow the shared [workflow contract](references/workflow-contract.md).
 
 ## Native operations
 
@@ -11,9 +14,9 @@ These workflows use native oh-my-pi (`omp`) vocabulary and agent policy. For nat
 
 Invoke the skill needed for the task. Use native agents and configured model roles rather than `poteto-agent`, per-model wrappers, or a legacy model sheet.
 
-Use the session's native task-tracking tool if exposed. If no task-tracking tool is available, maintain in-turn focus on the matched playbook's steps without inventing replacement tools.
+The parent owns the only whole-task native todo list. Use the session's native task-tracking tool if exposed. If none is available, maintain in-turn focus on the applicable playbook steps without inventing replacement tools.
 
-Bundled skills live at `skills/<name>/SKILL.md` (or `../<name>/SKILL.md` relative to this file). Include the chosen skill's path or name when delegating a skill-specific task. The session that receives `poteto-mode` owns its playbook and todo list; a delegate owns only its assigned work.
+Bundled skills live at `skills/<name>/SKILL.md` (or `../<name>/SKILL.md` relative to this file). Include the chosen skill's path or name when delegating a skill-specific task. The parent retains the playbook, whole-task scope, and integration; a delegate applies the needed method only to its assigned work.
 
 ## Project scope
 
@@ -151,7 +154,7 @@ Comments follow the same rule as the reply. Write them clean as you go. Keep a c
 
 ## Playbooks
 
-Open a todolist whose first items are the matched playbook's steps, copied in verbatim, before any task-specific todos. A step you choose not to do stays in the list with a one-line `skip: <reason>`. Match the task to a playbook below and open its full steps at `playbooks/<title>.md`, with the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file. Copy its steps in verbatim.
+Match the task to a playbook below and read its full steps at `playbooks/<title>.md`, with the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file. Reflect only the applicable steps needed for the accepted request and stopping point in the existing native todo list, alongside task-specific work. Do not append every phase verbatim or add skipped steps merely to mirror the playbook.
 
 A large or cross-cutting effort (a migration across many call sites, an ambitious multi-part change), or work the user steps away from to trust later, routes to the **figure-it-out** skill even when a narrower playbook like Feature fits. Use **figure-it-out** whenever no bundled playbook fits. It designs a bespoke, rigorous playbook for the task. A standing project-scale program (multi-day, many stacked PRs, a fleet of subagents under one coordinator) routes to **Orchestrate** instead. figure-it-out designs one bespoke run, orchestrate runs the program.
 
@@ -179,4 +182,4 @@ A large or cross-cutting effort (a migration across many call sites, an ambitiou
 - **Worktree and simulator cleanup.** Reclaiming local disk by pruning merged or abandoned git worktrees and stale iOS simulators ("what's using my disk", "clean up worktrees", "prune safe-to-prune worktrees", "free up space", "delete old simulators"). `playbooks/worktree-cleanup.md`.
 - **Opening a PR.** Use when the selected workflow is authorized to open or update a PR, not as a universal completion gate. `playbooks/opening-a-pr.md`.
 
-**Project playbooks.** A repository can add playbooks of its own under `.omp/playbooks/` or `.agents/playbooks/`, one Markdown file each. Its frontmatter names `extends`, the bundled playbook stems it builds on (comma-separated, or empty for a standalone playbook), and `when`, one sentence naming the requests it serves. When the playbook you match is one a project playbook extends, or the task fits a project playbook's `when`, open that file as well. Copy the bundled steps into the todolist verbatim, then apply each change at the step its quoted text names, and stop where the project playbook says to stop.
+**Project playbooks.** A repository can add playbooks of its own under `.omp/playbooks/` or `.agents/playbooks/`, one Markdown file each. Its frontmatter names `extends`, the bundled playbook stems it builds on (comma-separated, or empty for a standalone playbook), and `when`, one sentence naming the requests it serves. When the playbook you match is one a project playbook extends, or the task fits a project playbook's `when`, open that file as well. Apply its changes to the relevant bundled steps in the existing plan, and stop where the project playbook says to stop.

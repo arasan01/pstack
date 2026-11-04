@@ -1,15 +1,18 @@
 ---
 name: figure-it-out
 description: "Design an auditable playbook when no narrower one fits: a large migration, an ambitious multi-part change, or work a human reviews after stepping away. Scales rigor to the task, runs a hypothesis loop, and logs decisions. Use for /figure-it-out or 'figure it out'."
+workflow-contract: ../poteto-mode/references/workflow-contract.md#figure-it-out
 ---
 
 # Figure it out
+
+Follow the shared [workflow contract](../poteto-mode/references/workflow-contract.md).
 
 When the task matches no playbook, design one. The deliverable before any code is the workflow itself: a sequence of phases that scales rigor to the task, runs the scientific method, and leaves a decision trail a human can audit after stepping away.
 
 ## Start
 
-Open a todolist whose first item is to read the Principles section of the **poteto-mode** skill. Then add the phases below as todos.
+Read the Principles section of **poteto-mode**. For a direct request, reflect the applicable phases below in the existing owner todo list. As a delegated contributor, design or execute only the assigned part of the parent plan.
 
 ## Phase A: Frame
 
@@ -30,7 +33,7 @@ Decompose into atomic, independently-landable units. Sequence riskiest-unknown-f
 - Decide what fans out. Parallelize only across seams, and give each worker its own worktree or branch (the **separate-before-serializing-shared-state** principle skill). Don't over-fan. Subagent delegation follows native agent policy.
 - Write the designed phase list down. That list is what the human reviews.
 
-Then execute the design. Add its steps to the todolist as concrete items between the Phase C and Phase D entries. Run each under the Phase C loop discipline, and weave the Phase D log through them, a row as each step lands, rather than saving the whole trail for the end.
+When execution is authorized, add the designed steps to the existing plan. Run the assigned units under the Phase C loop discipline, and weave the Phase D log through them, a row as each step lands. A workflow-design-only request returns the designed playbook and stops.
 
 ## Phase C: Run the loop
 
