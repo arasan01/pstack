@@ -21,11 +21,13 @@ The native `/pstack` command resolves current roles without writing settings. It
 
 Use the installed package's [model guide](../../docs/models.md) and [overlays](../../profiles/README.md). Resolve their paths from this skill directory, not the user's project directory. The overlays are editable examples for `omp --config <absolute-overlay-path>`; do not apply them automatically.
 
-The examples separate `default`, `smol`, `slow`, `plan`, `task` and custom `review` roles. Default workers use `@task`; discovery and mechanical agents may use `@smol`; reviewers use `@review`. Do not route design or synthesis through scout merely because it is read-only. Do not create one agent per skill or per model.
+The examples separate `default`, `smol`, `slow`, `plan`, `task` and custom `review` roles. Default workers use `@task`; the packaged `architect` uses `@slow`; discovery and mechanical agents may use `@smol`; reviewers use `@review`. The `architect` agent reads the architecture skill and follows its task brief. Respect project and user agent precedence. Do not route design or synthesis through scout merely because it is read-only. Do not create one agent per skill or per model.
 
 GPT and DeepSeek can both be primary workers. Preserve independent authorship and report actual model diversity separately. Do not assert model strengths or copy effort levels across models without evidence.
 
 `retry.modelFallback: false` disables retry substitution; it does not prove an unresolved startup selector will run as requested. Qualify exact models through the [real OMP harness](../../docs/verification.md) only when model execution is authorized.
+
+The model guide also describes the bundled Scope & Completion Guardian advisor. Its `WATCHDOG.yml` is an explicit opt-in example, not an automatically discovered package resource. Inspect existing project and user rosters before recommending a merge. Keep `scope: main`, explain native advisor-role resolution and additional model usage, and do not install or enable it as a setup side effect.
 
 ## Finish setup
 

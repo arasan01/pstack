@@ -5,9 +5,11 @@ description: "Fan out N parallel workers, drain them, and return one report. Use
 
 # Swarm
 
+Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
+
 ## Start
 
-Open a todolist with one entry per phase before launching anything.
+Apply the phases within the accepted task brief and native policy. Use the existing plan for work you coordinate. For an assigned subtask, reuse the parent plan and grounding without duplicating whole-task todos. A worker assigned one artifact returns that artifact and stops, rather than launching a new swarm. Invocation type grants no additional authority or permissions.
 
 1. Frame
 2. Fan out

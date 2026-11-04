@@ -26,7 +26,7 @@ The execution flow step by step. For each step: what function/method runs, what 
 Every file you read during exploration, so the explainer can reference them.
 
 ### Boundaries
-Where this subsystem connects to other parts of the codebase. The inputs and outputs.
+Where the assigned slice connects to other parts of the codebase: inputs, outputs, callers, shared data or state owners, and other consumers that constrain a change. Cite the code or configuration establishing each relationship; distinguish confirmed links from inference. Return this slice for the parent to merge into one system sketch, not a second whole-system investigation.
 
 ### Non-Obvious Things
 Anything surprising, historically motivated, or easy to get wrong. Things that look like they should work one way but work another.

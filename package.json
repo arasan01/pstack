@@ -1,7 +1,7 @@
 {
   "name": "pstack",
   "private": true,
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "Rigorous agent workflows, skills, and principles for Oh My Pi (OMP).",
   "author": {
     "name": "arasan01",

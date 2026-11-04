@@ -2,6 +2,22 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## Unreleased
+
+- `how` produces a source-grounded current-system sketch before planning behavioral or structural changes, showing feature context, state ownership, other consumers and the change boundary. It separates observed relationships from proposals and unknowns.
+- `poteto-mode` routes work through the sketch and system-fit assessment before choosing an approach. `architect` and implementation playbooks reuse that grounding rather than starting a second investigation. Strict output formats, scoped assignments and planning-only boundaries remain authoritative.
+
+## 0.10.3 - preserve native roles and check workflow evidence
+
+- Added the locally used `architect` task agent with its original `@slow` selection and architecture-skill instructions. Native model overrides and project/user agent precedence remain authoritative. Updated the optional overlays and agent-selection guidance.
+- Bundled `advisors/scope-completion/WATCHDOG.yml` from the `meta-soenan-apps` Scope & Completion Guardian. Its instructions and `scope: main` are preserved; the name is `pstack-scope-completion` to avoid replacing an explicit `default` entry.
+- Documented explicit Advisor opt-in, native roster merging, implicit-default replacement, model usage and prompt inspection. Installing pstack does not register an Advisor or modify user settings. Advisor notes do not replace required independent correctness review.
+- Consolidated shared scope, stopping and evidence guidance in the existing `skill:poteto-mode`. Other skills reuse its guidance and the parent's valid grounding without starting another whole workflow.
+- Skills use native names and discovery precedence; OMP settings and the accepted task brief remain authoritative. OMP owns skill-name resolution.
+- `/pstack` enumerates effective roles through the native settings API and resolves them through `ctx.models.resolve`. It no longer maintains a role-name list or fabricates an unconfigured `review` role.
+- Followed upstream `c742dd6` by removing the retired orchestration CLI, store and dedicated tests, its test entry, formatter exclusions and active playbook instructions. Orchestrate now uses native task delivery, existing plans, PRs and execution artifacts without recreating the old queue or fixed ledger layout. Package validation rejects the removed script directory.
+- Removed old statechart command references from retained model-fixture comments. The current TypeScript compiler, model bodies, watch-pr tooling, historical release notes and license attribution remain.
+
 ## 0.10.2 - adapt Cursor pstack 0.15.36 for OMP
 
 Adapted the useful changes from Cursor pstack `519d36a` through `c742dd6` (0.15.35 and 0.15.36) without restoring Cursor runtime dependencies.

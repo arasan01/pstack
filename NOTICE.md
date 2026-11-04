@@ -35,7 +35,7 @@ Summary of structural changes:
 - Root package installable into Oh My Pi (OMP) directly. Skills reside at `skills/` and the native extension at `omp/index.ts`.
 - Seven skills imported from `cursor-team-kit`: `deslop`, `nuclear-code-quality-review`, `make-pr-easy-to-review`, `fix-ci`, `fix-merge-conflicts`, `get-pr-comments`, `what-did-i-get-done`. The duplicate thermo-nuclear review was consolidated under the local nuclear review name.
 - `skills/babysit/` is independently authored as the analog of Cursor's `/babysit` built-in. It has no upstream pstack equivalent; its workflow is informed by Cursor's public `/babysit` behavior. No code or prose was copied from any source.
-- `skills/poteto-mode/scripts/` is vendored from upstream (`watch-pr`, `orch`, `bootstrap.ts`, `package.json`, `bun.lock`). `worktree-audit.mjs` is a port-only rewrite of upstream's `worktree-audit.sh` adapted for OMP workspace and session structures.
+- `skills/poteto-mode/scripts/` is vendored from upstream (`watch-pr`, `bootstrap.ts`, `package.json`, `bun.lock`). `worktree-audit.mjs` is a port-only rewrite of upstream's `worktree-audit.sh` adapted for OMP workspace and session structures.
 - `agents/comment-sicko.md` is upstream's `Comment Sicko` agent, preserved as a native specialist agent.
 
 ## Modifications
