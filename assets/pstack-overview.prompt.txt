@@ -12,11 +12,8 @@ Keep the three main columns:
 
 Retain the terminal/document icon on the far left with the exact label "Your request", and the arrow into the central panel. Retain a code document with a prominent cyan check on the far right, reached by an arrow, but simplify its two-line caption to exactly "Verified work".
 
-Add a distinct slim band inside the central panel below the main columns and above the support-skills footer, with two evenly spaced items, not extra sequential stages:
-- Label "Project playbooks" with the smaller monospace path ".agents/playbooks/".
-- Label "setup-pstack" with the smaller explanation "Model and reasoning effort per role".
-These are customization controls, not mandatory workflow steps.
+Add a distinct slim band inside the central panel below the main columns and above the support-skills footer. Label it "Project playbooks" with the smaller monospace path ".agents/playbooks/". This is a customization control, not a mandatory workflow step.
 
 Keep the bottom support-skills strip with the exact heading "Supporting skills" and three colored badges "how", "why", "unslop", matching the original style.
 
-Constraints: Preserve recognizable original composition, palette, icon language, skill names, and visual hierarchy. Enlarge the panel vertically if necessary to avoid crowding. Render all quoted text verbatim, no extra slogans or version numbers. Spell "poteto-mode", "interrogate", ".agents/playbooks/", and "setup-pstack" exactly. No unrelated new icons or vendor logos. Do not imply automatic merging, add a release step, or include formal verification in this core plugin's diagram.
+Constraints: Preserve recognizable original composition, palette, icon language, skill names, and visual hierarchy. Enlarge the panel vertically if necessary to avoid crowding. Render all quoted text verbatim, no extra slogans or version numbers. Spell "poteto-mode", "interrogate", and ".agents/playbooks/" exactly. No unrelated new icons or vendor logos. Do not imply automatic merging, add a release step, or include formal verification in this core plugin's diagram.

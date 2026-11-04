@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { parse as parseYaml } from "yaml";
 import { inspectTrace, isolatedEnvironment, makeWorkspace, parseEvents, requireSuccess, run, smokeConfig, snapshot } from "./runner.mjs";
 
 function requireCondition(condition, message) {
@@ -24,7 +25,9 @@ export async function packageDiscovery({ repoRoot, ompBin, outputDir, timeoutMs 
     requireSuccess(discovered, "Installed poteto-mode discovery");
     const skillPath = discovered.stdout.match(/^\[Skill file: (.+)\]/)?.[1];
     requireCondition(skillPath && realpathSync(skillPath) === realpathSync(join(repoRoot, "skills/poteto-mode/SKILL.md")), "Native reader did not resolve the installed checkout's skill");
-    const commands = await run(ompBin, ["--config", join(repoRoot, "profiles/arasan01.yml"), "--no-session", "--no-title", "--no-ui", "--mode", "rpc"], {
+    const profile = parseYaml(readFileSync(join(repoRoot, "profiles/arasan01.yml"), "utf8"));
+    const bootstrapModel = profile.modelRoles.default;
+    const commands = await run(ompBin, ["--model", bootstrapModel, "--no-session", "--no-title", "--no-ui", "--mode", "rpc"], {
       cwd: fixture.workspace, env, timeoutMs,
       input: [
         { type: "get_available_commands", id: "pstack-discovery" },

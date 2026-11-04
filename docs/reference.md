@@ -4,7 +4,7 @@ Start with the [README](../README.md) for installation and your first task.
 
 ## Slash commands
 
-The package includes 65 skill directories: 41 public skills and 24 `principle-*` references. Refer to a skill by its native `skill:name` ID. When skill commands are enabled, invoke it with `/skill:name`; native agent and model configuration remains in control.
+The package includes 64 skill directories: 40 public skills and 24 `principle-*` references. Refer to a skill by its native `skill:name` ID. When skill commands are enabled, invoke it with `/skill:name`; native agent and model configuration remains in control.
 
 Find each skill's instructions in the [skills tree](../skills/).
 
@@ -34,7 +34,6 @@ Find each skill's instructions in the [skills tree](../skills/).
 | `/skill:show-me-your-work` | log decisions to a reviewable tsv decision trail |
 | `/skill:blast-radius` | find what a change could break beyond the diff and prove safety by running code |
 | `/skill:recall` | catch up on recent working context from chat history, live state, and the shared record |
-| `/skill:setup-pstack` | diagnose and explain native model roles and verification readiness |
 | `/skill:poteto-help` | answer a question about pstack with the prompt to send and the file the answer came from |
 | `/skill:unslop` | clean up writing by removing AI tells |
 | `/skill:no-comments` | strip comments before review, fix the accepted findings, encode claimed constraints |
@@ -59,13 +58,28 @@ pstack installs as a canonical OMP package at the repository root:
 - **Extension (`omp/index.ts`)**: Declared via `package.json#omp.extensions`. Integrates with OMP extension loading to provide context and readiness guidance.
 - **Specialist agents (`agents/`)**: `architect.md` delegates source-grounded design through the architecture skill with native `@slow` selection; `comment-sicko.md` supplies the comment-audit specialist. Project and user agent definitions take native precedence.
 - **Model roles and execution**: Native `modelRoles`, `task.agentModelOverrides`, permissions, delegation, reasoning, fallback, and session lifecycle remain authoritative. pstack does not maintain a second runtime or parallel model sheet.
-- **Readonly root setup**: `setup-pstack` explains and diagnoses native configuration without mutating global or user settings unless explicitly requested.
-- **Advisor example (`advisors/scope-completion/WATCHDOG.yml`)**: The opt-in Scope & Completion Guardian roster watches accepted scope and completion evidence. OMP discovers rosters from user and project locations, not installed packages. See [advisor setup](models.md#scope-and-completion-advisor).
+- **Advisor example (`advisors/scope-completion/WATCHDOG.yml`)**: The opt-in Scope & Completion Guardian roster watches accepted scope and completion evidence. OMP discovers rosters from user and project locations, not installed packages. See [advisor setup](#scope-and-completion-advisor).
 - **Shared workflow guidance**: `skill:poteto-mode` owns scope, stopping and evidence instructions. Native settings and the accepted brief determine agents, models and permissions.
+
+## Scope and completion advisor
+
+The [Scope & Completion Guardian roster](../advisors/scope-completion/WATCHDOG.yml) challenges unapproved scope growth, redundant investigation and delegation, and premature completion without functional evidence. Its name is `pstack-scope-completion` to avoid replacing an existing default advisor.
+
+OMP does not discover `WATCHDOG.yml` inside installed packages. Installing pstack does not register or enable this advisor. To use it:
+
+1. Open `advisors/scope-completion/WATCHDOG.yml` in the pstack checkout or installed package.
+2. Add its entry to the existing `advisors` list in your project's `WATCHDOG.yml`, or use `/advisor configure` for the intended project or user scope. If no roster exists, use the bundled file as that scope's `WATCHDOG.yml`. Do not overwrite an existing roster or create a second `advisors` key.
+3. Restart the project session after editing the file externally, then run `/advisor on` and `/advisor status` to check the active model. Use `/advisor dump raw` to confirm the Scope & Completion Guardian instructions. A single-advisor status may omit its name.
+
+Check all discovered user and project rosters before adding it. Advisors merge by slug, not by field; a more-specific entry replaces an entry with the same slug. A new roster replaces the implicit default advisor. Explicitly named advisors with other slugs remain and can increase review usage and cost.
+
+The entry keeps `scope: main`; it does not enable advisors on subagents. It leaves model, tools, cadence and catch-up settings to OMP's native defaults and configuration. An omitted model resolves the native `advisor` role, using native `slow` resolution when that role is unset. The default investigative tools are `read`, `grep`, `glob`, and `recall` when available, plus `advise` for notes. pstack grants no mutating tools and changes no saved settings.
+
+Advisor notes do not replace a workflow's required independent correctness review or grant permission to narrow acceptance criteria. [OMP's Advisor guide](https://github.com/can1357/oh-my-pi/blob/v18.16.0/docs/advisor-watchdog.md) defines discovery, model resolution, permissions and lifecycle.
 
 ## Configuration and dependencies
 
-See [models.md](models.md) for OMP model role configuration and [verification.md](verification.md) for verification procedures.
+OMP owns model configuration. See [profiles](../profiles/README.md) for the optional user overlay and [verification.md](verification.md) for verification procedures.
 
 Install dependencies for the workflows you use:
 
@@ -88,7 +102,7 @@ agents/                      Semantic specialist agent definitions
 advisors/                    Opt-in native WATCHDOG roster examples
 tools/                       Package validator and verification smoke runners
 tests/                       Unit, invariant, and validation test suites
-docs/                        Documentation and model guidance
+docs/                        Documentation and verification guidance
 assets/                      Diagrams and package icons
 ```
 

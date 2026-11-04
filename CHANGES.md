@@ -4,14 +4,14 @@ This file is the release changelog, with one `## <version> - <title>` entry per 
 
 ## Unreleased
 
-- `profiles` を `arasan01.yml` に統合し、`~/.omp/agent/config.yml` の現行設定を反映。保存済みの `modelPresets` と旧GPT・DeepSeek・mixed例を除き、関連ガイドとdiscoveryの参照先を更新。
+- Replaced the GPT, DeepSeek and mixed overlays with `profiles/arasan01.yml`, reflecting the current user configuration without saved model presets. Removed `docs/models.md` and `setup-pstack`; OMP owns setup and model configuration. Moved the advisor setup instructions into the existing reference.
 - `how` produces a source-grounded current-system sketch before planning behavioral or structural changes, showing feature context, state ownership, other consumers and the change boundary. It separates observed relationships from proposals and unknowns.
 - `poteto-mode` routes work through the sketch and system-fit assessment before choosing an approach. `architect` and implementation playbooks reuse that grounding rather than starting a second investigation. Strict output formats, scoped assignments and planning-only boundaries remain authoritative.
 
 ## 0.10.3 - preserve native roles and check workflow evidence
 
 - Added the locally used `architect` task agent with its original `@slow` selection and architecture-skill instructions. Native model overrides and project/user agent precedence remain authoritative. Updated the optional overlays and agent-selection guidance.
-- Bundled `advisors/scope-completion/WATCHDOG.yml` from the `meta-soenan-apps` Scope & Completion Guardian. Its instructions and `scope: main` are preserved; the name is `pstack-scope-completion` to avoid replacing an explicit `default` entry.
+- Bundled `advisors/scope-completion/WATCHDOG.yml` with the Scope & Completion Guardian instructions and `scope: main`; the name is `pstack-scope-completion` to avoid replacing an explicit `default` entry.
 - Documented explicit Advisor opt-in, native roster merging, implicit-default replacement, model usage and prompt inspection. Installing pstack does not register an Advisor or modify user settings. Advisor notes do not replace required independent correctness review.
 - Consolidated shared scope, stopping and evidence guidance in the existing `skill:poteto-mode`. Other skills reuse its guidance and the parent's valid grounding without starting another whole workflow.
 - Skills use native names and discovery precedence; OMP settings and the accepted task brief remain authoritative. OMP owns skill-name resolution.

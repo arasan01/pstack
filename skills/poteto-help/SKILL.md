@@ -23,7 +23,7 @@ Infer the need from the message and the conversation. A named situation, such as
 
 Check the state that changes the answer, and mention it only when it does:
 
-- For model questions, inspect native model roles and agent settings per [`setup-pstack`](../setup-pstack/SKILL.md); no pstack model sheet or routing hook is required.
+- For model questions, inspect native `modelRoles` and `task.agentModelOverrides`; no pstack setup skill, model sheet or routing hook is required.
 - No project `verify` or `verify-*` skill or other app harness means agents have no scripted way to drive the app. Mention `/create-verification-skill` when the question is about proving a change works.
 - No formal verification skill means no property is checked beyond the cases tests reach. Mention [`/create-formal-verification-skill`](../create-formal-verification-skill/SKILL.md) for races and invariants. If verified code changed after its recorded sync commit, mention [`/maintain-formal-verification-skill`](../maintain-formal-verification-skill/SKILL.md).
 
@@ -32,8 +32,7 @@ Native configuration already owns its models through `modelRoles`.
 ## Get set up
 
 1. Install the pstack package into oh-my-pi (`omp install .`).
-2. Read [`/setup-pstack`](../setup-pstack/SKILL.md) to inspect native configuration. Invoke skills explicitly.
-3. Offer a first task prompt with a goal and a check that can pass or fail, per [`references/prompting.md`](references/prompting.md). Setup can also offer the project verification and formal verification skills when they are missing.
+2. Offer a first task prompt with a goal and a check that can pass or fail, per [`references/prompting.md`](references/prompting.md). Invoke skills explicitly.
 
 Before giving instructions or adapting a recipe, read the [native operations reference](../poteto-mode/references/omp-tools.md) when applicable.
 
@@ -81,7 +80,6 @@ The default answer is `/poteto-mode`, which runs most of the others when its ste
 | Vet a performance number before reporting or acting on it | [`/benchmark-checklist`](../benchmark-checklist/SKILL.md) |
 | Run a large or cross-cutting change, or one to review after stepping away | [`/figure-it-out`](../figure-it-out/SKILL.md) |
 | Keep a decision log during a run, and review it afterward | [`/show-me-your-work`](../show-me-your-work/SKILL.md) |
-| Inspect native model configuration | [`/setup-pstack`](../setup-pstack/SKILL.md) |
 | Turn their own working habits into a personal mode skill | [`/automate-me`](../automate-me/SKILL.md) |
 | Turn what a finished task taught into skill edits | [`/reflect`](../reflect/SKILL.md) |
 | Stop agents from repeating the same mistakes in this repo | [`/correct`](../correct/SKILL.md) |

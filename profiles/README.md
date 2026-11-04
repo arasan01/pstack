@@ -1,15 +1,13 @@
-# arasan01 のOMP設定
+# Native OMP overlay
 
-[`arasan01.yml`](arasan01.yml) は `~/.omp/agent/config.yml` の現行設定を反映した、単一のネイティブOMPオーバーレイです。保存済みの切替候補 `modelPresets` は含めません。認証情報、履歴、キャッシュ、拡張やエージェントのファイルもコピーしません。
-
-チェックアウトのルートから起動します。別のディレクトリからは絶対パスを指定してください。
+[`arasan01.yml`](arasan01.yml) reflects `~/.omp/agent/config.yml`, excluding saved `modelPresets`. Run it from the checkout root, or pass an absolute path.
 
 ```sh
 omp --config profiles/arasan01.yml
 ```
 
-モデルロール、エージェント別モデル指定、並列数に加え、表示や各機能の設定も含みます。`retry.modelFallback: true` と `fallbackOn: any`、Web検索のフォールバックチェーンも元設定のままです。モデル実行の検証では、要求したモデルと実行されたモデルが一致するかを別途確認してください。
+OMP applies this overlay to the process without persisting it. It includes model routing, task settings, fallback, display and feature preferences. It does not install agents or extensions, or copy credentials.
 
-`--config` はそのプロセスにだけ適用され、HOMEの設定を書き換えません。既存設定とのマージであり、ファイルの省略項目は下位設定を消しません。インストールだけではこのオーバーレイを適用しません。
+Confirm exact selectors with `omp models --json`. Listing a selector in a file does not prove it is available or has been exercised.
 
-利用可能なモデルは `omp models --json` で確認してください。セレクターの記載は、認証や推論の成功を保証しません。[モデルロール](../docs/models.md)と[実機検証](../docs/verification.md)を参照してください。
+See [live qualification](../docs/verification.md). The harness uses temporary overlays and never switches a saved preset or writes your global configuration.
