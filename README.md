@@ -58,6 +58,14 @@ marketplaceを登録済みの場合は、`marketplace add`を省略してくだ�
 
 詳しい手順は [playbook 一覧](skills/poteto-mode/SKILL.md#playbooks)と[スキルのリファレンス](docs/reference.md)を参照してください。
 
+## 標準レビューへの観点追加
+
+OMPの `/review` が使う `reviewer` に、`nuclear-code-quality-review` の構造・保守性の観点を追加します。標準agentの差し替えや `poteto-mode` の起動は不要です。
+
+同梱の [rule](rules/nuclear-review.md) が `reviewer` のsystem promptにスキルを読む指示を追加します。スキル本文の読み込みはagentが行います。`/review` 以外で起動する `reviewer` にも適用し、メインセッションや他のagentには適用しません。
+
+標準のレビュー範囲、証拠の要件、出力形式と読み取り専用の制約は維持します。nuclearスキルのレポートファイル作成は行いません。無効化や検証方法は[リファレンス](docs/reference.md#additional-review-criteria)を参照してください。
+
 ## Advisorのセットアップ
 
 スコープ拡大や終わらない調査を監視する [Scope & Completion Guardian](advisors/scope-completion/WATCHDOG.yml) を同梱しています。パッケージのインストールだけでは有効になりません。

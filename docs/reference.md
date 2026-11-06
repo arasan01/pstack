@@ -57,9 +57,20 @@ pstack installs as a canonical OMP package at the repository root:
 - **Skills (`skills/`)**: Discovered natively by OMP. Skills contain procedural guidance and playbooks.
 - **Extension (`omp/index.ts`)**: Declared via `package.json#omp.extensions`. Integrates with OMP extension loading to provide context and readiness guidance.
 - **Specialist agents (`agents/`)**: `architect.md` delegates source-grounded design through the architecture skill with native `@slow` selection; `comment-sicko.md` supplies the comment-audit specialist. Project and user agent definitions take native precedence.
+- **Reviewer rule (`rules/nuclear-review.md`)**: Adds nuclear structural and maintainability criteria to the native `reviewer` without replacing its agent definition.
 - **Model roles and execution**: Native `modelRoles`, `task.agentModelOverrides`, permissions, delegation, reasoning, fallback, and session lifecycle remain authoritative. pstack does not maintain a second runtime or parallel model sheet.
 - **Advisor example (`advisors/scope-completion/WATCHDOG.yml`)**: The opt-in Scope & Completion Guardian roster watches accepted scope and completion evidence. OMP discovers rosters from user and project locations, not installed packages. See [advisor setup](#scope-and-completion-advisor).
 - **Shared workflow guidance**: `skill:poteto-mode` owns scope, stopping and evidence instructions. Native settings and the accepted brief determine agents, models and permissions.
+
+## Additional review criteria
+
+The bundled [nuclear review rule](../rules/nuclear-review.md) uses `alwaysApply: true` and `agents: [reviewer]`. OMP injects its instructions into the `reviewer` system prompt, including reviewers launched by `/review` and direct task calls. Main sessions and other agent names do not receive this rule.
+
+The rule asks the reviewer to read `skill://nuclear-code-quality-review`; the URI is not an automatic expansion of the skill body. Native skill discovery and same-name overrides remain authoritative. Existing reviewer definitions, models and tools are not replaced. The added criteria cover structural and maintainability regressions and concrete simplification opportunities, while preserving assigned scope, diff evidence, read-only execution and structured output. The skill's standalone report-file workflow does not apply.
+
+To disable this addition, add `nuclear-review` to `ttsr.disabledRules` in the desired native configuration scope, preserving any existing entries. Disabling rule discovery with `--no-rules` also disables it, along with all other discovered rules.
+
+See [verification](verification.md#check-changed-skill-behavior) for the loading and isolation checks. Prompt inspection proves rule delivery, not that a model followed the rubric or found every issue.
 
 ## Scope and completion advisor
 
@@ -95,6 +106,7 @@ VERSION                      Canonical version file
 omp/index.ts                 Native OMP extension entry point
 skills/                      Shared skills, principles, playbooks, and scripts
 agents/                      Semantic specialist agent definitions
+rules/                       Agent-scoped additive review guidance
 advisors/                    Opt-in native WATCHDOG roster examples
 tools/                       Package validator and verification smoke runners
 tests/                       Unit, invariant, and validation test suites
