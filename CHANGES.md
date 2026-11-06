@@ -2,7 +2,7 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
-## Unreleased
+## 0.10.6 - add nuclear criteria to native reviewers
 
 - Added nuclear structural and maintainability criteria to native `reviewer` sessions without replacing the agent definition; other agents remain unchanged.
 
