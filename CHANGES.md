@@ -2,6 +2,10 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## Unreleased
+
+- Added nuclear structural and maintainability criteria to native `reviewer` sessions without replacing the agent definition; other agents remain unchanged.
+
 ## 0.10.5 - document companion plugin setup
 
 - Added an "Awesome other plugins" section to the README with the OMP marketplace registration and installation commands for yomiyasu, plus usage through `skill:yomiyasu`.
