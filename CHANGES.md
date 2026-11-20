@@ -2,6 +2,14 @@
 
 This file is the release changelog, with one `## <version> - <title>` entry per release, newest first.
 
+## 0.10.7 - adapt Cursor pstack 0.15.46 for OMP
+
+Adapted [Cursor pstack changes through `0b46ec3`](https://github.com/cursor/plugins/compare/c742dd61706f...0b46ec399d55). OMP still owns skill discovery, agents, models, permissions, and session lifecycle. No Cursor model defaults, wrapper agents, or setup commands are installed.
+
+- Shortened `how`, `why`, `architect`, `reflect`, and the principle and writing skills. Kept the pre-change system sketch and scope boundaries; `reflect` reads the transcript directly and waits for approval. `sharpen` asks for small prototypes when an experiment can settle a choice.
+- Added a scoped `worker.md` brief for playbook delegates. Simplified Babysit, PR opening, and multi-phase planning. Program-scale work now routes to `figure-it-out`; the OMP plan checker, nonvisual evidence, and independent review and landing rules remain.
+- Updated `statechart` to report source locations for SANY errors, route Mermaid arrows through parent-state borders, read TLC output with Windows line endings, and run without a POSIX shell on native Windows.
+
 ## 0.10.6 - add nuclear criteria to native reviewers
 
 - Added nuclear structural and maintainability criteria to native `reviewer` sessions without replacing the agent definition; other agents remain unchanged.
