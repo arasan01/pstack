@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import { type ChildProcess, spawn } from "node:child_process";
+import { once } from "node:events";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { killGroup, messageOf } from "./run.ts";
+import { killGroup } from "./kill.ts";
+import { messageOf } from "./run.ts";
 
 const USAGE = `Usage: statechart SPEC.tla [--config FILE] [--view FILE] [--out DIR]
 
@@ -17,7 +19,7 @@ draws only the paths to the rules that break, and with no rule broken there is n
                  colors gives each group blue, orange, purple, yellow, teal, tan, or pink.
   --out DIR      Where to write report.md, chart.mmd, tlc.out, and tlc-RULE.out for each
                  property that breaks and each rule that breaks off the chart. The folder must
-                 be new or empty. Default: SPEC-chart.
+                 be new or empty (new on native Windows). Default: SPEC-chart.
 Exit code: TLC's own on the config as written: 0 when every rule holds, 1 when a rule breaks,
 and 2 when TLC stops with an error, a signal kills the check, or the command cannot run. 130 or
 143 when SIGINT or SIGTERM stops the check. Only exits 0 and 1 write output.`;
@@ -76,6 +78,8 @@ try {
     throw new Error(
       `${out} is not empty. It has ${entries.sort()[0]}. The command writes only to a new or empty folder. Pass --out with a new folder.`,
     );
+  if (process.platform === "win32" && fs.existsSync(dest))
+    throw new Error(`Pass --out with a new folder on native Windows. ${out} already exists.`);
 
   let base = path.dirname(dest);
   while (!fs.existsSync(base)) base = path.dirname(base);
@@ -109,27 +113,36 @@ try {
       ],
       {
         detached: true,
+        windowsHide: true,
         stdio: ["ignore", "inherit", "inherit"],
-        env: { ...process.env, TMPDIR: tmp },
+        env: { ...process.env, TMPDIR: tmp, TEMP: tmp, TMP: tmp },
       },
     );
-    janitor = spawn(
-      "/bin/sh",
-      [
-        "-c",
-        'while read -r line; do :; done; kill -s KILL -- "-$1"; rm -rf -- "$2" "$3"',
-        "sh",
-        String(worker.pid),
-        stage,
-        tmp,
-      ],
-      { detached: true, stdio: ["pipe", "ignore", "ignore"] },
-    );
-    const exited = new Promise<number>((resolve) =>
-      worker.on("exit", (code) => resolve(code ?? 2)),
-    );
-    await Promise.race([stopped, exited]);
-    await killGroup(worker.pid as number);
+    const exited = once(worker, "exit").then(([code]) => {
+      janitor?.stdin?.write("exited\n");
+      return typeof code === "number" ? code : 2;
+    });
+    const { pid } = worker;
+    if (pid === undefined) {
+      await exited;
+      throw new Error("Could not start the statechart worker.");
+    }
+    try {
+      janitor = spawn(
+        process.execPath,
+        [...runtime, path.join(import.meta.dirname, "janitor.ts"), String(pid), stage, tmp],
+        { detached: true, stdio: ["pipe", "ignore", "ignore"], windowsHide: true },
+      );
+      janitor.stdin?.on("error", () => {});
+      await Promise.race([exited, once(janitor, "spawn")]);
+      await Promise.race([stopped, exited]);
+    } catch (error) {
+      if (worker.exitCode === null && worker.signalCode === null) await killGroup(pid);
+      await exited.catch(() => {});
+      throw error;
+    }
+    const running = worker.exitCode === null && worker.signalCode === null;
+    if (running || process.platform !== "win32") await killGroup(pid);
     const verdict = await exited;
     if (stop) {
       console.error(`${stop} stopped the check, so the command wrote nothing.`);
@@ -153,8 +166,8 @@ try {
       exitCode = verdict;
     } else exitCode = 2;
   } finally {
-    fs.rmSync(stage, { recursive: true, force: true });
-    if (tmp) fs.rmSync(tmp, { recursive: true, force: true });
+    fs.rmSync(stage, { recursive: true, force: true, maxRetries: 5 });
+    if (tmp) fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5 });
     janitor?.kill("SIGKILL");
   }
   process.exit(exitCode);
