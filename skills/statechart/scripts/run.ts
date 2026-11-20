@@ -290,6 +290,10 @@ export async function check(specFile: string, configFile: string): Promise<Check
         [
           `-Djava.io.tmpdir=${tmp}`,
           `-DTLA-Library=${folder}`,
+          "-Dfile.encoding=UTF-8",
+          // JDK 17 reads the sun.* properties for its standard streams.
+          "-Dsun.stdout.encoding=UTF-8",
+          "-Dsun.stderr.encoding=UTF-8",
           "-Dstdout.encoding=UTF-8",
           "-Dstderr.encoding=UTF-8",
           ...jvm,
@@ -312,7 +316,7 @@ export async function check(specFile: string, configFile: string): Promise<Check
       ["-XX:TieredStopAtLevel=1"],
     );
     if (xml.status !== 0) {
-      const errors = xml.error
+      const errors = xml.error || xml.status === null
         ? undefined
         : sanyErrors(
             await runJava(

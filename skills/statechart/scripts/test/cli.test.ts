@@ -677,6 +677,55 @@ test("a spec that SANY cannot read stops the command with exit 2", () => {
   assert.deepEqual(r.files, []);
 });
 
+test("a signaled SANY stops without another Java launch", { skip: process.platform === "win32" }, (t) => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "statechart-sany-signal-"));
+  t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  const java = path.join(tmp, "java");
+  const launches = path.join(tmp, "launches");
+  fs.writeFileSync(java, `#!/bin/sh
+for arg do
+  case "$arg" in
+    tla2sany.xml.XMLExporter|tla2sany.SANY)
+      printf '%s\\n' "$arg" >> "$LAUNCHES"
+      [ "$arg" != tla2sany.xml.XMLExporter ] || kill -TERM "$$"
+      exit 1 ;;
+  esac
+done
+exit 2
+`, { mode: 0o755 });
+  const r = run(path.join(corpus, "Login"), { java, env: { LAUNCHES: launches } });
+  t.after(() => fs.rmSync(path.dirname(r.out), { recursive: true, force: true }));
+  assert.equal(r.status, 2);
+  assert.deepEqual(r.files, []);
+  assert.equal(read(launches), "tla2sany.xml.XMLExporter\n");
+});
+
+test("TLC output preserves Unicode with a legacy Java console encoding", { skip: !process.env.TLA2TOOLS }, (t) => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "statechart-java-encoding-"));
+  t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  const dir = path.join(tmp, "Accent");
+  fs.mkdirSync(dir);
+  fs.writeFileSync(path.join(dir, "Accent.tla"), `---- MODULE Accent ----
+EXTENDS TLC
+VARIABLE x
+Init == x = 0 /\\ PrintT("café")
+Next == UNCHANGED x
+Spec == Init /\\ [][Next]_x
+====
+`);
+  fs.writeFileSync(path.join(dir, "Accent.cfg"), "SPECIFICATION Spec\n");
+  const r = run(dir, {
+    java: process.env.JAVA || "java",
+    env: {
+      TLA2TOOLS: process.env.TLA2TOOLS,
+      JAVA_TOOL_OPTIONS: "-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=windows-1252 -Dsun.stderr.encoding=windows-1252",
+    },
+  });
+  t.after(() => fs.rmSync(path.dirname(r.out), { recursive: true, force: true }));
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(read(path.join(r.out, "tlc.out")), /"café"/u);
+});
+
 test("a first verdict run that TLC cannot finish stops the command with exit 2", () => {
   const dir = copyCase("Login", (d) => fs.writeFileSync(path.join(d, "verdict-1.exit"), "150\n"));
   const r = run(dir);

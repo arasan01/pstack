@@ -9,6 +9,7 @@ Adapted [Cursor pstack changes through `0b46ec3`](https://github.com/cursor/plug
 - Shortened `how`, `why`, `architect`, `reflect`, and the principle and writing skills. Kept the pre-change system sketch and scope boundaries; `reflect` reads the transcript directly and waits for approval. `sharpen` asks for small prototypes when an experiment can settle a choice.
 - Added a scoped `worker.md` brief for playbook delegates. Simplified Babysit, PR opening, and multi-phase planning. Program-scale work now routes to `figure-it-out`; the OMP plan checker, nonvisual evidence, and independent review and landing rules remain.
 - Updated `statechart` to report source locations for SANY errors, route Mermaid arrows through parent-state borders, read TLC output with Windows line endings, and run without a POSIX shell on native Windows.
+- Kept TLC output in UTF-8 on Java 17 and avoided a second SANY launch after a signal. Babysit stops for a conflict or a required base update, not merely a newer base commit.
 
 ## 0.10.6 - add nuclear criteria to native reviewers
 
