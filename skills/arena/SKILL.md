@@ -15,10 +15,10 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick runners through native `task`, `modelRoles`, and agent settings. Preserve native precedence, `task.agentModelOverrides`, permissions, and fallback policy. Default to configured selection. Use a supported model override only for an explicit model comparison or named-model request after resolving available selectors. Preserve independent candidate perspectives and disclose when native policy supplies no model diversity. Spawn more runners when the arena covers multiple design directions.
+3. Select runners through native agent settings and `modelRoles`. Use a supported override only for an explicit model comparison or named-model request. Preserve independent perspectives even when runners share a model.
 4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
 
-If a runner is refused, inspect the cause and who controls the restriction before replacing it. Use only an available replacement allowed by native policy. Do not bypass a permission denial or silently switch models. Replace unavailable runners to keep at least two candidates, unless the user requested one. If policy or availability prevents replacement, continue with fewer candidates and disclose the count and reason. If no runner can execute, report the blocker rather than claim an arena result. Independent candidates may use the same model.
+If a runner is refused, identify the cause. Replace an unavailable runner only with a policy-allowed selection. Do not bypass a denial or silently switch models. Aim for at least two artifacts unless the user asked for one; report any shortfall, or the blocker if none ran.
 
 ## Phase B: Fan out
 
@@ -28,7 +28,7 @@ If a candidate produces no output, proceed with N-1 and note the dropout.
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, resolve the parent's model family and an available judge from another family through native settings. Dispatch that judge via `task` using `agent: "reviewer"` with an explicit read-only judging brief. An inherited model is not an independent family. If either family cannot be confirmed, or no allowed different-family judge can run, skip Phase C and disclose why. Do not bypass permissions or fallback policy to obtain a judge.
+After all candidates finish, resolve the parent's model family and a policy-allowed judge from another family through native settings. Dispatch a read-only `reviewer`. If either family is unknown or no eligible judge can run, skip Phase C and say why.
 
 The judge sees the rubric and candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Do not spawn it while candidates are still writing.
 

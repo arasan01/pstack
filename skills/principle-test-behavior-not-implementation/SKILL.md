@@ -6,22 +6,13 @@ hide: true
 
 # Test behavior, not implementation
 
-A test claims something about what a caller, end user, or another service can observe through its interface: return values, errors, readable state, requests, writes, or messages. Private helpers, internal call order, and intermediate data are implementation.
+A test is a claim about what users of the code can observe through its interface: return values, errors, state they can read back, and effects on outside systems. Private helpers, internal call order, and intermediate data are implementation.
 
-Judge the complete arrangement, including shared setup, against two edits:
+Judge each test against two imagined edits:
 
-- Break the behavior. Name a relevant defect, such as a wrong result, a skipped effect, or a duplicate effect. The test must detect it. Where practical, introduce it temporarily and observe the failure.
-- Change the internals while preserving every required result and effect. The test should still pass.
+- **Break the behavior** (a wrong value, a skipped or doubled effect). If the test still passes, it proves nothing. The usual causes are a loose assertion, an expected value computed by the code under test, and an assertion on data the test built itself.
+- **Change the internals** and keep every observable result. If the test fails, it is pinned to the implementation.
 
-Keep a test that catches the first edit and survives the second. Drive the subject through its users' interface with a concrete input. Derive the expectation from the requirement, not from the same code path as the actual value. A restated source constant, prompt string, or untouched fixture does not exercise the consumer that reads it.
+Keep a test that catches the first edit and survives the second. Rewrite or delete the rest. Drive the code through its users' interface with a concrete input and derive the expected value from the requirement. What an external service receives is behavior. A call to an internal helper is not.
 
-The contract decides, not the assertion's syntax:
-
-- `toBeDefined` detects a missing result but accepts a wrong one. Check the particular result when correctness requires it.
-- Keep absence assertions when absence is required. Exercise a denied operation and check that it sends no email. A temporary defect that sends one can prove detection; a positive case need not be in the same test.
-- A mocked external service's payload is observable behavior. Calling an internal helper is not. Checking only that a substitute ran is insufficient when its payload or resulting state defines correctness.
-- Keep fixed-value checks for an explicit user-facing contract, such as a promised default or required instruction. Name that contract and the defect a changed value causes. Do not pin incidental wording.
-- Keep comparisons between results when disagreement exposes the identified defect. An expectation computed through the same faulty path can confirm itself.
-- An invariant or compile-time type check can express a consumer contract. Name the failure it prevents rather than calling every internal relationship behavior.
-
-Rewrite or delete tests that exercise nothing relevant or assert nothing meaningful.
+Judge the complete setup. Where practical, introduce the defect and confirm the check detects it. An untouched fixture or a prompt string that never reaches its consumer is not proof. The contract decides whether to assert an exact value, absence, an error message, or an invariant; do not pin incidental values. A mutation that produces the forbidden effect can prove detection without a positive case in the same test.
