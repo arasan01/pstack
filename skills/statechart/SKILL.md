@@ -9,15 +9,25 @@ The chart shows how a system moves between states, in the words of the person wh
 
 ## Run
 
-Work in a scratch folder outside the repo. Write a TLA+ spec and its config. Then run:
+Work in a scratch folder outside the repo. Write a TLA+ spec and its config. On macOS or Linux, run the shell launcher:
 
 ```sh
-<skill dir>/scripts/statechart SPEC.tla [--config FILE] [--view FILE] [--out DIR]
+"<skill dir>/scripts/statechart" SPEC.tla [--config FILE] [--view FILE] [--out DIR]
 ```
 
-`scripts/statechart.ts` is TypeScript, so run it with a runtime that can execute TypeScript.
+The launcher picks a compatible Node, Bun, or Deno from `PATH`. On native Windows, use Bun directly and choose a new output folder:
 
-The first run installs TLC and Java with mise and needs the network.
+```powershell
+bun "<skill dir>/scripts/statechart.ts" SPEC.tla [--config FILE] [--view FILE] [--out DIR]
+```
+
+To use Node instead on native Windows, use Node 22.18 to 22.x or Node 23.6 and later:
+
+```powershell
+node --disable-warning=ExperimentalWarning "<skill dir>/scripts/statechart.ts" SPEC.tla [--config FILE] [--view FILE] [--out DIR]
+```
+
+Replace `<skill dir>` with the installed skill's directory. The first run installs TLC and Java with mise and needs the network. If you already have them, set `TLA2TOOLS` to the path of `tla2tools.jar` and, if needed, `JAVA` to the Java executable.
 
 ## Write the spec
 

@@ -12,16 +12,16 @@ Find each skill's instructions in the [skills tree](../skills/).
 | --- | --- |
 | `/skill:poteto-mode` | default entry point; map the current system and check the change boundary before choosing an approach |
 | `/skill:in-your-own-words` | restate the user's goal and the problem before starting |
-| `/skill:sharpen` | rewrite a prompt with deeper source material, methods, and checks without expanding its scope |
+| `/skill:sharpen` | deepen a prompt without expanding its scope; ask for small prototypes when an experiment can settle a choice |
 | `/skill:ketchup` | catch up on this chat's changes and every decision waiting on the user |
 | `/skill:ketchup-video` | explain this chat's changes in a short silent subtitled video with decisions in text |
 | `/skill:how` | explain the current system or draw a source-grounded pre-change sketch of the feature, state owners and target region |
-| `/skill:why` | investigate why something was built this way (parallel multi-MCP evidence) |
-| `/skill:architect` | use the current-system grounding to design proposed types and module structure before implementation |
+| `/skill:why` | explain the reasons for a change from commits, PR discussions, and other sources when the record is thin |
+| `/skill:architect` | reuse the current-system sketch, compare two structural designs, and use an arena for large or contested choices |
 | `/skill:arena` | run independent candidates, synthesize the best parts, and use a cross-judge only when a different model family is confirmed |
 | `/skill:interrogate` | challenge a change with execution-backed findings and report blocked serious risks separately |
 | `/skill:automate-me` | draft your own personal -mode skill from recent transcripts |
-| `/skill:reflect` | capture a long task's lessons as a skill edit |
+| `/skill:reflect` | read a finished session's transcript and propose skill edits for approval |
 | `/skill:correct` | find the mistakes agents keep repeating in a repo and make each one impossible, enforced at the highest level that works |
 | `/skill:tdd` | fix a bug by writing the failing test first, then the fix |
 | `/skill:benchmark-checklist` | vet a measured speedup or regression (limiter, tuning, errors, repeat runs, end-to-end relevance) before you report or act on it |
@@ -60,7 +60,7 @@ pstack installs as a canonical OMP package at the repository root:
 - **Reviewer rule (`rules/nuclear-review.md`)**: Adds nuclear structural and maintainability criteria to the native `reviewer` without replacing its agent definition.
 - **Model roles and execution**: Native `modelRoles`, `task.agentModelOverrides`, permissions, delegation, reasoning, fallback, and session lifecycle remain authoritative. pstack does not maintain a second runtime or parallel model sheet.
 - **Advisor example (`advisors/scope-completion/WATCHDOG.yml`)**: The opt-in Scope & Completion Guardian roster watches accepted scope and completion evidence. OMP discovers rosters from user and project locations, not installed packages. See [advisor setup](#scope-and-completion-advisor).
-- **Shared workflow guidance**: `skill:poteto-mode` owns scope, stopping and evidence instructions. Native settings and the accepted brief determine agents, models and permissions.
+- **Shared workflow guidance**: `skill:poteto-mode` owns scope, stopping and evidence instructions. Playbook delegates read its [worker brief](../skills/poteto-mode/worker.md). Native settings and the accepted brief determine agents, models and permissions.
 
 ## Additional review criteria
 

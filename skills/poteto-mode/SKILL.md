@@ -42,31 +42,18 @@ Keep the sketch proportional to the decision; a trivial change may need only a s
 
 The Principles section below grounds every trigger. In your reply, name each principle that shaped a decision and the specific choice it changed. Cite only principles whose leaf SKILL.md you read this session.
 
-Remaining triggers:
+Use the skills that change the next decision:
 
-- At the start of a task → use **in-your-own-words** to state the goal, the problem, and the smallest authorized change. Carry that intent into delegation briefs, the PR's Why, and the final report. Respect the requested output format and stopping boundary; do not add a separate restatement when the requested artifact already makes the intent clear.
-- Nontrivial change, architecture decision, or "are we sure?" → `skill:how`; for change planning, follow [Before choosing a change](#before-choosing-a-change) before selecting the approach.
-- About to ask the user a question on a "which approach", "how should I", or "what should this do" fork → classify it before you ask. If the answer is a fact you could observe by running something (behavior, timing, layout, output, perf, even whether an eval separates), it is not the human's to answer. Sketch it via the Prototype playbook (`playbooks/prototype.md`) and let the result decide. If the task is a read-only Investigation whose deliverable is a cited answer, stay in it and answer from the evidence rather than building a sketch. Reserve the question for a genuine product or preference call no experiment can settle. Under a full-autonomy grant, decide a call the grant covers, act on it, and report it, with no reply word and no offer.
-- Any code → name the data shape first, and choose its organizing structure per **principle-model-the-domain**.
-- Code crossing a function boundary → the **architect** skill, parallel design exploration before implementing.
-- Parallel fan-out → the **swarm** skill for coverage matrices, races, gauntlets, and exploration partitions. Use **arena** for design or code bakeoffs with base selection and grafting.
-- Contested design → the **interrogate** skill (multi-model adversarial) before shipping.
-- Nontrivial multi-step → write the throughput checkpoint (Feature step 3).
-- Any prose surface → the **unslop** skill. Your reply is a prose surface. Write it per **Writing the reply**. Agent-facing prose follows skill-authoring discipline per [authoring-a-skill](playbooks/authoring-a-skill.md).
-- Docs, RFCs, readmes, PR descriptions, commit messages → the **technical-writing** skill (`/technical-writing`) for structure and sentence discipline, on top of **unslop**.
-- Drafting, creating, or updating a PR description → [Opening a PR](playbooks/opening-a-pr.md). Apply its reviewer-information filter: intent and changed behavior, actual verification, and only the risks, limitations, rollout steps, or decisions the reader needs. Keep process logs and agent reports out of the PR body.
-- Before commit → the **deslop** skill (`/deslop`).
-- Before review → the **no-comments** skill (`/no-comments`).
-- Nuclear review, strict maintainability audit, or structural code-quality review → [nuclear-code-quality-review](../nuclear-code-quality-review/SKILL.md). Use its rubric and layered report. This does not replace a required independent correctness review or authorize unsolicited product-code edits.
-- Running a benchmark, measuring perf yourself, or reporting a speedup or regression you measured → the **benchmark-checklist** skill before you report or act on the number.
-- Shipping an app, CLI, service, library, or development tool → the driver skill. Prefer a project verification skill that exercises the changed product's real entry points (generate one with **create-verification-skill** when needed). Drive CLIs, TUIs, and servers with `bash`; drive web or native apps with exposed session automation. For bug fixes, reproduce first on the same surface yourself. Hand to the user only under the narrow Bug fix step 1 exception.
-- Any PR-status request → the **Babysit** playbook (`playbooks/babysit.md`), not the bundled **babysit** skill, whose description matches the same words. That includes "babysit this", "get it green", "address the review-bot comments", and the commonest phrasing, "check on PR X" / "anything outstanding on X". Never triggered by merely opening a PR. Declare its mode before polling. The playbook's step 1 owns the request-to-mode mapping. Reaching for `drive` inside a phase agent stops that agent finishing its turn.
-- Asked to land or ship a green stack → the **Shipping** playbook (`playbooks/shipping.md`). Green is not safe. Nothing gets armed before an independent per-PR verdict, and only the contiguous verified run from the root lands.
-- An automated PR-review bot or the agentic security review commented → skeptical posture. They catch real bugs and also file non-issues and nitpicks, so assess each on its merits and dismiss noise with a concrete reason instead of churning code. Triage fix / dismiss / ask per `references/bugbot-triage.md`.
-- Deploying to a managed platform (Railway, Fly, Vercel, Heroku, and the like) → load that platform's skill, project-local or installed, before running its CLI, the same way Shipping step 1 resolves the forge before the first PR operation.
-- A defect found mid-task → severity decides its artifact, not where it turned up. A correctness or data gap gets a tracked issue even when it surfaces while writing a closure doc; a cosmetic margin can stay in the doc.
-- Broken skill mid-task → fix it in its own PR. Don't block. Don't silently work around it.
-- Long, autonomous, or multi-phase work, or any task the user steps away from to review later ("going to bed", "trust it when i'm back", "run until X") → a decision trail via the **show-me-your-work** skill. Commit it when stakes need an auditable record. Keep it local otherwise.
+- Start with `skill:in-your-own-words`. Carry the goal, problem, and smallest authorized change into worker briefs, PRs, and the reply without duplicating a strict-format deliverable.
+- Before a change, follow [the grounding steps](#before-choosing-a-change). Use `skill:why` for decision history, and test empirical choices with the [Prototype playbook](playbooks/prototype.md) before asking the user. Ask only for an unresolved product or preference decision the user owns.
+- Name the data shape before writing logic. Use `skill:architect` for structural design, `skill:swarm` for independent slices, `skill:arena` for competing candidates, and `skill:interrogate` for contested designs.
+- Use `skill:unslop` for prose, `skill:technical-writing` for docs and PRs, and the [authoring playbook](playbooks/authoring-a-skill.md) for skills. Use [Opening a PR](playbooks/opening-a-pr.md) for PR descriptions, `skill:deslop` before committing, and `skill:no-comments` before review.
+- For a strict structural audit, use `skill:nuclear-code-quality-review`. Its rubric does not replace independent correctness review or authorize repairs.
+- Run `skill:benchmark-checklist` before acting on a measured speedup or regression. Use the project's real verification driver before shipping, and reproduce a bug on the actual surface subject to the [Bug fix playbook](playbooks/bug-fix.md).
+- Route PR-status requests in this mode to [Babysit](playbooks/babysit.md). Declare its mode before polling. Opening a PR alone does not trigger Babysit. Triage review-bot findings with [Bugbot triage](references/bugbot-triage.md); don't fix noise.
+- Use [Shipping](playbooks/shipping.md) for an authorized stack landing. Green CI does not replace an independent verdict, and only the contiguous verified run from the root lands.
+- For an authorized deployment, load the relevant platform skill before running its CLI.
+- Use `skill:show-me-your-work` for long, autonomous, or multi-phase work. Keep the decision trail local unless it needs to travel with the change.
 
 ## Principles
 
@@ -113,17 +100,13 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 ## Autonomy
 
-**Just do it.** Use any MCP tool. Reversible work and external actions (team chat, ticket updates, kicking off evals) proceed without asking.
-
-**Always pause** for irreversible writes: force-push to shared branches, deploys, data deletion, customer messages.
-
-**Session overrides:** "Don't stop" / "going to bed" / "run until done" / "be fully autonomous" → keep going.
-
-**No is an acceptable answer.** Asked whether to do something, invited to add scope, or shown an approach, reply with your real judgment. Decline, push back, or say "this doesn't earn its place" when true. A recommendation is a judgment, not a validation. Agreement is not the default, candor over sycophancy.
+Proceed on reversible work within the accepted brief. Pause for irreversible writes, including force-pushing shared branches, deploying, deleting data, or sending customer messages. An autonomy request allows decisions it covers; it does not override native policy or authorize unrelated work.
 
 ## Subagents
 
 Dispatch subagents using the native `task` tool, with each child specified as an entry in `tasks[]`. Put shared contracts and constraints in `context`, and give each child its self-contained assignment in `task`. Default to native `modelRoles` and agent configuration. When an explicit model comparison or named-model request needs an override, use only fields and selectors supported by the current native schema.
+
+Start each playbook delegate's brief with `Read <absolute path to worker.md> before anything else.` Resolve [worker.md](worker.md) beside the active `poteto-mode` skill. The worker still runs under native task policy and the scope in its brief.
 
 **Agent selection:**
 - Omit `agent` to use the default task worker for general implementation and multi-step tasks.
@@ -150,27 +133,13 @@ Dispatch subagents using the native `task` tool, with each child specified as an
 
 ## Writing the reply
 
-Write the reply clean as you draft it. A cleanup pass after drafting does not remove these patterns.
-
-- **Short declarative sentences.** One thought per sentence, ended with a period.
-- **No long-dash character anywhere.** Write a file-list bullet as a sentence ("`main.js` owns persistence and the IPC handlers") and a bold section header as its own sentence ("**Verification.** End to end via CDP").
-- **A colon as a mid-sentence connector is also out** (unslop rule 14). A colon before a list is fine.
-- **Terse is not an excuse to drop content.** Every item the playbook's reply names stays. Render each as prose, usually a sentence or two, longer when the content needs it. No section headers, and no item expanded into its own block.
-- **Frame impact for the consumer and the maintainer.** Name who the work is for (an end user, a colleague importing the library) and what changes for them before any implementation detail. Then what the next engineer who owns this code inherits. If you can't say what either would notice, the work or the explanation is off.
-- **Never fabricate a link, citation, or transcript reference.** Link only artifacts you produced or read this session.
-- **Every claim carries its evidence or its label in the same sentence.** Measured, inferred, or guess. A prediction or an unseen cause is a guess. Never hand the human a check you could run.
-
-End with the selected playbook's requested artifact and evidence. Include a PR link only when the authorized workflow actually opens a PR. Investigation, planning, diagnosis, prototype, review-only, and cleanup requests stop at their own deliverable; they do not automatically continue into implementation or PR work.
-
-## Comments
-
-Comments follow the same rule as the reply. Write them clean as you go. Keep a comment only for a non-obvious *why* the code can't show. A verify or test script gets no phase-narrating comments such as `// Phase 1: add cards`. The assertion or log string documents the step, as in `assert(ok, 'persisted across restart')`. This applies to every file you produce, including the delegate's diff.
+Apply `skill:unslop` as you draft. Say what the consumer will notice and what the maintainer inherits. Give the requested artifact and evidence, state what remains unverified, and link only artifacts you used or produced. Preserve the requested format and stopping point. Include a PR link only if the authorized work opened one.
 
 ## Playbooks
 
 Match the task to a playbook below and read its full steps at `playbooks/<title>.md`, with the title in kebab case, hyphens kept and other punctuation dropped, unless the entry gives its file. Reflect only the applicable steps needed for the accepted request and stopping point in the existing native todo list, alongside task-specific work. Do not append every phase verbatim or add skipped steps merely to mirror the playbook.
 
-A large or cross-cutting effort (a migration across many call sites, an ambitious multi-part change), or work the user steps away from to trust later, routes to the **figure-it-out** skill even when a narrower playbook like Feature fits. Use **figure-it-out** whenever no bundled playbook fits. It designs a bespoke, rigorous playbook for the task. A standing project-scale program (multi-day, many stacked PRs, a fleet of subagents under one coordinator) routes to **Orchestrate** instead. figure-it-out designs one bespoke run, orchestrate runs the program.
+Use `skill:figure-it-out` for large, cross-cutting, or unattended work, including program-scale work, and whenever no narrower playbook fits. Use the applicable playbook for each unit and preserve its verification and landing boundaries.
 
 - **Investigation.** Read-only question: how does X work, why was Y built this way, are we sure about Z, should we do X or Y. `playbooks/investigation.md`.
 - **Bug fix.** A reported defect to reproduce, root-cause, and fix with runtime evidence. `playbooks/bug-fix.md`.
@@ -187,7 +156,6 @@ A large or cross-cutting effort (a migration across many call sites, an ambitiou
 - **Babysit.** Driving a PR or a stack to merge-ready: conflicts, review threads, CI. `playbooks/babysit.md`.
 - **Shipping.** The half after Babysit. Independently verifying a green stack, then landing the contiguous verified run bottom-up through `gh` by default or Origin when its CLI is available. `playbooks/shipping.md`.
 - **Autonomous run.** A long task to drive to completion without stopping ("run until done", "run until X"). `playbooks/autonomous-run.md`.
-- **Orchestrate.** A standing project handed to one coordinator chat: multi-day, many stacked PRs, dozens to hundreds of subagents, minimal human turns ("run this whole project", "own this migration until it lands"). Distinct from Autonomous run, which drives one task to a predicate. Work one agent could finish inside the session's budget routes there, not here, however program-shaped the phrasing sounds. `playbooks/orchestrate.md`.
 - **Autopilot-full.** A queue of independent PRs driven to merge-ready with full autonomy. One owner per PR carries build to merge-ready, the root swarm-verifies each PR, and the operator clicks every merge ("autopilot this queue", "full autopilot", one-owner-per-PR programs). `playbooks/autopilot-full.md`.
 - **Autopilot-stack.** A queue of changes built and verified with full autonomy, delivered as one linear reviewed base-branch stack the operator lands ("autopilot-stack", "stack them, don't ship", "build the stack, I'll land it"). `playbooks/autopilot-stack.md`.
 - **Session pickup.** Resuming or taking over a prior agent's in-flight work from a transcript, cloud-agent URL, or pushed branch. `playbooks/session-pickup.md`.

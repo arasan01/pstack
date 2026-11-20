@@ -91,15 +91,14 @@ Close calls:
 
 - `/how` explains what the code does. `/why` explains the reasons. `/teach` runs one or both and explains the result plainly.
 - `/arena` gives every worker the same brief and merges the best parts. `/swarm` splits work into slices or a race and returns one report.
-- `/architect` implements right after it settles the design. Add "with checkpoint" to review the design before it writes code.
+- `/architect` compares designs before implementation. A design-only request or an explicit checkpoint stops before code changes.
 - `/interrogate` reviews the diff without applying fixes. Its report states the Intent, keeps only findings backed by execution evidence in Findings, and explains rejected candidates in Dropped. User-reported failures are ground truth, not a reason to rerun a failing command only to confirm it. Material risks that cannot be reproduced or executed within the review's permissions stay separate as Unverified. A read-only review uses an isolated worktree or temporary output for any reproduction that writes files. `/blast-radius` looks for breakage outside the diff and proves the one fact that makes the change safe.
 - `/recall` rebuilds context across recent chats. `/ketchup` covers only this chat since the user's last message. Resuming one specific chat or branch is the Session pickup playbook.
-- `/figure-it-out` designs one rigorous run. The Orchestrate playbook runs a program that spans days and many PRs. The Autonomous run playbook drives one task to a finish condition.
+- `/figure-it-out` designs the run for a broad or multi-phase effort. The Autonomous run playbook drives one task to a finish condition.
 
 Not in pstack:
 
 - There is no bundled product-specific driver. Use the project verification skill and native tools for the actual app, service, CLI, or library per poteto-mode's Non-negotiables.
-- pstack has no orchestrate skill. Orchestrate is a `/poteto-mode` playbook. If the slash menu shows an orchestrate command, another plugin provides it.
 
 ## Playbooks and principles
 

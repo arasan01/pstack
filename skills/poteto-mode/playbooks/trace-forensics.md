@@ -4,7 +4,7 @@
 
 Distinct from **Runtime forensics**, which instruments a live process. Here the capture is a fixed dataset. Read it; do not rerun it. Choose tooling for its format and runtime: DevTools for browser profiles, platform tools for native captures, managed-heap tooling, or a service trace viewer. Do not assume Chromium JSON or garbage collection.
 
-1. Identify the format and load it with the matching tool. Delegate bulk parsing when native policy permits. Keep the reduced finding in the main thread.
+1. Identify the format and load it with the matching tool. Delegate bulk parsing when native policy permits. Keep the selected frames, spans, or paths and their artifact references in the main thread.
 2. Query the artifact with its native analysis tool or an exported dataset. Use sqlite when a structured export fits. Preserve timestamps, units, process and thread identifiers, and symbols rather than forcing every capture into one schema.
 3. Narrow to the cause. Follow hot frames or request spans. For a managed leak, follow retainers to a GC root; for native memory, inspect allocation lifetimes and ownership. For a thread capture, find the on-CPU or blocked thread and its wait reason.
 4. Attribute to source. Map the hot frame to file, symbol, and line via the artifact's own symbols. A frame with no source mapping is not yet a diagnosis. Resolve the symbols, or say plainly the artifact does not carry them.

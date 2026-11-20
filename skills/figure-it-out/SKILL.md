@@ -27,8 +27,10 @@ Present the framing and tradeoffs before committing to a long run. Reversible wo
 
 Decompose into atomic, independently-landable units. Sequence riskiest-unknown-first. Scaffold and verification come before features (the **foundational-thinking** principle skill).
 
+For a program spanning several PRs, name the dependency order, the owner and acceptance evidence for each unit, and which publication or landing actions the operator authorized. Inspect the current artifact, head, and base before accepting a unit. Keep those records in the existing plan and PRs.
+
 - Build the verification harness before the work, with the baseline captured from the pre-change state, so the check reads as "old value vs new value".
-- For one-way-door design decisions, run the **architect** skill (it runs **arena**). Skip it for mechanical work whose shape is already concrete. A second arena over a settled design is over-engineering (the **laziness-protocol** principle skill).
+- For one-way-door decisions, use `skill:architect` and compare alternatives through `skill:arena` when the choice is large or contested. Skip a design round when the shape is already settled.
 - Decide what fans out. Parallelize only across seams, and give each worker its own worktree or branch (the **separate-before-serializing-shared-state** principle skill). Don't over-fan. Subagent delegation follows native agent policy.
 - Write the designed phase list down. That list is what the human reviews.
 

@@ -7,20 +7,9 @@ description: "Use for understanding existing code, source-grounded system or fea
 
 Use the shared guidance in `skill:poteto-mode` within the accepted brief. Reading it does not start another workflow or select an agent or model.
 
-Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
+Trace existing code to give a senior engineer a usable mental model. If the scope is ambiguous, state your interpretation and proceed. Start inline and keep the investigation read-only. Use native delegation for genuinely independent missing slices only when native policy permits. Give each explorer a bounded question and the existing grounding. Synthesize the cited findings into one explanation.
 
-This is a read-only investigation workflow. It produces a clear mental model and cited explanation; it does not implement changes or impose an implementation review gate.
-
-The accepted brief and native policy determine responsibility, not whether the request is direct or delegated. For a scoped subtask, reuse the parent's plan and valid grounding, investigate only the missing evidence, and return the assigned explanation. Do not duplicate whole-task todos. A narrower brief does not grant permissions.
-
-## 1. Assess complexity
-
-If the scope is ambiguous, state your interpretation and explore. The user can redirect.
-
-- **Simple** (a single module, a small utility, a narrow question such as "how does function X work"): no explorers. Investigate inline or dispatch one explainer that explores and explains in one pass, built from `references/explainer-prompt.md` without the explorer-findings section. Go to step 4.
-- **Complex** (a subsystem spanning multiple files or services, a cross-cutting feature, a full architectural overview): go to step 2.
-
-When in doubt, take the simple path.
+For an assigned slice, reuse the parent's plan and valid grounding. Investigate only missing or invalidated relationships. A walkthrough should explain the entry point, flow, ownership, and surprising behavior relevant to the question. Skip a repository tour and details the reader can get from one source file.
 
 ## Pre-change system sketch
 
@@ -35,21 +24,3 @@ When grounding a behavioral or structural change, present the current-system ske
 Reuse the parent's valid sketch and grounding. Refresh only missing or invalidated relationships; an assigned slice does not redraw the whole system. Keep source access read-only. When the response format permits, show the sketch and constraints in a grounding update before the approach. The parent can then continue authorized planning or implementation without waiting for approval, referencing that sketch later instead of redrawing it in the final reply. Otherwise keep the relationships and constraints in the requested response or an explicitly authorized artifact. Do not create a diagram file, plan, log or separate todo list by default.
 
 Preserve the requested output format. If it cannot carry a diagram, express the relationships and constraints in its permitted fields; do not add unrequested keys, files or a second response. A sketch-only request stops at the sketch and constraints. A planning request may continue to a plan, but not implementation.
-
-## 2. Explore (complex only)
-
-Decompose the question into 2 to 4 angles, each a distinct slice of the subsystem. When genuine unmapped codebase exploration is required, dispatch read-only explorers using native `task` with `agent: "scout"` in a single call, each with `references/explorer-prompt.md` and its angle filled in.
-
-## 3. Synthesize (complex only)
-
-Once all explorers have returned, synthesize their findings using `references/explainer-prompt.md` with every explorer's findings filled in. Synthesis can run inline or via a default task worker.
-
-## 4. Present
-
-Present the explainer's output. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
-
-## Output format
-
-The explanation uses the sections defined in `references/explainer-prompt.md`, dropping any that do not apply: Overview, Key Concepts, How It Works, Where Things Live, Gotchas.
-
-For pre-change grounding, put the current-system sketch and its change-boundary constraints before any proposed approach. Reuse or omit overlapping explanation sections rather than repeating the same map in prose.

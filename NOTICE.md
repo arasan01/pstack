@@ -24,6 +24,7 @@ This distribution is maintained as the private [arasan01/pstack](https://github.
 | `skills/correct/` (v0.15.9 addition) | [cursor/plugins/pstack @ e43c7ee](https://github.com/cursor/plugins/tree/e43c7ee/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
 | `skills/poteto-help/` (v0.15.13 addition) | [cursor/plugins/pstack @ 2cbf585](https://github.com/cursor/plugins/tree/2cbf585/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
 | `skills/{arena,interrogate,ketchup-video,poteto-help,poteto-mode,principle-explain-the-number}/` (v0.15.35 and v0.15.36 adaptations for OMP) | [cursor/plugins/pstack @ c742dd6](https://github.com/cursor/plugins/tree/c742dd61706fbacc1b95f1a20b7b988cf096ce6c/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
+| `skills/` and `agents/comment-sicko.md` (skill and playbook simplification, worker guidance, and statechart fixes through v0.15.46) | [cursor/plugins/pstack @ 0b46ec3](https://github.com/cursor/plugins/tree/0b46ec399d55/pstack) | (c) 2026 Lauren Tan | MIT | [LICENSE](LICENSE) |
 | `skills/deslop/references/japanese-prose.md` | [iKora128/stop-ai-slop-jp](https://github.com/iKora128/stop-ai-slop-jp), imported from the local skill and adapted for technical prose | (c) 2026 Daichi Nagashima | MIT | [LICENSE-stop-ai-slop-jp](LICENSE-stop-ai-slop-jp) |
 
 ## What changed in the port
